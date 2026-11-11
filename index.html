@@ -1,259 +1,319 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#1F6B45" />
-<title>Verde Pro — Panel del jardinero</title>
-<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
-<style>
-  :root{
-    --green:#1F6B45; --green-dark:#154D32; --green-soft:#E8F3EC; --green-mid:#CFE6D7;
-    --ink:#14281D; --muted:#5E7266; --line:#E3ECE6; --bg:#F6FAF7; --white:#FFFFFF;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:#DDE9E1;font-family:"Geist",system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
-  body{min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:24px 12px}
-  .phone{position:relative;width:100%;max-width:390px;height:800px;background:var(--bg);border-radius:36px;overflow:hidden;box-shadow:0 30px 60px -20px rgba(20,40,29,.35),0 0 0 8px #14281D}
-  @media (max-width:440px){body{padding:0}.phone{max-width:none;height:100vh;border-radius:0;box-shadow:none}}
-  .scroll{height:100%;overflow-y:auto;padding-bottom:150px;scrollbar-width:none}
-  .scroll::-webkit-scrollbar{display:none}
-  svg{width:20px;height:20px;stroke-width:2}
-
-  header{background:var(--green);color:var(--white);padding:22px 20px 64px;border-radius:0 0 28px 28px}
-  .status{display:flex;justify-content:space-between;font-size:12px;font-weight:600;opacity:.85;margin-bottom:18px}
-  .top{display:flex;align-items:center;gap:12px}
-  .avatar{width:48px;height:48px;border-radius:50%;background:var(--green-mid);color:var(--green-dark);display:grid;place-items:center;font-weight:700;font-size:17px;flex-shrink:0}
-  .hello small{display:block;font-size:13px;opacity:.8}
-  .hello h1{font-size:21px;font-weight:700;letter-spacing:-.01em}
-  .icon-btn{margin-left:auto;width:42px;height:42px;border-radius:14px;border:0;background:rgba(255,255,255,.14);color:var(--white);display:grid;place-items:center;position:relative;cursor:pointer}
-  .icon-btn .dot{position:absolute;top:10px;right:11px;width:8px;height:8px;border-radius:50%;background:#B8F0CB;border:2px solid var(--green)}
-
-  .sub{margin:-46px 16px 0;background:var(--white);border-radius:20px;padding:16px;box-shadow:0 10px 30px -12px rgba(20,40,29,.25);position:relative}
-  .sub-row{display:flex;align-items:center;gap:10px}
-  .sub-ic{width:40px;height:40px;border-radius:12px;background:var(--green-soft);color:var(--green);display:grid;place-items:center}
-  .sub-row h2{font-size:15px;font-weight:700}
-  .sub-row p{font-size:12.5px;color:var(--muted)}
-  .badge{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--green);background:var(--green-soft);padding:5px 10px;border-radius:999px;display:flex;align-items:center;gap:5px}
-  .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
-  .bar{height:6px;background:var(--green-soft);border-radius:99px;margin:14px 0 6px;overflow:hidden}
-  .bar span{display:block;height:100%;width:72%;background:var(--green);border-radius:99px}
-  .bar-meta{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
-
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px}
-  .stat{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:12px}
-  .stat b{display:block;font-size:20px;font-weight:700;color:var(--green-dark)}
-  .stat span{font-size:11.5px;color:var(--muted)}
-
-  .sec-head{display:flex;justify-content:space-between;align-items:baseline;margin:22px 20px 12px}
-  .sec-head h3{font-size:17px;font-weight:700}
-  .sec-head a{font-size:13px;color:var(--green);font-weight:600;text-decoration:none}
-
-  .days{display:flex;gap:8px;padding:0 16px;overflow-x:auto;scrollbar-width:none}
-  .days::-webkit-scrollbar{display:none}
-  .day{flex:0 0 52px;border:1px solid var(--line);background:var(--white);border-radius:16px;padding:10px 0;text-align:center;cursor:pointer;color:var(--ink);font:inherit}
-  .day small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:600}
-  .day b{font-size:17px}
-  .day i{display:block;width:5px;height:5px;border-radius:50%;margin:4px auto 0;background:transparent}
-  .day.has i{background:var(--green)}
-  .day[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--white)}
-  .day[aria-pressed="true"] small{color:rgba(255,255,255,.8)}
-  .day[aria-pressed="true"] i{background:var(--white)}
-
-  .visits{list-style:none;padding:14px 16px 0;display:flex;flex-direction:column;gap:12px}
-  .visit{display:flex;gap:12px}
-  .time{width:46px;flex-shrink:0;text-align:right;padding-top:14px}
-  .time b{display:block;font-size:14px}
-  .time span{font-size:11px;color:var(--muted)}
-  .card{flex:1;background:var(--white);border:1px solid var(--line);border-radius:18px;padding:14px;border-left:4px solid var(--green);transition:opacity .2s}
-  .card.done{opacity:.55;border-left-color:var(--green-mid)}
-  .card.done h4{text-decoration:line-through}
-  .card-top{display:flex;align-items:flex-start;gap:8px}
-  .card h4{font-size:15px;font-weight:700}
-  .check{margin-left:auto;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--green-mid);background:var(--white);color:var(--green);display:grid;place-items:center;cursor:pointer;flex-shrink:0}
-  .check svg{width:16px;height:16px;opacity:0}
-  .card.done .check{background:var(--green);border-color:var(--green);color:var(--white)}
-  .card.done .check svg{opacity:1}
-  .meta{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-top:6px}
-  .meta svg{width:15px;height:15px;flex-shrink:0}
-  .tag{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;font-weight:600;color:var(--green-dark);background:var(--green-soft);padding:6px 10px;border-radius:10px}
-  .tag svg{width:14px;height:14px}
-  .empty{text-align:center;color:var(--muted);font-size:14px;padding:30px 20px;background:var(--white);border:1px dashed var(--green-mid);border-radius:18px;margin:14px 16px 0}
-
-  .fab{position:absolute;right:16px;bottom:96px;height:60px;padding:0 22px 0 18px;border:0;border-radius:20px;background:var(--green);color:var(--white);font:inherit;font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:10px;box-shadow:0 14px 30px -8px rgba(31,107,69,.6);cursor:pointer;z-index:5}
-  .fab:active{transform:scale(.97)}
-  .fab svg{width:22px;height:22px;stroke-width:2.5}
-
-  nav{position:absolute;left:0;right:0;bottom:0;height:78px;background:var(--white);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:flex-start;padding-top:10px;z-index:4}
-  nav button{border:0;background:none;font:inherit;font-size:11px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;width:70px}
-  nav button[aria-current="page"]{color:var(--green)}
-
-  .overlay{position:absolute;inset:0;background:rgba(20,40,29,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:10}
-  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--white);border-radius:28px 28px 0 0;padding:12px 20px 28px;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);z-index:11}
-  .open .overlay{opacity:1;pointer-events:auto}
-  .open .sheet{transform:none}
-  .grip{width:40px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 16px}
-  .sheet h3{font-size:19px;font-weight:700;margin-bottom:4px}
-  .sheet > p{font-size:13px;color:var(--muted);margin-bottom:16px}
-  label{display:block;font-size:12.5px;font-weight:600;margin:12px 0 6px}
-  input,select{width:100%;height:48px;border:1px solid var(--line);border-radius:14px;padding:0 14px;font:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none}
-  input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .submit{width:100%;height:54px;margin-top:20px;border:0;border-radius:16px;background:var(--green);color:var(--white);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
-  .toast{position:absolute;left:50%;top:20px;transform:translate(-50%,-80px);background:var(--ink);color:var(--white);padding:12px 16px;border-radius:14px;font-size:13.5px;font-weight:600;display:flex;gap:8px;align-items:center;transition:transform .3s;z-index:20;white-space:nowrap}
-  .toast.show{transform:translate(-50%,0)}
-  .toast svg{color:#B8F0CB;width:18px;height:18px}
-  :focus-visible{outline:2px solid var(--green);outline-offset:2px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jardineros Pro - Gestión</title>
+  <script src="https://tailwindcss.com"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background-color: #f3f4f6; }
+    .hide-scroll::-webkit-scrollbar { display: none; }
+  </style>
 </head>
-<body>
-<div class="phone" id="phone">
-  <div class="scroll">
-    <header>
-      <div class="status" aria-hidden="true"><span>9:41</span><span>Lunes, 10 nov</span></div>
-      <div class="top">
-        <div class="avatar" aria-hidden="true">CR</div>
-        <div class="hello">
-          <small>Buenos días,</small>
-          <h1>Carlos Ramírez</h1>
-        </div>
-        <button class="icon-btn" aria-label="Notificaciones (1 nueva)"><i data-lucide="bell"></i><span class="dot"></span></button>
-      </div>
-    </header>
+<body class="pb-24 text-gray-800">
 
-    <section class="sub" aria-label="Estado de suscripción">
-      <div class="sub-row">
-        <div class="sub-ic"><i data-lucide="sprout"></i></div>
-        <div>
-          <h2>Plan Profesional</h2>
-          <p>Renueva el 15 dic 2026</p>
-        </div>
-        <span class="badge">Activa</span>
-      </div>
-      <div class="bar" role="progressbar" aria-valuenow="36" aria-valuemax="50" aria-label="Clientes usados"><span></span></div>
-      <div class="bar-meta"><span>36 de 50 clientes</span><span>14 disponibles</span></div>
-    </section>
-
-    <section class="stats" aria-label="Resumen de hoy">
-      <div class="stat"><b id="statVisits">4</b><span>Visitas hoy</span></div>
-      <div class="stat"><b id="statDone">0</b><span>Completadas</span></div>
-      <div class="stat"><b>$2.4k</b><span>Este mes</span></div>
-    </section>
-
-    <div class="sec-head">
-      <h3>Próximas visitas</h3>
-      <a href="#" onclick="return false">Ver calendario</a>
+  <header class="bg-emerald-700 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center max-w-md mx-auto">
+    <div>
+      <h1 class="text-xl font-bold tracking-tight">🌿 Jardineros Pro</h1>
+      <p class="text-xs text-emerald-100" id="header-capacidad">Capacidad: 0 / 500 clientes</p>
     </div>
-    <div class="days" id="days" role="group" aria-label="Seleccionar día"></div>
-    <ul class="visits" id="visits"></ul>
-  </div>
+    <button onclick="abrirModalNuevo()" class="bg-white text-emerald-800 px-3 py-1.5 rounded-full text-sm font-bold shadow hover:bg-emerald-50 active:scale-95 transition">
+      + Cliente
+    </button>
+  </header>
 
-  <button class="fab" id="fab"><i data-lucide="user-plus"></i>Agregar Cliente</button>
+  <main class="max-w-md mx-auto p-4 space-y-4">
 
-  <nav aria-label="Navegación principal">
-    <button aria-current="page"><i data-lucide="house"></i>Inicio</button>
-    <button><i data-lucide="calendar-days"></i>Agenda</button>
-    <button><i data-lucide="users"></i>Clientes</button>
-    <button><i data-lucide="user-round"></i>Perfil</button>
+    <section id="tab-dashboard" class="space-y-4">
+      <div class="grid grid-cols-3 gap-2 text-center">
+        <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+          <p class="text-[10px] font-bold text-gray-400 uppercase">Total Clientes</p>
+          <p class="text-xl font-extrabold text-gray-800 mt-1" id="dash-total">0</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl shadow-sm border border-red-100">
+          <p class="text-[10px] font-bold text-red-400 uppercase">Por Cobrar</p>
+          <p class="text-xl font-extrabold text-red-600 mt-1" id="dash-por-cobrar">$0</p>
+        </div>
+        <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100">
+          <p class="text-[10px] font-bold text-emerald-500 uppercase">Cobrado Mes</p>
+          <p class="text-xl font-extrabold text-emerald-600 mt-1" id="dash-cobrado">$0</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <h2 class="font-bold text-gray-700 mb-3 flex items-center justify-between">
+          <span>⚠️ Pendientes de Pago</span>
+          <span class="text-xs font-normal text-gray-400">Toca para editar/cobrar</span>
+        </h2>
+        <div id="lista-deudores" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <section id="tab-clientes" class="hidden space-y-3">
+      <div class="flex gap-2 overflow-x-auto hide-scroll pb-1" id="filtros-dias">
+        <button onclick="filtrarDia('Todos')" class="dia-btn bg-emerald-700 text-white px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Todos</button>
+        <button onclick="filtrarDia('Lunes')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Lunes</button>
+        <button onclick="filtrarDia('Martes')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Martes</button>
+        <button onclick="filtrarDia('Miércoles')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Miércoles</button>
+        <button onclick="filtrarDia('Jueves')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Jueves</button>
+        <button onclick="filtrarDia('Viernes')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Viernes</button>
+        <button onclick="filtrarDia('Sábado')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Sábado</button>
+      </div>
+
+      <p class="text-xs text-gray-400 text-center">💡 Toca cualquier parte de la tarjeta para editar</p>
+      <div id="lista-clientes" class="space-y-3"></div>
+    </section>
+
+    <section id="tab-libreta" class="hidden">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-3 bg-emerald-50 border-b border-emerald-100">
+          <h2 class="font-bold text-emerald-900 text-sm">📒 Libreta de Estado General</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-gray-50 text-gray-500 border-b">
+                <th class="p-2.5">Cliente</th>
+                <th class="p-2.5">Cargo</th>
+                <th class="p-2.5">Pagado</th>
+                <th class="p-2.5">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-libreta" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-conta" class="hidden space-y-4">
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-3">
+        <div class="flex justify-between items-center">
+          <h2 class="font-bold text-gray-800">📊 Contabilidad</h2>
+          <select id="select-anio" class="border rounded-lg px-2 py-1 text-sm bg-gray-50 font-semibold">
+            <option value="2026">Año 2026</option>
+            <option value="2027">Año 2027</option>
+          </select>
+        </div>
+
+        <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-100 flex justify-between items-center">
+          <span class="text-sm text-emerald-800 font-medium">Ingresos Totales del Mes:</span>
+          <span class="text-lg font-extrabold text-emerald-700" id="conta-ingresos">$0.00</span>
+        </div>
+
+        <div class="p-3 bg-red-50 rounded-lg border border-red-100 flex justify-between items-center">
+          <span class="text-sm text-red-800 font-medium">Saldo Pendiente en Calle:</span>
+          <span class="text-lg font-extrabold text-red-600" id="conta-pendiente">$0.00</span>
+        </div>
+
+        <div class="pt-2">
+          <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+            <span>Capacidad del Plan Pro</span>
+            <span id="conta-barra-texto">0 / 500 clientes</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2.5">
+            <div id="conta-barra-progreso" class="bg-emerald-600 h-2.5 rounded-full transition-all" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <button onclick="reiniciarMes()" class="w-full mt-4 bg-gray-800 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-gray-700">
+          🔄 Iniciar Nuevo Mes (Reiniciar Pagos Mensuales)
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-20 max-w-md mx-auto shadow-lg">
+    <button onclick="cambiarTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-emerald-700 font-bold text-xs">
+      <span class="text-lg">🏠</span>
+      <span>Dashboard</span>
+    </button>
+    <button onclick="cambiarTab('clientes')" id="nav-clientes" class="nav-btn flex flex-col items-center text-gray-400 text-xs">
+      <span class="text-lg">👥</span>
+      <span>Clientes</span>
+    </button>
+    <button onclick="cambiarTab('libreta')" id="nav-libreta" class="nav-btn flex flex-col items-center text-gray-400 text-xs">
+      <span class="text-lg">📒</span>
+      <span>Libreta</span>
+    </button>
+    <button onclick="cambiarTab('conta')" id="nav-conta" class="nav-btn flex flex-col items-center text-gray-400 text-xs">
+      <span class="text-lg">📊</span>
+      <span>Conta</span>
+    </button>
   </nav>
 
-  <div class="overlay" id="overlay"></div>
-  <form class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-    <div class="grip"></div>
-    <h3 id="sheetTitle">Nuevo cliente</h3>
-    <p>Agrega un cliente y programa su primera visita.</p>
-    <label for="fName">Nombre completo</label>
-    <input id="fName" required placeholder="Ej. Ana Torres" autocomplete="name" />
-    <label for="fAddr">Dirección</label>
-    <input id="fAddr" required placeholder="Ej. Av. Jacarandas #12" autocomplete="street-address" />
-    <label for="fService">Servicio</label>
-    <select id="fService">
-      <option>Corte de césped</option>
-      <option>Poda de rosales</option>
-      <option>Poda de árboles</option>
-      <option>Riego y fertilización</option>
-      <option>Diseño de jardín</option>
-    </select>
-    <div class="row">
-      <div><label for="fDay">Día</label><select id="fDay"></select></div>
-      <div><label for="fTime">Hora</label><input id="fTime" type="time" value="15:00" required /></div>
-    </div>
-    <button class="submit" type="submit">Guardar cliente</button>
-  </form>
+  <div id="modal-cliente" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-lg text-gray-800" id="modal-titulo">Editar Cliente</h3>
+        <button onclick="cerrarModal()" class="text-gray-400 hover:text-gray-700 text-xl font-bold">&times;</button>
+      </div>
 
-  <div class="toast" id="toast" role="status"><i data-lucide="circle-check"></i><span id="toastText"></span></div>
-</div>
+      <input type="hidden" id="edit-id">
 
-<script>
-  const dayNames = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
-  const days = Array.from({length:7},(_,i)=>{const d=new Date(2026,10,10+i);return {key:i,label:dayNames[d.getDay()],num:d.getDate()}});
-  const icons = {"Poda de rosales":"flower-2","Corte de césped":"scissors","Poda de árboles":"trees","Riego y fertilización":"droplets","Diseño de jardín":"shovel"};
-  const visits = {
-    0:[
-      {time:"08:30",name:"María Gómez",addr:"Calle Orquídeas #45",service:"Poda de rosales",done:false},
-      {time:"10:30",name:"Jorge Herrera",addr:"Av. Los Pinos #120",service:"Corte de césped",done:false},
-      {time:"13:00",name:"Lucía Fernández",addr:"Privada Girasoles #8",service:"Riego y fertilización",done:false},
-      {time:"16:00",name:"Roberto Salas",addr:"Calle Magnolia #301",service:"Poda de árboles",done:false}
-    ],
-    1:[{time:"09:00",name:"Elena Ruiz",addr:"Calle Tulipanes #19",service:"Diseño de jardín",done:false}],
-    2:[{time:"08:00",name:"Familia Ortiz",addr:"Blvd. Ceibas #77",service:"Corte de césped",done:false},{time:"11:30",name:"Pedro Luna",addr:"Calle Lirios #5",service:"Poda de rosales",done:false}],
-    4:[{time:"10:00",name:"Sofía Medina",addr:"Av. Bugambilias #210",service:"Riego y fertilización",done:false}]
-  };
-  let selected = 0;
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase">Nombre del Cliente</label>
+          <input type="text" id="edit-nombre" placeholder="Ej. Cornel Jones" class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
 
-  const $ = id => document.getElementById(id);
-  const fmt = t => {const [h,m]=t.split(":").map(Number);return {t:`${((h+11)%12)+1}:${String(m).padStart(2,"0")}`,ap:h<12?"a.m.":"p.m."}};
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase">Dirección / Notas del Jardín</label>
+          <input type="text" id="edit-notas" placeholder="Ej. Calle Orquídeas 45" class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
 
-  function renderDays(){
-    $("days").innerHTML = days.map(d=>`<button class="day ${visits[d.key]?.length?"has":""}" aria-pressed="${d.key===selected}" data-k="${d.key}" aria-label="${d.label} ${d.num}"><small>${d.label}</small><b>${d.num}</b><i></i></button>`).join("");
-    $("fDay").innerHTML = days.map(d=>`<option value="${d.key}" ${d.key===selected?"selected":""}>${d.label} ${d.num}</option>`).join("");
-  }
-  function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-  function renderVisits(){
-    const list = (visits[selected]||[]).sort((a,b)=>a.time.localeCompare(b.time));
-    const ul = $("visits");
-    if(!list.length){
-      ul.innerHTML = `<li class="empty">Sin visitas programadas este día.<br/>Toca “Agregar Cliente” para programar una.</li>`;
-    } else {
-      ul.innerHTML = list.map((v,i)=>{const f=fmt(v.time);return `
-        <li class="visit">
-          <div class="time"><b>${f.t}</b><span>${f.ap}</span></div>
-          <article class="card ${v.done?"done":""}">
-            <div class="card-top">
-              <h4>${esc(v.name)}</h4>
-              <button class="check" data-i="${i}" aria-label="Marcar visita de ${esc(v.name)} como ${v.done?"pendiente":"completada"}"><i data-lucide="check"></i></button>
-            </div>
-            <div class="meta"><i data-lucide="map-pin"></i>${esc(v.addr)}</div>
-            <span class="tag"><i data-lucide="${icons[v.service]||"leaf"}"></i>${esc(v.service)}</span>
-          </article>
-        </li>`}).join("");
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase">Día de Visita</label>
+            <select id="edit-dia" class="w-full border rounded-lg p-2 mt-1 bg-white">
+              <option value="Lunes">Lunes</option>
+              <option value="Martes">Martes</option>
+              <option value="Miércoles">Miércoles</option>
+              <option value="Jueves">Jueves</option>
+              <option value="Viernes">Viernes</option>
+              <option value="Sábado">Sábado</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase">Tipo de Cobro</label>
+            <select id="edit-tipo" class="w-full border rounded-lg p-2 mt-1 bg-white">
+              <option value="Mes">Por Mes</option>
+              <option value="Servicio">Por Servicio</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase">Costo Pactado ($)</label>
+    function renderizarTodo() {
+      let totalClientes = clientes.length;
+      let totalCobrado = 0;
+      let totalPorCobrar = 0;
+      clientes.forEach(c => {
+        totalCobrado += Number(c.pagado);
+        let deuda = Number(c.costo) - Number(c.pagado);
+        if (deuda > 0) totalPorCobrar += deuda;
+      });
+      document.getElementById('header-capacidad').innerText = `Capacidad: ${totalClientes} / 500 clientes`;
+      document.getElementById('dash-total').innerText = totalClientes;
+      document.getElementById('dash-cobrado').innerText = `$${totalCobrado}`;
+      document.getElementById('dash-por-cobrar').innerText = `$${totalPorCobrar}`;
+      document.getElementById('conta-ingresos').innerText = `$${totalCobrado.toFixed(2)}`;
+      document.getElementById('conta-pendiente').innerText = `$${totalPorCobrar.toFixed(2)}`;
+      document.getElementById('conta-barra-texto').innerText = `${totalClientes} / 500 clientes`;
+      document.getElementById('conta-barra-progreso').style.width = `${(totalClientes / 500) * 100}%`;
+
+      const listaDeudores = document.getElementById('lista-deudores');
+      listaDeudores.innerHTML = '';
+      const deudores = clientes.filter(c => (c.costo - c.pagado) > 0);
+      if (deudores.length === 0) {
+        listaDeudores.innerHTML = '<p class="text-xs text-emerald-600 font-semibold text-center py-2">🎉 ¡Todos tus clientes están al día!</p>';
+      } else {
+        deudores.forEach(c => {
+          let debe = c.costo - c.pagado;
+          listaDeudores.innerHTML += `<div onclick="abrirModalEditar(${c.id})" class="flex justify-between items-center p-2.5 bg-red-50/50 border border-red-100 rounded-lg cursor-pointer"><div><p class="font-bold text-sm text-gray-800">${c.nombre}</p><p class="text-[11px] text-gray-500">${c.dia} • ${c.tipo}</p></div><span class="bg-red-100 text-red-700 font-extrabold text-xs px-2.5 py-1 rounded-full">Debe $${debe}</span></div>`;
+        });
+      }
+      renderizarClientes();
+      renderizarLibreta();
     }
-    if(selected===0){$("statVisits").textContent=list.length;$("statDone").textContent=list.filter(v=>v.done).length}
-    lucide.createIcons();
-  }
 
-  $("days").addEventListener("click",e=>{const b=e.target.closest(".day");if(!b)return;selected=+b.dataset.k;renderDays();renderVisits()});
-  $("visits").addEventListener("click",e=>{const b=e.target.closest(".check");if(!b)return;const v=visits[selected][+b.dataset.i];v.done=!v.done;renderVisits();if(v.done)toast(`Visita a ${v.name} completada`)});
+    function renderizarClientes() {
+      const contenedor = document.getElementById('lista-clientes');
+      contenedor.innerHTML = '';
+      const filtrados = diaFiltroActual === 'Todos' ? clientes : clientes.filter(c => c.dia === diaFiltroActual);
+      if (filtrados.length === 0) {
+        contenedor.innerHTML = `<div class="bg-white p-6 rounded-xl text-center text-gray-400 text-sm">No tienes clientes programados para ${diaFiltroActual}.</div>`;
+        return;
+      }
+      filtrados.forEach(c => {
+        let debe = c.costo - c.pagado;
+        let badgeEstado = debe <= 0
+          ? `<span class="bg-emerald-100 text-emerald-700 text-[11px] font-bold px-2 py-0.5 rounded-full">Al día</span>`
+          : `<span class="bg-red-100 text-red-700 text-[11px] font-bold px-2 py-0.5 rounded-full">Debe $${debe}</span>`;
+        contenedor.innerHTML += `<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-3"><div onclick="abrirModalEditar(${c.id})" class="cursor-pointer space-y-1"><div class="flex justify-between items-start"><h3 class="font-bold text-base text-gray-800">${c.nombre}</h3>${badgeEstado}</div><p class="text-xs text-gray-500">${c.notas || 'Sin notas adicionales'}</p><div class="flex gap-3 text-xs font-semibold text-gray-600 pt-1"><span>📅 ${c.dia}</span><span>💳 ${c.tipo}: $${c.costo}</span></div></div><div class="flex gap-2 pt-2 border-t border-gray-100"><button onclick="pagarRapido(${c.id})" class="flex-1 bg-amber-500 text-white py-1.5 rounded-lg text-xs font-bold hover:bg-amber-600">$ Pagar</button><button onclick="abrirModalEditar(${c.id})" class="flex-1 bg-gray-100 text-gray-700 py-1.5 rounded-lg text-xs font-bold hover:bg-gray-200">📝 Editar</button><button onclick="borrarCliente(${c.id})" class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-rose-200">Borrar</button></div></div>`;
+      });
+    }
 
-  const phone=$("phone");
-  const openSheet=()=>{phone.classList.add("open");$("fDay").value=selected;setTimeout(()=>$("fName").focus(),300)};
-  const closeSheet=()=>{phone.classList.remove("open");$("fab").focus()};
-  $("fab").addEventListener("click",openSheet);
-  $("overlay").addEventListener("click",closeSheet);
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&phone.classList.contains("open"))closeSheet()});
-  $("sheet").addEventListener("submit",e=>{
-    e.preventDefault();
-    const k=+$("fDay").value;
-    (visits[k] ||= []).push({time:$("fTime").value,name:$("fName").value.trim(),addr:$("fAddr").value.trim(),service:$("fService").value,done:false});
-    toast(`${$("fName").value.trim()} agregado`);
-    e.target.reset();$("fTime").value="15:00";
-    selected=k;closeSheet();renderDays();renderVisits();
-  });
+    function renderizarLibreta() {
+      const tbody = document.getElementById('tabla-libreta');
+      tbody.innerHTML = '';
+      clientes.forEach(c => {
+        let debe = c.costo - c.pagado;
+        let estado = debe <= 0 ? `<span class="text-emerald-600 font-bold">Al día</span>` : `<span class="text-red-600 font-bold">Debe $${debe}</span>`;
+        tbody.innerHTML += `<tr><td class="p-2.5 font-semibold text-gray-800">${c.nombre}</td><td class="p-2.5 text-gray-600">$${c.costo}</td><td class="p-2.5 text-gray-600">$${c.pagado}</td><td class="p-2.5">${estado}</td></tr>`;
+      });
+    }
 
-  let tt;
-  function toast(msg){$("toastText").textContent=msg;$("toast").classList.add("show");clearTimeout(tt);tt=setTimeout(()=>$("toast").classList.remove("show"),2200)}
+    function abrirModalNuevo() {
+      if (clientes.length >= 500) { alert("Límite de 500 clientes alcanzado."); return; }
+      document.getElementById('modal-titulo').innerText = 'Nuevo Cliente';
+      document.getElementById('edit-id').value = '';
+      document.getElementById('edit-nombre').value = '';
+      document.getElementById('edit-notas').value = '';
+      document.getElementById('edit-dia').value = diaFiltroActual === 'Todos' ? 'Lunes' : diaFiltroActual;
+      document.getElementById('edit-tipo').value = 'Mes';
+      document.getElementById('edit-costo').value = '';
+      document.getElementById('edit-pagado').value = '0';
+      document.getElementById('modal-cliente').classList.replace('hidden', 'flex');
+    }
 
-  renderDays();renderVisits();
-</script>
+    function abrirModalEditar(id) {
+      const c = clientes.find(item => item.id === id);
+      if (!c) return;
+      document.getElementById('modal-titulo').innerText = 'Editar Cliente / Pago';
+      document.getElementById('edit-id').value = c.id;
+      document.getElementById('edit-nombre').value = c.nombre;
+      document.getElementById('edit-notas').value = c.notas;
+      document.getElementById('edit-dia').value = c.dia;
+      document.getElementById('edit-tipo').value = c.tipo;
+      document.getElementById('edit-costo').value = c.costo;
+      document.getElementById('edit-pagado').value = c.pagado;
+      document.getElementById('modal-cliente').classList.replace('hidden', 'flex');
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-cliente').classList.replace('flex', 'hidden');
+    }
+
+    function guardarCliente() {
+      const id = document.getElementById('edit-id').value;
+      const nombre = document.getElementById('edit-nombre').value.trim();
+      const notas = document.getElementById('edit-notas').value.trim();
+      const dia = document.getElementById('edit-dia').value;
+      const tipo = document.getElementById('edit-tipo').value;
+      const costo = Number(document.getElementById('edit-costo').value) || 0;
+      const pagado = Number(document.getElementById('edit-pagado').value) || 0;
+      if (!nombre) { alert('Escribe el nombre del cliente.'); return; }
+      if (id) {
+        const index = clientes.findIndex(c => c.id == id);
+        if (index !== -1) clientes[index] = { id: Number(id), nombre, notas, dia, tipo, costo, pagado };
+      } else {
+        clientes.push({ id: Date.now(), nombre, notas, dia, tipo, costo, pagado });
+      }
+      cerrarModal();
+      guardarEnMemoria();
+    }
+
+    function pagarRapido(id) {
+      const index = clientes.findIndex(c => c.id === id);
+      if (index !== -1) { clientes[index].pagado = clientes[index].costo; guardarEnMemoria(); }
+    }
+
+    function borrarCliente(id) {
+      if (confirm('¿Borrar este cliente?')) { clientes = clientes.filter(c => c.id !== id); guardarEnMemoria(); }
+    }
+
+    function reiniciarMes() {
+      if (confirm('¿Iniciar nuevo mes? Se reiniciarán los pagos mensuales a $0.')) {
+        clientes = clientes.map(c => { if (c.tipo === 'Mes') c.pagado = 0; return c; });
+        guardarEnMemoria();
+      }
+    }
+
+    renderizarTodo();
+  </script>
 </body>
 </html>
