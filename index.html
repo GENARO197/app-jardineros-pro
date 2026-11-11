@@ -1,192 +1,51 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jardineros Pro - Gestión</title>
-  <script src="https://tailwindcss.com"></script>
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; background-color: #f3f4f6; }
-    .hide-scroll::-webkit-scrollbar { display: none; }
-  </style>
-</head>
-<body class="pb-24 text-gray-800">
-
-  <header class="bg-emerald-700 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center max-w-md mx-auto">
-    <div>
-      <h1 class="text-xl font-bold tracking-tight">🌿 Jardineros Pro</h1>
-      <p class="text-xs text-emerald-100" id="header-capacidad">Capacidad: 0 / 500 clientes</p>
+            <input type="number" id="edit-costo" placeholder="0" class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase">Ya Pagado ($)</label>
+            <input type="number" id="edit-pagado" placeholder="0" class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-2 pt-3 border-t">
+        <button onclick="cerrarModal()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-200">Cancelar</button>
+        <button onclick="guardarCliente()" class="flex-1 bg-emerald-700 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-800">Guardar</button>
+      </div>
     </div>
-    <button onclick="abrirModalNuevo()" class="bg-white text-emerald-800 px-3 py-1.5 rounded-full text-sm font-bold shadow hover:bg-emerald-50 active:scale-95 transition">
-      + Cliente
-    </button>
-  </header>
+  </div>
 
-  <main class="max-w-md mx-auto p-4 space-y-4">
+  <script>
+    let clientes = JSON.parse(localStorage.getItem('jardineros_clientes')) || [
+      { id: 1, nombre: 'Cornel Jones', notas: 'Calle Orquídeas 45 - Poda completa', dia: 'Lunes', tipo: 'Mes', costo: 270, pagado: 0 },
+      { id: 2, nombre: 'María Gómez', notas: 'Av. Los Pinos 12 - Abono orgánico', dia: 'Lunes', tipo: 'Mes', costo: 150, pagado: 150 },
+      { id: 3, nombre: 'Roberto Silva', notas: 'Corte rápido de césped', dia: 'Martes', tipo: 'Servicio', costo: 60, pagado: 60 }
+    ];
+    let diaFiltroActual = 'Todos';
 
-    <section id="tab-dashboard" class="space-y-4">
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
-          <p class="text-[10px] font-bold text-gray-400 uppercase">Total Clientes</p>
-          <p class="text-xl font-extrabold text-gray-800 mt-1" id="dash-total">0</p>
-        </div>
-        <div class="bg-white p-3 rounded-xl shadow-sm border border-red-100">
-          <p class="text-[10px] font-bold text-red-400 uppercase">Por Cobrar</p>
-          <p class="text-xl font-extrabold text-red-600 mt-1" id="dash-por-cobrar">$0</p>
-        </div>
-        <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100">
-          <p class="text-[10px] font-bold text-emerald-500 uppercase">Cobrado Mes</p>
-          <p class="text-xl font-extrabold text-emerald-600 mt-1" id="dash-cobrado">$0</p>
-        </div>
-      </div>
+    function guardarEnMemoria() {
+      localStorage.setItem('jardineros_clientes', JSON.stringify(clientes));
+      renderizarTodo();
+    }
 
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-        <h2 class="font-bold text-gray-700 mb-3 flex items-center justify-between">
-          <span>⚠️ Pendientes de Pago</span>
-          <span class="text-xs font-normal text-gray-400">Toca para editar/cobrar</span>
-        </h2>
-        <div id="lista-deudores" class="space-y-2"></div>
-      </div>
-    </section>
+    function cambiarTab(tab) {
+      ['dashboard', 'clientes', 'libreta', 'conta'].forEach(t => {
+        document.getElementById('tab-' + t).classList.add('hidden');
+        document.getElementById('nav-' + t).classList.remove('text-emerald-700', 'font-bold');
+        document.getElementById('nav-' + t).classList.add('text-gray-400');
+      });
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      document.getElementById('nav-' + tab).classList.add('text-emerald-700', 'font-bold');
+      document.getElementById('nav-' + tab).classList.remove('text-gray-400');
+    }
 
-    <section id="tab-clientes" class="hidden space-y-3">
-      <div class="flex gap-2 overflow-x-auto hide-scroll pb-1" id="filtros-dias">
-        <button onclick="filtrarDia('Todos')" class="dia-btn bg-emerald-700 text-white px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Todos</button>
-        <button onclick="filtrarDia('Lunes')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Lunes</button>
-        <button onclick="filtrarDia('Martes')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Martes</button>
-        <button onclick="filtrarDia('Miércoles')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Miércoles</button>
-        <button onclick="filtrarDia('Jueves')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Jueves</button>
-        <button onclick="filtrarDia('Viernes')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Viernes</button>
-        <button onclick="filtrarDia('Sábado')" class="dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border">Sábado</button>
-      </div>
-
-      <p class="text-xs text-gray-400 text-center">💡 Toca cualquier parte de la tarjeta para editar</p>
-      <div id="lista-clientes" class="space-y-3"></div>
-    </section>
-
-    <section id="tab-libreta" class="hidden">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-3 bg-emerald-50 border-b border-emerald-100">
-          <h2 class="font-bold text-emerald-900 text-sm">📒 Libreta de Estado General</h2>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr class="bg-gray-50 text-gray-500 border-b">
-                <th class="p-2.5">Cliente</th>
-                <th class="p-2.5">Cargo</th>
-                <th class="p-2.5">Pagado</th>
-                <th class="p-2.5">Estado</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-libreta" class="divide-y divide-gray-100"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section id="tab-conta" class="hidden space-y-4">
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-3">
-        <div class="flex justify-between items-center">
-          <h2 class="font-bold text-gray-800">📊 Contabilidad</h2>
-          <select id="select-anio" class="border rounded-lg px-2 py-1 text-sm bg-gray-50 font-semibold">
-            <option value="2026">Año 2026</option>
-            <option value="2027">Año 2027</option>
-          </select>
-        </div>
-
-        <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-100 flex justify-between items-center">
-          <span class="text-sm text-emerald-800 font-medium">Ingresos Totales del Mes:</span>
-          <span class="text-lg font-extrabold text-emerald-700" id="conta-ingresos">$0.00</span>
-        </div>
-
-        <div class="p-3 bg-red-50 rounded-lg border border-red-100 flex justify-between items-center">
-          <span class="text-sm text-red-800 font-medium">Saldo Pendiente en Calle:</span>
-          <span class="text-lg font-extrabold text-red-600" id="conta-pendiente">$0.00</span>
-        </div>
-
-        <div class="pt-2">
-          <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
-            <span>Capacidad del Plan Pro</span>
-            <span id="conta-barra-texto">0 / 500 clientes</span>
-          </div>
-          <div class="w-full bg-gray-200 rounded-full h-2.5">
-            <div id="conta-barra-progreso" class="bg-emerald-600 h-2.5 rounded-full transition-all" style="width: 0%"></div>
-          </div>
-        </div>
-
-        <button onclick="reiniciarMes()" class="w-full mt-4 bg-gray-800 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-gray-700">
-          🔄 Iniciar Nuevo Mes (Reiniciar Pagos Mensuales)
-        </button>
-      </div>
-    </section>
-
-  </main>
-
-  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-20 max-w-md mx-auto shadow-lg">
-    <button onclick="cambiarTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center text-emerald-700 font-bold text-xs">
-      <span class="text-lg">🏠</span>
-      <span>Dashboard</span>
-    </button>
-    <button onclick="cambiarTab('clientes')" id="nav-clientes" class="nav-btn flex flex-col items-center text-gray-400 text-xs">
-      <span class="text-lg">👥</span>
-      <span>Clientes</span>
-    </button>
-    <button onclick="cambiarTab('libreta')" id="nav-libreta" class="nav-btn flex flex-col items-center text-gray-400 text-xs">
-      <span class="text-lg">📒</span>
-      <span>Libreta</span>
-    </button>
-    <button onclick="cambiarTab('conta')" id="nav-conta" class="nav-btn flex flex-col items-center text-gray-400 text-xs">
-      <span class="text-lg">📊</span>
-      <span>Conta</span>
-    </button>
-  </nav>
-
-  <div id="modal-cliente" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
-      <div class="flex justify-between items-center border-b pb-2">
-        <h3 class="font-bold text-lg text-gray-800" id="modal-titulo">Editar Cliente</h3>
-        <button onclick="cerrarModal()" class="text-gray-400 hover:text-gray-700 text-xl font-bold">&times;</button>
-      </div>
-
-      <input type="hidden" id="edit-id">
-
-      <div class="space-y-3 text-sm">
-        <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase">Nombre del Cliente</label>
-          <input type="text" id="edit-nombre" placeholder="Ej. Cornel Jones" class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-emerald-500 outline-none">
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase">Dirección / Notas del Jardín</label>
-          <input type="text" id="edit-notas" placeholder="Ej. Calle Orquídeas 45" class="w-full border rounded-lg p-2 mt-1 focus:ring-2 focus:ring-emerald-500 outline-none">
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase">Día de Visita</label>
-            <select id="edit-dia" class="w-full border rounded-lg p-2 mt-1 bg-white">
-              <option value="Lunes">Lunes</option>
-              <option value="Martes">Martes</option>
-              <option value="Miércoles">Miércoles</option>
-              <option value="Jueves">Jueves</option>
-              <option value="Viernes">Viernes</option>
-              <option value="Sábado">Sábado</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase">Tipo de Cobro</label>
-            <select id="edit-tipo" class="w-full border rounded-lg p-2 mt-1 bg-white">
-              <option value="Mes">Por Mes</option>
-              <option value="Servicio">Por Servicio</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase">Costo Pactado ($)</label>
+    function filtrarDia(dia) {
+      diaFiltroActual = dia;
+      document.querySelectorAll('.dia-btn').forEach(btn => {
+        btn.className = btn.innerText === dia
+          ? 'dia-btn bg-emerald-700 text-white px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap'
+          : 'dia-btn bg-white text-gray-600 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border';
+      });
+      renderizarClientes();
+    }
     function renderizarTodo() {
       let totalClientes = clientes.length;
       let totalCobrado = 0;
