@@ -2,62 +2,84 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Jardineros Pro</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://w3.org' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23047857'/><text x='50' y='68' font-size='58' text-anchor='middle'>🌿</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://w3.org' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23047857'/><text x='50' y='68' font-size='58' text-anchor='middle'>🌿</text></svg>">
+  <script src="https://tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 pb-24 text-gray-800 font-sans">
 
-  <header class="bg-emerald-700 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center max-w-md mx-auto">
+  <header class="bg-gradient-to-r from-emerald-800 to-emerald-600 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center max-w-md mx-auto">
     <div>
-      <h1 class="text-xl font-bold">🌿 Jardineros Pro</h1>
+      <h1 class="text-xl font-bold flex items-center gap-1.5">🌿 Jardineros Pro</h1>
       <p class="text-xs text-emerald-100" id="header-cap">0 / 500</p>
     </div>
     <div class="flex gap-2">
-      <button onclick="toggleLang()" id="btn-lang" class="bg-emerald-800 text-white px-2.5 py-1.5 rounded-full text-xs font-bold border border-emerald-500">🇺🇸 EN</button>
-      <button onclick="abrirModal()" id="btn-add" class="bg-white text-emerald-800 px-3 py-1.5 rounded-full text-sm font-bold shadow">+ Cliente</button>
+      <button onclick="toggleLang()" id="btn-lang" class="bg-emerald-900/60 text-white px-2.5 py-1.5 rounded-full text-xs font-bold border border-emerald-400/50">🇺🇸 EN</button>
+      <button onclick="abrirModal()" id="btn-add" class="bg-white text-emerald-800 px-3.5 py-1.5 rounded-full text-sm font-bold shadow">+ Cliente</button>
     </div>
   </header>
 
   <main class="max-w-md mx-auto p-4 space-y-4">
     <section id="tab-dashboard" class="space-y-4">
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <div class="bg-white p-3 rounded-xl shadow-sm">
+      <div class="grid grid-cols-3 gap-2.5 text-center">
+        <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100">
           <p class="text-[10px] font-bold text-gray-400 uppercase" data-t="tot">Total Clientes</p>
-          <p class="text-xl font-extrabold mt-1" id="dash-tot">0</p>
+          <p class="text-2xl font-extrabold mt-1 text-gray-800" id="dash-tot">0</p>
         </div>
-        <div class="bg-white p-3 rounded-xl shadow-sm border border-red-100">
+        <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-red-100">
           <p class="text-[10px] font-bold text-red-400 uppercase" data-t="due">Por Cobrar</p>
-          <p class="text-xl font-extrabold text-red-600 mt-1" id="dash-due">$0</p>
+          <p class="text-2xl font-extrabold text-red-600 mt-1" id="dash-due">$0</p>
         </div>
-        <div class="bg-white p-3 rounded-xl shadow-sm border border-emerald-100">
+        <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-emerald-100">
           <p class="text-[10px] font-bold text-emerald-500 uppercase" data-t="paid">Cobrado Mes</p>
-          <p class="text-xl font-extrabold text-emerald-600 mt-1" id="dash-paid">$0</p>
+          <p class="text-2xl font-extrabold text-emerald-600 mt-1" id="dash-paid">$0</p>
         </div>
       </div>
-      <div class="bg-white p-4 rounded-xl shadow-sm">
-        <h2 class="font-bold text-gray-700 mb-3 flex justify-between">
+
+      <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <h2 class="font-bold text-gray-800 mb-3 flex justify-between items-center">
+          <span data-t="todayTitle">📅 Ruta de Visitas (Hoy)</span>
+          <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full" id="dia-hoy-badge">Hoy</span>
+        </h2>
+        <div id="lista-hoy" class="space-y-2"></div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <h2 class="font-bold text-gray-800 mb-3 flex justify-between items-center">
           <span data-t="pend">⚠️ Pendientes de Pago</span>
           <span class="text-xs font-normal text-gray-400" data-t="tap">Toca para editar</span>
         </h2>
         <div id="lista-deudores" class="space-y-2"></div>
       </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="abrirModal()" class="bg-emerald-700 text-white p-3.5 rounded-2xl font-bold text-sm shadow-sm flex items-center justify-center gap-2">
+          <span>➕</span><span data-t="qAdd">Nuevo Cliente</span>
+        </button>
+        <button onclick="verTab('clientes')" class="bg-white text-emerald-800 border border-emerald-200 p-3.5 rounded-2xl font-bold text-sm shadow-sm flex items-center justify-center gap-2">
+          <span>📋</span><span data-t="qList">Ver Todos</span>
+        </button>
+      </div>
     </section>
 
     <section id="tab-clientes" class="hidden space-y-3">
       <div class="flex gap-2 overflow-x-auto pb-1" id="filtros-dias"></div>
-      <p class="text-xs text-gray-400 text-center" data-t="tip">💡 Toca cualquier tarjeta para editar nombre, precio o día</p>
+      <p class="text-xs text-gray-400 text-center" data-t="tip">💡 Toca cualquier tarjeta para editar nombre, dirección o precio</p>
       <div id="lista-clientes" class="space-y-3"></div>
     </section>
 
     <section id="tab-libreta" class="hidden">
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="p-3 bg-emerald-50 border-b border-emerald-100">
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+        <div class="p-3.5 bg-emerald-50 border-b border-emerald-100">
           <h2 class="font-bold text-emerald-900 text-sm" data-t="ledger">📒 Libreta de Estado General</h2>
         </div>
         <table class="w-full text-left text-xs">
           <thead class="bg-gray-50 text-gray-500 border-b">
-            <tr><th class="p-2.5" data-t="col1">Cliente</th><th class="p-2.5" data-t="col2">Cargo</th><th class="p-2.5" data-t="col3">Pagado</th><th class="p-2.5" data-t="col4">Estado</th></tr>
+            <tr><th class="p-3" data-t="col1">Cliente</th><th class="p-3" data-t="col2">Cargo</th><th class="p-3" data-t="col3">Pagado</th><th class="p-3" data-t="col4">Estado</th></tr>
           </thead>
           <tbody id="tabla-libreta" class="divide-y divide-gray-100"></tbody>
         </table>
@@ -65,16 +87,16 @@
     </section>
 
     <section id="tab-conta" class="hidden space-y-4">
-      <div class="bg-white p-4 rounded-xl shadow-sm space-y-3">
+      <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3 border border-gray-100">
         <div class="flex justify-between items-center">
           <h2 class="font-bold text-gray-800" data-t="acc">📊 Contabilidad</h2>
           <select class="border rounded-lg px-2 py-1 text-sm bg-gray-50 font-semibold"><option>2026</option><option>2027</option></select>
         </div>
-        <div class="p-3 bg-emerald-50 rounded-lg flex justify-between items-center">
+        <div class="p-3 bg-emerald-50 rounded-xl flex justify-between items-center">
           <span class="text-sm text-emerald-800 font-medium" data-t="inc">Ingresos del Mes:</span>
           <span class="text-lg font-extrabold text-emerald-700" id="conta-inc">$0.00</span>
         </div>
-        <div class="p-3 bg-red-50 rounded-lg flex justify-between items-center">
+        <div class="p-3 bg-red-50 rounded-xl flex justify-between items-center">
           <span class="text-sm text-red-800 font-medium" data-t="rem">Pendiente en Calle:</span>
           <span class="text-lg font-extrabold text-red-600" id="conta-rem">$0.00</span>
         </div>
@@ -87,7 +109,7 @@
             <div id="conta-bar" class="bg-emerald-600 h-2.5 rounded-full" style="width: 0%"></div>
           </div>
         </div>
-        <button onclick="reiniciarMes()" class="w-full mt-4 bg-gray-800 text-white py-2.5 rounded-xl text-xs font-bold" data-t="rst">🔄 Iniciar Nuevo Mes (Reiniciar Pagos)</button>
+        <button onclick="reiniciarMes()" class="w-full mt-4 bg-gray-800 text-white py-3 rounded-xl text-xs font-bold" data-t="rst">🔄 Iniciar Nuevo Mes (Reiniciar Pagos)</button>
       </div>
     </section>
   </main>
@@ -98,17 +120,18 @@
     <button onclick="verTab('libreta')" id="nav-libreta" class="flex flex-col items-center text-gray-400 text-xs"><span class="text-lg">📒</span><span data-t="n3">Libreta</span></button>
     <button onclick="verTab('conta')" id="nav-conta" class="flex flex-col items-center text-gray-400 text-xs"><span class="text-lg">📊</span><span data-t="n4">Conta</span></button>
   </nav>
-
   <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+    <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-2">
         <h3 class="font-bold text-lg" id="m-tit">Cliente</h3>
         <button onclick="cerrar()" class="text-gray-400 text-xl font-bold">&times;</button>
       </div>
       <input type="hidden" id="e-id">
-      <div class="space-y-3 text-sm">
+      <div class="space-y-2.5 text-sm">
         <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f1">Nombre</label><input type="text" id="e-nom" class="w-full border rounded-lg p-2 mt-1"></div>
-        <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f2">Dirección / Notas</label><input type="text" id="e-not" class="w-full border rounded-lg p-2 mt-1"></div>
+        <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f7">Teléfono (Ej. 16615551234)</label><input type="tel" id="e-tel" placeholder="16615551234" class="w-full border rounded-lg p-2 mt-1"></div>
+        <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f8">Dirección (Para GPS / Maps)</label><input type="text" id="e-dir" placeholder="123 Main St, Sun Village, CA" class="w-full border rounded-lg p-2 mt-1"></div>
+        <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f2">Notas del Jardín</label><input type="text" id="e-not" class="w-full border rounded-lg p-2 mt-1"></div>
         <div class="grid grid-cols-2 gap-2">
           <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f3">Día</label><select id="e-dia" class="w-full border rounded-lg p-2 mt-1 bg-white"><option value="Lunes">Lunes / Mon</option><option value="Martes">Martes / Tue</option><option value="Miércoles">Miércoles / Wed</option><option value="Jueves">Jueves / Thu</option><option value="Viernes">Viernes / Fri</option><option value="Sábado">Sábado / Sat</option></select></div>
           <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f4">Cobro</label><select id="e-tip" class="w-full border rounded-lg p-2 mt-1 bg-white"><option value="Mes">Mes / Month</option><option value="Servicio">Servicio / Visit</option></select></div>
@@ -128,14 +151,17 @@
   <script>
     let lang = localStorage.getItem('j_lang') || 'es';
     let clientes = JSON.parse(localStorage.getItem('j_cli')) || [
-      { id: 1, nom: 'Cornel Jones', not: 'Calle Orquídeas 45', dia: 'Lunes', tip: 'Mes', cos: 270, pag: 0 },
-      { id: 2, nom: 'María Gómez', not: 'Av. Los Pinos 12', dia: 'Lunes', tip: 'Mes', cos: 150, pag: 150 }
+      { id: 1, nom: 'Cornel Jones', tel: '16615550199', dir: 'Sun Village, CA', not: 'Poda completa', dia: 'Lunes', tip: 'Mes', cos: 270, pag: 0 },
+      { id: 2, nom: 'María Gómez', tel: '16615550144', dir: 'Palmdale, CA', not: 'Abono orgánico', dia: 'Miércoles', tip: 'Mes', cos: 150, pag: 150 }
     ];
     let filtro = 'Todos';
 
+    const diasSemana = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const hoyNombre = diasSemana[new Date().getDay()];
+
     const txt = {
-            es: { add:'+ Cliente', tot:'Total Clientes', due:'Por Cobrar', paid:'Cobrado Mes', pend:'⚠️ Pendientes de Pago', tap:'Toca para editar', tip:'💡 Toca cualquier tarjeta para editar', ledger:'📒 Libreta General', col1:'Cliente', col2:'Cargo', col3:'Pagado', col4:'Estado', acc:'📊 Contabilidad', inc:'Ingresos del Mes:', rem:'Pendiente en Calle:', cap:'Capacidad Plan Pro', rst:'🔄 Iniciar Nuevo Mes', n1:'Dashboard', n2:'Clientes', n3:'Libreta', n4:'Conta', f1:'Nombre', f2:'Dirección / Notas', f3:'Día', f4:'Cobro', f5:'Costo ($)', f6:'Pagado ($)', b1:'Cancelar', b2:'Guardar', ok:'Al día', owes:'Debe $', payBtn:'$ Pagar', editBtn:'📝 Editar', delBtn:'Borrar', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'] },
-      en: { add:'+ Client', tot:'Total Clients', due:'To Collect', paid:'Collected Mo.', pend:'⚠️ Pending Payments', tap:'Tap to edit', tip:'💡 Tap any card to edit details', ledger:'📒 General Ledger', col1:'Client', col2:'Charge', col3:'Paid', col4:'Status', acc:'📊 Accounting', inc:'Monthly Income:', rem:'Pending Balance:', cap:'Pro Plan Capacity', rst:'🔄 Start New Month', n1:'Dashboard', n2:'Clients', n3:'Ledger', n4:'Account', f1:'Name', f2:'Address / Notes', f3:'Day', f4:'Billing', f5:'Rate ($)', f6:'Paid ($)', b1:'Cancel', b2:'Save', ok:'Paid', owes:'Owes $', payBtn:'$ Pay', editBtn:'📝 Edit', delBtn:'Delete', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['All','Mon','Tue','Wed','Thu','Fri','Sat'] }
+      es: { add:'+ Cliente', tot:'Total Clientes', due:'Por Cobrar', paid:'Cobrado Mes', todayTitle:'📅 Ruta de Hoy', noToday:'No tienes visitas programadas para hoy.', qAdd:'Nuevo Cliente', qList:'Ver Clientes', pend:'⚠️ Pendientes de Pago', tap:'Toca para editar', tip:'💡 Toca la tarjeta para editar datos', ledger:'📒 Libreta General', col1:'Cliente', col2:'Cargo', col3:'Pagado', col4:'Estado', acc:'📊 Contabilidad', inc:'Ingresos del Mes:', rem:'Pendiente en Calle:', cap:'Capacidad Plan Pro', rst:'🔄 Iniciar Nuevo Mes', n1:'Dashboard', n2:'Clientes', n3:'Libreta', n4:'Conta', f1:'Nombre', f2:'Notas del Jardín', f3:'Día', f4:'Cobro', f5:'Costo ($)', f6:'Pagado ($)', f7:'Teléfono', f8:'Dirección (Para Maps)', b1:'Cancelar', b2:'Guardar', ok:'Al día', owes:'Debe $', payBtn:'$ Pagar', delBtn:'Borrar', noTel:'Agrega un teléfono en Editar.', noDir:'Agrega una dirección en Editar.', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'] },
+      en: { add:'+ Client', tot:'Total Clients', due:'To Collect', paid:'Collected Mo.', todayTitle:'📅 Today\'s Route', noToday:'No visits scheduled for today.', qAdd:'Add Client', qList:'All Clients', pend:'⚠️ Pending Payments', tap:'Tap to edit', tip:'💡 Tap card to edit details', ledger:'📒 General Ledger', col1:'Client', col2:'Charge', col3:'Paid', col4:'Status', acc:'📊 Accounting', inc:'Monthly Income:', rem:'Pending Balance:', cap:'Pro Plan Capacity', rst:'🔄 Start New Month', n1:'Dashboard', n2:'Clients', n3:'Ledger', n4:'Account', f1:'Name', f2:'Garden Notes', f3:'Day', f4:'Billing', f5:'Rate ($)', f6:'Paid ($)', f7:'Phone Number', f8:'Address (For Maps)', b1:'Cancel', b2:'Save', ok:'Paid', owes:'Owes $', payBtn:'$ Pay', delBtn:'Delete', noTel:'Add a phone number first.', noDir:'Add an address first.', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['All','Mon','Tue','Wed','Thu','Fri','Sat'] }
     };
 
     function toggleLang() { lang = lang === 'es' ? 'en' : 'es'; localStorage.setItem('j_lang', lang); render(); }
@@ -152,10 +178,29 @@
 
     function setFiltro(d) { filtro = d; render(); }
 
-        function render() {
+    function abrirMaps(id) {
+      const c = clientes.find(x => x.id === id);
+      if(!c || !c.dir) return alert(txt[lang].noDir);
+      window.open(`https://google.com{encodeURIComponent(c.dir)}`, '_blank');
+    }
+
+    function enviarMsg(id, tipo) {
+      const c = clientes.find(x => x.id === id);
+      if(!c || !c.tel) return alert(txt[lang].noTel);
+      const num = c.tel.replace(/\D/g, '');
+      const debe = Number(c.cos) - Number(c.pag);
+      const msg = lang === 'es'
+        ? (debe > 0 ? `Hola ${c.nom}, te saludo de Jardineros Pro. Te recuerdo que tienes un saldo pendiente de $${debe} por el servicio de jardinería.` : `Hola ${c.nom}, te saludo de Jardineros Pro para confirmar nuestra próxima visita de jardinería.`)
+        : (debe > 0 ? `Hi ${c.nom}, greetings from Jardineros Pro. Friendly reminder of your pending balance of $${debe} for lawn care service.` : `Hi ${c.nom}, greetings from Jardineros Pro confirming our upcoming lawn care visit.`);
+      const enc = encodeURIComponent(msg);
+      if(tipo === 'wa') window.open(`https://wa.me{num}?text=${enc}`, '_blank');
+      else window.open(`sms:${num}?&body=${enc}`, '_self');
+    }
+    function render() {
       const t = txt[lang];
       document.getElementById('btn-lang').innerText = lang === 'es' ? '🇺🇸 EN' : '🇲🇽 ES';
       document.getElementById('btn-add').innerText = t.add;
+      document.getElementById('dia-hoy-badge').innerText = hoyNombre;
       document.querySelectorAll('[data-t]').forEach(el => el.innerText = t[el.getAttribute('data-t')]);
 
       let tot = clientes.length, cob = 0, due = 0;
@@ -170,29 +215,35 @@
       document.getElementById('conta-txt').innerText = `${tot} / 500`;
       document.getElementById('conta-bar').style.width = `${(tot/500)*100}%`;
 
+      const hoyList = clientes.filter(c => c.dia === hoyNombre);
+      document.getElementById('lista-hoy').innerHTML = hoyList.length ? hoyList.map(c =>
+        `<div class="flex justify-between items-center p-2.5 bg-emerald-50/70 border border-emerald-100 rounded-xl"><div onclick="editar(${c.id})" class="cursor-pointer"><p class="font-bold text-sm text-gray-800">${c.nom}</p><p class="text-[11px] text-gray-500">${c.dir || c.not || ''}</p></div><button onclick="abrirMaps(${c.id})" class="bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">📍 Map</button></div>`
+      ).join('') : `<p class="text-xs text-gray-400 text-center py-2">${t.noToday}</p>`;
+
       document.getElementById('filtros-dias').innerHTML = t.days.map((d, i) => 
         `<button onclick="setFiltro('${d}')" class="${filtro === d ? 'bg-emerald-700 text-white' : 'bg-white text-gray-600 border'} px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">${t.dayLabels[i]}</button>`
       ).join('');
 
       const deudores = clientes.filter(c => (c.cos - c.pag) > 0);
       document.getElementById('lista-deudores').innerHTML = deudores.length ? deudores.map(c => 
-        `<div onclick="editar(${c.id})" class="flex justify-between items-center p-2.5 bg-red-50/50 border border-red-100 rounded-lg cursor-pointer"><div><p class="font-bold text-sm">${c.nom}</p><p class="text-[11px] text-gray-500">${c.dia} • ${c.tip}</p></div><span class="bg-red-100 text-red-700 font-extrabold text-xs px-2.5 py-1 rounded-full">${t.owes}${c.cos - c.pag}</span></div>`
+        `<div onclick="editar(${c.id})" class="flex justify-between items-center p-2.5 bg-red-50/50 border border-red-100 rounded-xl cursor-pointer"><div><p class="font-bold text-sm">${c.nom}</p><p class="text-[11px] text-gray-500">${c.dia} • ${c.tip}</p></div><span class="bg-red-100 text-red-700 font-extrabold text-xs px-2.5 py-1 rounded-full">${t.owes}${c.cos - c.pag}</span></div>`
       ).join('') : `<p class="text-xs text-emerald-600 font-semibold text-center py-2">🎉 ${t.ok}</p>`;
 
       const filt = filtro === 'Todos' ? clientes : clientes.filter(c => c.dia === filtro);
       document.getElementById('lista-clientes').innerHTML = filt.map(c => {
         let d = c.cos - c.pag;
-        return `<div class="bg-white p-4 rounded-xl shadow-sm space-y-3"><div onclick="editar(${c.id})" class="cursor-pointer space-y-1"><div class="flex justify-between"><h3 class="font-bold text-base">${c.nom}</h3><span class="${d<=0?'bg-emerald-100 text-emerald-700':'bg-red-100 text-red-700'} text-[11px] font-bold px-2 py-0.5 rounded-full">${d<=0?t.ok:t.owes+d}</span></div><p class="text-xs text-gray-500">${c.not||''}</p><div class="flex gap-3 text-xs font-semibold text-gray-600 pt-1"><span>📅 ${c.dia}</span><span>💳 ${c.tip}: $${c.cos}</span></div></div><div class="flex gap-2 pt-2 border-t"><button onclick="pagar(${c.id})" class="flex-1 bg-amber-500 text-white py-1.5 rounded-lg text-xs font-bold">${t.payBtn}</button><button onclick="editar(${c.id})" class="flex-1 bg-gray-100 text-gray-700 py-1.5 rounded-lg text-xs font-bold">${t.editBtn}</button><button onclick="borrar(${c.id})" class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-bold">${t.delBtn}</button></div></div>`;
+        return `<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3"><div onclick="editar(${c.id})" class="cursor-pointer space-y-1"><div class="flex justify-between"><h3 class="font-bold text-base">${c.nom}</h3><span class="${d<=0?'bg-emerald-100 text-emerald-700':'bg-red-100 text-red-700'} text-[11px] font-bold px-2.5 py-0.5 rounded-full">${d<=0?t.ok:t.owes+d}</span></div><p class="text-xs text-gray-500">${c.dir?'📍 '+c.dir:''} ${c.not?'• '+c.not:''}</p><div class="flex gap-3 text-xs font-semibold text-gray-600 pt-1"><span>📅 ${c.dia}</span><span>💳 ${c.tip}: $${c.cos}</span></div></div><div class="grid grid-cols-5 gap-1.5 pt-2 border-t"><button onclick="pagar(${c.id})" class="bg-amber-500 text-white py-1.5 rounded-lg text-xs font-bold">${t.payBtn}</button><button onclick="abrirMaps(${c.id})" class="bg-indigo-600 text-white py-1.5 rounded-lg text-xs font-bold">📍 Map</button><button onclick="enviarMsg(${c.id},'wa')" class="bg-green-600 text-white py-1.5 rounded-lg text-xs font-bold">💬 WA</button><button onclick="enviarMsg(${c.id},'sms')" class="bg-sky-600 text-white py-1.5 rounded-lg text-xs font-bold">✉️ SMS</button><button onclick="borrar(${c.id})" class="bg-rose-100 text-rose-700 py-1.5 rounded-lg text-xs font-bold">${t.delBtn}</button></div></div>`;
       }).join('');
 
       document.getElementById('tabla-libreta').innerHTML = clientes.map(c => {
         let d = c.cos - c.pag;
-        return `<tr onclick="editar(${c.id})" class="cursor-pointer"><td class="p-2.5 font-semibold">${c.nom}</td><td class="p-2.5">$${c.cos}</td><td class="p-2.5">$${c.pag}</td><td class="p-2.5 font-bold ${d<=0?'text-emerald-600':'text-red-600'}">${d<=0?t.ok:t.owes+d}</td></tr>`;
+        return `<tr onclick="editar(${c.id})" class="cursor-pointer"><td class="p-3 font-semibold">${c.nom}</td><td class="p-3">$${c.cos}</td><td class="p-3">$${c.pag}</td><td class="p-3 font-bold ${d<=0?'text-emerald-600':'text-red-600'}">${d<=0?t.ok:t.owes+d}</td></tr>`;
       }).join('');
     }
+
     function abrirModal() {
       if(clientes.length >= 500) return alert("Max 500");
-      ['e-id','e-nom','e-not','e-cos'].forEach(x => document.getElementById(x).value = '');
+      ['e-id','e-nom','e-tel','e-dir','e-not','e-cos'].forEach(x => document.getElementById(x).value = '');
       document.getElementById('e-pag').value = '0';
       document.getElementById('modal').classList.replace('hidden','flex');
     }
@@ -200,7 +251,8 @@
     function editar(id) {
       const c = clientes.find(x => x.id === id); if(!c) return;
       document.getElementById('e-id').value = c.id; document.getElementById('e-nom').value = c.nom;
-      document.getElementById('e-not').value = c.not; document.getElementById('e-dia').value = c.dia;
+      document.getElementById('e-tel').value = c.tel || ''; document.getElementById('e-dir').value = c.dir || '';
+      document.getElementById('e-not').value = c.not || ''; document.getElementById('e-dia').value = c.dia;
       document.getElementById('e-tip').value = c.tip; document.getElementById('e-cos').value = c.cos;
       document.getElementById('e-pag').value = c.pag;
       document.getElementById('modal').classList.replace('hidden','flex');
@@ -211,7 +263,7 @@
     function guardar() {
       const id = document.getElementById('e-id').value, nom = document.getElementById('e-nom').value.trim();
       if(!nom) return;
-      const obj = { id: id ? Number(id) : Date.now(), nom, not: document.getElementById('e-not').value, dia: document.getElementById('e-dia').value, tip: document.getElementById('e-tip').value, cos: Number(document.getElementById('e-cos').value)||0, pag: Number(document.getElementById('e-pag').value)||0 };
+      const obj = { id: id ? Number(id) : Date.now(), nom, tel: document.getElementById('e-tel').value.trim(), dir: document.getElementById('e-dir').value.trim(), not: document.getElementById('e-not').value, dia: document.getElementById('e-dia').value, tip: document.getElementById('e-tip').value, cos: Number(document.getElementById('e-cos').value)||0, pag: Number(document.getElementById('e-pag').value)||0 };
       if(id) { const i = clientes.findIndex(x => x.id == id); clientes[i] = obj; } else { clientes.push(obj); }
       cerrar(); save();
     }
@@ -224,4 +276,3 @@
   </script>
 </body>
 </html>
-
