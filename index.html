@@ -182,24 +182,35 @@
 
     function setFiltro(d) { filtro = d; render(); }
 
-    function abrirMaps(id) {
-      const c = clientes.find(x => x.id === id);
-      if(!c || !c.dir) return alert(txt[lang].noDir);
-      window.open(`https://google.com{encodeURIComponent(c.dir)}`, '_blank');
+          function abrirMaps(id) {
+      var c = clientes.find(function(x) { return x.id === id; });
+      if (!c || !c.dir) return alert(txt[lang].noDir);
+      window.open('https://google.com' + encodeURIComponent(c.dir), '_blank');
     }
 
     function enviarMsg(id, tipo) {
-      const c = clientes.find(x => x.id === id);
-      if(!c || !c.tel) return alert(txt[lang].noTel);
-      const num = c.tel.replace(/\D/g, '');
-      const debe = Number(c.cos) - Number(c.pag);
-      const msg = lang === 'es'
-        ? (debe > 0 ? `Hola ${c.nom}, te saludo de Jardineros Pro. Te recuerdo que tienes un saldo pendiente de $${debe} por el servicio de jardinería.` : `Hola ${c.nom}, te saludo de Jardineros Pro para confirmar nuestra próxima visita de jardinería.`)
-        : (debe > 0 ? `Hi ${c.nom}, greetings from Jardineros Pro. Friendly reminder of your pending balance of $${debe} for lawn care service.` : `Hi ${c.nom}, greetings from Jardineros Pro confirming our upcoming lawn care visit.`);
-      const enc = encodeURIComponent(msg);
-      if(tipo === 'wa') window.open(`https://wa.me{num}?text=${enc}`, '_blank');
-      else window.open(`sms:${num}?&body=${enc}`, '_self');
+      var c = clientes.find(function(x) { return x.id === id; });
+      if (!c || !c.tel) return alert(txt[lang].noTel);
+      var num = c.tel.replace(/\D/g, '');
+      var debe = Number(c.cos) - Number(c.pag);
+      var msg = '';
+      if (lang === 'es') {
+        msg = debe > 0
+          ? 'Hola ' + c.nom + ', te saludo de Jardineros Pro. Te recuerdo que tienes un saldo pendiente de $' + debe + ' por el servicio de jardinería.'
+          : 'Hola ' + c.nom + ', te saludo de Jardineros Pro para confirmar nuestra próxima visita de jardinería.';
+      } else {
+        msg = debe > 0
+          ? 'Hi ' + c.nom + ', greetings from Jardineros Pro. Friendly reminder of your pending balance of $' + debe + ' for lawn care service.'
+          : 'Hi ' + c.nom + ', greetings from Jardineros Pro confirming our upcoming lawn care visit.';
+      }
+      var enc = encodeURIComponent(msg);
+      if (tipo === 'wa') {
+        window.open('https://wa.me' + num + '?text=' + enc, '_blank');
+      } else {
+        window.location.href = 'sms:' + num + '&body=' + enc;
+      }
     }
+
     function render() {
       const t = txt[lang];
       document.getElementById('btn-lang').innerText = lang === 'es' ? '🇺🇸 EN' : '🇲🇽 ES';
