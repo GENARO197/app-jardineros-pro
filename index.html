@@ -185,7 +185,8 @@
           function abrirMaps(id) {
       var c = clientes.find(function(x) { return x.id === id; });
       if (!c || !c.dir) return alert(txt[lang].noDir);
-      window.open('https://google.com' + encodeURIComponent(c.dir), '_blank');
+            window.location.href = 'https://google.com' + encodeURIComponent(c.dir);
+
     }
 
     function enviarMsg(id, tipo) {
@@ -204,7 +205,8 @@
           : 'Hi ' + c.nom + ', greetings from Jardineros Pro confirming our upcoming lawn care visit.';
       }
       var enc = encodeURIComponent(msg);
-      if (tipo === 'wa') {
+              window.location.href = 'https://whatsapp.com' + num + '&text=' + enc;
+
         window.open('https://wa.me' + num + '?text=' + enc, '_blank');
       } else {
         window.location.href = 'sms:' + num + '&body=' + enc;
