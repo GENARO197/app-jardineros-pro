@@ -6,8 +6,8 @@
   <title>Jardineros Pro</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="https:/img.icons8.com/color/180/lawn-mower.png">
-  <link rel="icon" href="https://icons8.com">
+  <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/lawn-mower.png">
+  <link rel="icon" href="https://img.icons8.com/color/180/lawn-mower.png">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 pb-24 text-gray-800 font-sans">
@@ -130,7 +130,7 @@
       <div class="space-y-2.5 text-sm">
         <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f1">Nombre</label><input type="text" id="e-nom" class="w-full border rounded-lg p-2 mt-1"></div>
         <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f7">Teléfono (Ej. 16615551234)</label><input type="tel" id="e-tel" placeholder="16615551234" class="w-full border rounded-lg p-2 mt-1"></div>
-        <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f8">Dirección (Para GPS / Maps)</label><input type="text" id="e-dir" placeholder="123 Main St, Sun Village, CA" class="w-full border rounded-lg p-2 mt-1"></div>
+        <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f8">Dirección</label><input type="text" id="e-dir" placeholder="123 Main St, Sun Village, CA" class="w-full border rounded-lg p-2 mt-1"></div>
         <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f2">Notas del Jardín</label><input type="text" id="e-not" class="w-full border rounded-lg p-2 mt-1"></div>
         <div class="grid grid-cols-2 gap-2">
           <div><label class="block text-xs font-bold text-gray-500 uppercase" data-t="f3">Día</label><select id="e-dia" class="w-full border rounded-lg p-2 mt-1 bg-white"><option value="Lunes">Lunes / Mon</option><option value="Martes">Martes / Tue</option><option value="Miércoles">Miércoles / Wed</option><option value="Jueves">Jueves / Thu</option><option value="Viernes">Viernes / Fri</option><option value="Sábado">Sábado / Sat</option></select></div>
@@ -160,8 +160,8 @@
     var hoyNombre = diasSemana[new Date().getDay()];
 
     var txt = {
-      es: { add:'+ Cliente', tot:'Total Clientes', due:'Por Cobrar', paid:'Cobrado Mes', todayTitle:'📅 Ruta de Hoy', noToday:'No tienes visitas programadas para hoy.', qAdd:'Nuevo Cliente', qList:'Ver Clientes', pend:'⚠️ Pendientes de Pago', tap:'Toca para editar', tip:'💡 Toca la tarjeta para editar datos', ledger:'📒 Libreta General', col1:'Cliente', col2:'Cargo', col3:'Pagado', col4:'Estado', acc:'📊 Contabilidad', inc:'Ingresos del Mes:', rem:'Pendiente en Calle:', cap:'Capacidad Plan Pro', rst:'🔄 Iniciar Nuevo Mes', n1:'Dashboard', n2:'Clientes', n3:'Libreta', n4:'Conta', f1:'Nombre', f2:'Notas del Jardín', f3:'Día', f4:'Cobro', f5:'Costo ($)', f6:'Pagado ($)', f7:'Teléfono', f8:'Dirección (Para Maps)', b1:'Cancelar', b2:'Guardar', ok:'Al día', owes:'Debe $', payBtn:'$ Pagar', delBtn:'Borrar', noTel:'Agrega un teléfono en Editar.', noDir:'Agrega una dirección en Editar.', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'] },
-      en: { add:'+ Client', tot:'Total Clients', due:'To Collect', paid:'Collected Mo.', todayTitle:'📅 Today\'s Route', noToday:'No visits scheduled for today.', qAdd:'Add Client', qList:'All Clients', pend:'⚠️ Pending Payments', tap:'Tap to edit', tip:'💡 Tap card to edit details', ledger:'📒 General Ledger', col1:'Client', col2:'Charge', col3:'Paid', col4:'Status', acc:'📊 Accounting', inc:'Monthly Income:', rem:'Pending Balance:', cap:'Pro Plan Capacity', rst:'🔄 Start New Month', n1:'Dashboard', n2:'Clients', n3:'Ledger', n4:'Account', f1:'Name', f2:'Garden Notes', f3:'Day', f4:'Billing', f5:'Rate ($)', f6:'Paid ($)', f7:'Phone Number', f8:'Address (For Maps)', b1:'Cancel', b2:'Save', ok:'Paid', owes:'Owes $', payBtn:'$ Pay', delBtn:'Delete', noTel:'Add a phone number first.', noDir:'Add an address first.', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['All','Mon','Tue','Wed','Thu','Fri','Sat'] }
+      es: { add:'+ Cliente', tot:'Total Clientes', due:'Por Cobrar', paid:'Cobrado Mes', todayTitle:'📅 Ruta de Hoy', noToday:'No tienes visitas programadas para hoy.', qAdd:'Nuevo Cliente', qList:'Ver Clientes', pend:'⚠️ Pendientes de Pago', tap:'Toca para editar', tip:'💡 Toca la tarjeta para editar datos', ledger:'📒 Libreta General', col1:'Cliente', col2:'Cargo', col3:'Pagado', col4:'Estado', acc:'📊 Contabilidad', inc:'Ingresos del Mes:', rem:'Pendiente en Calle:', cap:'Capacidad Plan Pro', rst:'🔄 Iniciar Nuevo Mes', n1:'Dashboard', n2:'Clientes', n3:'Libreta', n4:'Conta', f1:'Nombre', f2:'Notas del Jardín', f3:'Día', f4:'Cobro', f5:'Costo ($)', f6:'Pagado ($)', f7:'Teléfono', f8:'Dirección', b1:'Cancelar', b2:'Guardar', ok:'Al día', owes:'Debe $', payBtn:'$ Pagar', editBtn:'📝 Editar', delBtn:'Borrar', noTel:'Agrega un teléfono en Editar.', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'] },
+      en: { add:'+ Client', tot:'Total Clients', due:'To Collect', paid:'Collected Mo.', todayTitle:'📅 Today\'s Route', noToday:'No visits scheduled for today.', qAdd:'Add Client', qList:'All Clients', pend:'⚠️ Pending Payments', tap:'Tap to edit', tip:'💡 Tap card to edit details', ledger:'📒 General Ledger', col1:'Client', col2:'Charge', col3:'Paid', col4:'Status', acc:'📊 Accounting', inc:'Monthly Income:', rem:'Pending Balance:', cap:'Pro Plan Capacity', rst:'🔄 Start New Month', n1:'Dashboard', n2:'Clients', n3:'Ledger', n4:'Account', f1:'Name', f2:'Garden Notes', f3:'Day', f4:'Billing', f5:'Rate ($)', f6:'Paid ($)', f7:'Phone Number', f8:'Address', b1:'Cancel', b2:'Save', ok:'Paid', owes:'Owes $', payBtn:'$ Pay', editBtn:'📝 Edit', delBtn:'Delete', noTel:'Add a phone number first.', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['All','Mon','Tue','Wed','Thu','Fri','Sat'] }
     };
 
     function toggleLang() { lang = (lang === 'es') ? 'en' : 'es'; localStorage.setItem('j_lang', lang); render(); }
@@ -178,31 +178,17 @@
 
     function setFiltro(d) { filtro = d; render(); }
 
-    function abrirMaps(id) {
-      var c = clientes.find(function(x) { return x.id === id; });
-      if (!c || !c.dir) return alert(txt[lang].noDir);
-      window.location.href = 'https://google.com' + encodeURIComponent(c.dir);
-    }
-
-    function enviarMsg(id, tipo) {
+    function enviarSMS(id) {
       var c = clientes.find(function(x) { return x.id === id; });
       if (!c || !c.tel) return alert(txt[lang].noTel);
       var num = c.tel.replace(/\D/g, '');
       var debe = Number(c.cos) - Number(c.pag);
-      var msg = '';
-      if (lang === 'es') {
-        msg = (debe > 0)
-          ? 'Hola ' + c.nom + ', te saludo de Jardineros Pro. Te recuerdo que tienes un saldo pendiente de $' + debe + ' por el servicio de jardinería.'
-          : 'Hola ' + c.nom + ', te saludo de Jardineros Pro para confirmar nuestra próxima visita de jardinería.';
-      } else {
-        msg = (debe > 0)
-          ? 'Hi ' + c.nom + ', greetings from Jardineros Pro. Friendly reminder of your pending balance of $' + debe + ' for lawn care service.'
-          : 'Hi ' + c.nom + ', greetings from Jardineros Pro confirming our upcoming lawn care visit.';
-      }
-      var enc = encodeURIComponent(msg);
-      if (tipo === 'wa') window.location.href = 'https://whatsapp.com' + num + '&text=' + enc;
-      else window.location.href = 'sms:' + num + '&body=' + enc;
+      var msg = (lang === 'es')
+        ? (debe > 0 ? 'Hola ' + c.nom + ', te saludo de Jardineros Pro. Te recuerdo que tienes un saldo pendiente de $' + debe + ' por el servicio de jardinería.' : 'Hola ' + c.nom + ', te saludo de Jardineros Pro para confirmar nuestra próxima visita de jardinería.')
+        : (debe > 0 ? 'Hi ' + c.nom + ', greetings from Jardineros Pro. Friendly reminder of your pending balance of $' + debe + ' for lawn care service.' : 'Hi ' + c.nom + ', greetings from Jardineros Pro confirming our upcoming lawn care visit.');
+      window.location.href = 'sms:' + num + '&body=' + encodeURIComponent(msg);
     }
+
     function render() {
       var t = txt[lang];
       document.getElementById('btn-lang').innerText = (lang === 'es') ? '🇺🇸 EN' : '🇲🇽 ES';
@@ -224,7 +210,7 @@
 
       var hoyList = clientes.filter(function(c) { return c.dia === hoyNombre; });
       document.getElementById('lista-hoy').innerHTML = hoyList.length ? hoyList.map(function(c) {
-        return '<div class="flex justify-between items-center p-2.5 bg-emerald-50/70 border border-emerald-100 rounded-xl"><div onclick="editar(' + c.id + ')" class="cursor-pointer"><p class="font-bold text-sm text-gray-800">' + c.nom + '</p><p class="text-[11px] text-gray-500">' + (c.dir || c.not || '') + '</p></div><button onclick="abrirMaps(' + c.id + ')" class="bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">📍 Map</button></div>';
+        return '<div onclick="editar(' + c.id + ')" class="flex justify-between items-center p-2.5 bg-emerald-50/70 border border-emerald-100 rounded-xl cursor-pointer"><div><p class="font-bold text-sm text-gray-800">' + c.nom + '</p><p class="text-[11px] text-gray-500">' + (c.dir || c.not || '') + '</p></div><span class="text-xs font-bold text-emerald-700">$' + c.cos + '</span></div>';
       }).join('') : '<p class="text-xs text-gray-400 text-center py-2">' + t.noToday + '</p>';
 
       document.getElementById('filtros-dias').innerHTML = t.days.map(function(d, i) {
@@ -235,57 +221,3 @@
       var deudores = clientes.filter(function(c) { return (c.cos - c.pag) > 0; });
       document.getElementById('lista-deudores').innerHTML = deudores.length ? deudores.map(function(c) {
         return '<div onclick="editar(' + c.id + ')" class="flex justify-between items-center p-2.5 bg-red-50/50 border border-red-100 rounded-xl cursor-pointer"><div><p class="font-bold text-sm">' + c.nom + '</p><p class="text-[11px] text-gray-500">' + c.dia + ' • ' + c.tip + '</p></div><span class="bg-red-100 text-red-700 font-extrabold text-xs px-2.5 py-1 rounded-full">' + t.owes + (c.cos - c.pag) + '</span></div>';
-      }).join('') : '<p class="text-xs text-emerald-600 font-semibold text-center py-2">🎉 ' + t.ok + '</p>';
-
-      var filt = (filtro === 'Todos') ? clientes : clientes.filter(function(c) { return c.dia === filtro; });
-      document.getElementById('lista-clientes').innerHTML = filt.map(function(c) {
-        var d = c.cos - c.pag;
-        var badge = (d <= 0) ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700';
-        var st = (d <= 0) ? t.ok : (t.owes + d);
-        return '<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3"><div onclick="editar(' + c.id + ')" class="cursor-pointer space-y-1"><div class="flex justify-between"><h3 class="font-bold text-base">' + c.nom + '</h3><span class="' + badge + ' text-[11px] font-bold px-2.5 py-0.5 rounded-full">' + st + '</span></div><p class="text-xs text-gray-500">' + (c.dir ? '📍 ' + c.dir : '') + ' ' + (c.not ? '• ' + c.not : '') + '</p><div class="flex gap-3 text-xs font-semibold text-gray-600 pt-1"><span>📅 ' + c.dia + '</span><span>💳 ' + c.tip + ': $' + c.cos + '</span></div></div><div class="grid grid-cols-5 gap-1.5 pt-2 border-t"><button onclick="pagar(' + c.id + ')" class="bg-amber-500 text-white py-1.5 rounded-lg text-xs font-bold">' + t.payBtn + '</button><button onclick="abrirMaps(' + c.id + ')" class="bg-indigo-600 text-white py-1.5 rounded-lg text-xs font-bold">📍 Map</button><button onclick="enviarMsg(' + c.id + ',\'wa\')" class="bg-green-600 text-white py-1.5 rounded-lg text-xs font-bold">💬 WA</button><button onclick="enviarMsg(' + c.id + ',\'sms\')" class="bg-sky-600 text-white py-1.5 rounded-lg text-xs font-bold">✉️ SMS</button><button onclick="borrar(' + c.id + ')" class="bg-rose-100 text-rose-700 py-1.5 rounded-lg text-xs font-bold">' + t.delBtn + '</button></div></div>';
-      }).join('');
-
-      document.getElementById('tabla-libreta').innerHTML = clientes.map(function(c) {
-        var d = c.cos - c.pag;
-        var col = (d <= 0) ? 'text-emerald-600' : 'text-red-600';
-        var st = (d <= 0) ? t.ok : (t.owes + d);
-        return '<tr onclick="editar(' + c.id + ')" class="cursor-pointer"><td class="p-3 font-semibold">' + c.nom + '</td><td class="p-3">$' + c.cos + '</td><td class="p-3">$' + c.pag + '</td><td class="p-3 font-bold ' + col + '">' + st + '</td></tr>';
-      }).join('');
-    }
-
-    function abrirModal() {
-      if (clientes.length >= 500) return alert('Max 500');
-      ['e-id','e-nom','e-tel','e-dir','e-not','e-cos'].forEach(function(x) { document.getElementById(x).value = ''; });
-      document.getElementById('e-pag').value = '0';
-      document.getElementById('modal').classList.replace('hidden','flex');
-    }
-
-    function editar(id) {
-      var c = clientes.find(function(x) { return x.id === id; });
-      if (!c) return;
-      document.getElementById('e-id').value = c.id; document.getElementById('e-nom').value = c.nom;
-      document.getElementById('e-tel').value = c.tel || ''; document.getElementById('e-dir').value = c.dir || '';
-      document.getElementById('e-not').value = c.not || ''; document.getElementById('e-dia').value = c.dia;
-      document.getElementById('e-tip').value = c.tip; document.getElementById('e-cos').value = c.cos;
-      document.getElementById('e-pag').value = c.pag;
-      document.getElementById('modal').classList.replace('hidden','flex');
-    }
-
-    function cerrar() { document.getElementById('modal').classList.replace('flex','hidden'); }
-
-    function guardar() {
-      var id = document.getElementById('e-id').value, nom = document.getElementById('e-nom').value.trim();
-      if (!nom) return;
-      var obj = { id: id ? Number(id) : Date.now(), nom: nom, tel: document.getElementById('e-tel').value.trim(), dir: document.getElementById('e-dir').value.trim(), not: document.getElementById('e-not').value, dia: document.getElementById('e-dia').value, tip: document.getElementById('e-tip').value, cos: Number(document.getElementById('e-cos').value) || 0, pag: Number(document.getElementById('e-pag').value) || 0 };
-      if (id) { var i = clientes.findIndex(function(x) { return x.id == id; }); clientes[i] = obj; } else { clientes.push(obj); }
-      cerrar(); save();
-    }
-
-    function pagar(id) { var i = clientes.findIndex(function(x) { return x.id === id; }); clientes[i].pag = clientes[i].cos; save(); }
-    function borrar(id) { if (confirm('?')) { clientes = clientes.filter(function(x) { return x.id !== id; }); save(); } }
-    function reiniciarMes() { if (confirm('?')) { clientes.forEach(function(c) { if (c.tip === 'Mes') c.pag = 0; }); save(); } }
-
-    render();
-  </script>
-</body>
-</html>
