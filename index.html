@@ -30,7 +30,6 @@
           <input type="password" id="auth-pass" placeholder="Mínimo 6 caracteres" class="w-full border rounded-xl p-3 mt-1 text-sm">
         </div>
         <p id="auth-err" class="text-xs text-red-600 font-semibold text-center hidden"></p>
-        <p id="auth-msg" class="text-xs text-emerald-700 font-semibold text-center hidden"></p>
         <button id="btn-login" onclick="iniciarSesion()" class="w-full bg-emerald-700 text-white py-3 rounded-xl font-bold text-sm shadow">Iniciar Sesión / Sign In</button>
         <button id="btn-signup" onclick="registrarCuenta()" class="w-full bg-emerald-50 text-emerald-800 border border-emerald-200 py-3 rounded-xl font-bold text-sm">Crear Cuenta (14 Días Gratis)</button>
       </div>
@@ -210,49 +209,45 @@
 
     function showErr(m) {
       var e = document.getElementById('auth-err');
-      var ok = document.getElementById('auth-msg');
-      ok.classList.add('hidden');
       e.innerText = m;
       e.classList.remove('hidden');
     }
 
-    function showMsg(m) {
-      var e = document.getElementById('auth-err');
-      var ok = document.getElementById('auth-msg');
-      e.classList.add('hidden');
-      ok.innerText = m;
-      ok.classList.remove('hidden');
-    }
-
     async function registrarCuenta() {
+      var email = document.getElementById('auth-email').value.trim().toLowerCase();
+      var password = document.getElementById('auth-pass').value;
+      if (!email || password.length < 6) return showErr('Ingresa correo válido y contraseña de 6+ caracteres.');
+      var btn = document.getElementById('btn-signup');
+      btn.innerText = 'Creando cuenta...';
       try {
-        var email = document.getElementById('auth-email').value.trim().toLowerCase();
-        var password = document.getElementById('auth-pass').value;
-        if (!email || password.length < 6) return showErr('Ingresa un correo válido y contraseña de 6+ caracteres.');
-        showMsg('Creando cuenta...');
         var res = await db.auth.signUp({ email: email, password: password });
-        if (res.error) return showErr(res.error.message);
-        await db.from('suscripciones').insert([{ email: email }]);
-        if (!res.data.session) {
-          var logRes = await db.auth.signInWithPassword({ email: email, password: password });
-          if (logRes.error) return showMsg('Cuenta creada. Ahora presiona Iniciar Sesión.');
+        if (res.error) {
+          btn.innerText = 'Crear Cuenta (14 Días Gratis)';
+          return showErr(res.error.message);
         }
-        verificarAcceso();
+        await db.from('suscripciones').upsert([{ email: email }], { onConflict: 'email', ignoreDuplicates: true });
+        await verificarAcceso();
       } catch (err) {
+        btn.innerText = 'Crear Cuenta (14 Días Gratis)';
         showErr('Error de conexión: ' + err.message);
       }
     }
 
     async function iniciarSesion() {
+      var email = document.getElementById('auth-email').value.trim().toLowerCase();
+      var password = document.getElementById('auth-pass').value;
+      if (!email || !password) return showErr('Escribe tu correo y contraseña.');
+      var btn = document.getElementById('btn-login');
+      btn.innerText = 'Entrando...';
       try {
-        var email = document.getElementById('auth-email').value.trim().toLowerCase();
-        var password = document.getElementById('auth-pass').value;
-        if (!email || !password) return showErr('Escribe tu correo y contraseña.');
-        showMsg('Entrando...');
         var res = await db.auth.signInWithPassword({ email: email, password: password });
-        if (res.error) return showErr('Correo o contraseña incorrectos: ' + res.error.message);
-        verificarAcceso();
+        if (res.error) {
+          btn.innerText = 'Iniciar Sesión / Sign In';
+          return showErr('Correo o contraseña incorrectos.');
+        }
+        await verificarAcceso();
       } catch (err) {
+        btn.innerText = 'Iniciar Sesión / Sign In';
         showErr('Error de conexión: ' + err.message);
       }
     }
@@ -263,30 +258,27 @@
     }
 
     async function verificarAcceso() {
-      try {
-        var ses = await db.auth.getSession();
-        if (!ses.data.session) return;
-        currentUser = ses.data.session.user;
-        document.getElementById('auth-screen').classList.add('hidden');
+      var ses = await db.auth.getSession();
+      if (!ses.data.session) return;
+      currentUser = ses.data.session.user;
+      document.getElementById('auth-screen').classList.add('hidden');
 
-        var sub = await db.from('suscripciones').select('*').eq('email', currentUser.email.toLowerCase()).maybeSingle();
-        if (!sub.data) {
-          var ins = await db.from('suscripciones').insert([{ email: currentUser.email.toLowerCase() }]).select().single();
-          sub.data = ins.data;
-        }
-
-        var hoy = new Date().toISOString().slice(0, 10);
-        if (sub.data && (!sub.data.activo || sub.data.vence < hoy)) {
-          document.getElementById('paywall-screen').classList.remove('hidden');
-          return;
-        }
-
-        document.getElementById('sub-status').innerText = sub.data ? (sub.data.plan + ' (' + sub.data.vence + ')') : 'Prueba Activa';
-        document.getElementById('app-screen').classList.remove('hidden');
-        cargarClientes();
-      } catch (err) {
-        showErr('Error al verificar acceso: ' + err.message);
+      var sub = await db.from('suscripciones').select('*').eq('email', currentUser.email).maybeSingle();
+      if (!sub.data) {
+        await db.from('suscripciones').insert([{ email: currentUser.email }]);
+        sub = await db.from('suscripciones').select('*').eq('email', currentUser.email).maybeSingle();
       }
+
+      var hoy = new Date().toISOString().split('T')[0];
+
+      if (!sub.data || !sub.data.activo || sub.data.vence < hoy) {
+        document.getElementById('paywall-screen').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('sub-status').innerText = sub.data.plan + ' (Vence: ' + sub.data.vence + ')';
+      document.getElementById('app-screen').classList.remove('hidden');
+      cargarClientes();
     }
 
     async function cargarClientes() {
