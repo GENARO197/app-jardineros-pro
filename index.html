@@ -221,3 +221,55 @@
       var deudores = clientes.filter(function(c) { return (c.cos - c.pag) > 0; });
       document.getElementById('lista-deudores').innerHTML = deudores.length ? deudores.map(function(c) {
         return '<div onclick="editar(' + c.id + ')" class="flex justify-between items-center p-2.5 bg-red-50/50 border border-red-100 rounded-xl cursor-pointer"><div><p class="font-bold text-sm">' + c.nom + '</p><p class="text-[11px] text-gray-500">' + c.dia + ' • ' + c.tip + '</p></div><span class="bg-red-100 text-red-700 font-extrabold text-xs px-2.5 py-1 rounded-full">' + t.owes + (c.cos - c.pag) + '</span></div>';
+      var filt = (filtro === 'Todos') ? clientes : clientes.filter(function(c) { return c.dia === filtro; });
+      document.getElementById('lista-clientes').innerHTML = filt.map(function(c) {
+        var d = c.cos - c.pag;
+        var badge = (d <= 0) ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700';
+        var st = (d <= 0) ? t.ok : (t.owes + d);
+        return '<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3"><div onclick="editar(' + c.id + ')" class="cursor-pointer space-y-1"><div class="flex justify-between"><h3 class="font-bold text-base">' + c.nom + '</h3><span class="' + badge + ' text-[11px] font-bold px-2.5 py-0.5 rounded-full">' + st + '</span></div><p class="text-xs text-gray-500">' + (c.dir ? '📍 ' + c.dir : '') + ' ' + (c.not ? '• ' + c.not : '') + '</p><div class="flex gap-3 text-xs font-semibold text-gray-600 pt-1"><span>📅 ' + c.dia + '</span><span>💳 ' + c.tip + ': $' + c.cos + '</span></div></div><div class="grid grid-cols-4 gap-1.5 pt-2 border-t"><button onclick="pagar(' + c.id + ')" class="bg-amber-500 text-white py-1.5 rounded-lg text-xs font-bold">' + t.payBtn + '</button><button onclick="enviarSMS(' + c.id + ')" class="bg-sky-600 text-white py-1.5 rounded-lg text-xs font-bold">✉️ SMS</button><button onclick="editar(' + c.id + ')" class="bg-gray-100 text-gray-700 py-1.5 rounded-lg text-xs font-bold">' + t.editBtn + '</button><button onclick="borrar(' + c.id + ')" class="bg-rose-100 text-rose-700 py-1.5 rounded-lg text-xs font-bold">' + t.delBtn + '</button></div></div>';
+      }).join('');
+
+      document.getElementById('tabla-libreta').innerHTML = clientes.map(function(c) {
+        var d = c.cos - c.pag;
+        var col = (d <= 0) ? 'text-emerald-600' : 'text-red-600';
+        var st = (d <= 0) ? t.ok : (t.owes + d);
+        return '<tr onclick="editar(' + c.id + ')" class="cursor-pointer"><td class="p-3 font-semibold">' + c.nom + '</td><td class="p-3">$' + c.cos + '</td><td class="p-3">$' + c.pag + '</td><td class="p-3 font-bold ' + col + '">' + st + '</td></tr>';
+      }).join('');
+    }
+
+    function abrirModal() {
+      if (clientes.length >= 500) return alert('Max 500');
+      ['e-id','e-nom','e-tel','e-dir','e-not','e-cos'].forEach(function(x) { document.getElementById(x).value = ''; });
+      document.getElementById('e-pag').value = '0';
+      document.getElementById('modal').classList.replace('hidden','flex');
+    }
+
+    function editar(id) {
+      var c = clientes.find(function(x) { return x.id === id; });
+      if (!c) return;
+      document.getElementById('e-id').value = c.id; document.getElementById('e-nom').value = c.nom;
+      document.getElementById('e-tel').value = c.tel || ''; document.getElementById('e-dir').value = c.dir || '';
+      document.getElementById('e-not').value = c.not || ''; document.getElementById('e-dia').value = c.dia;
+      document.getElementById('e-tip').value = c.tip; document.getElementById('e-cos').value = c.cos;
+      document.getElementById('e-pag').value = c.pag;
+      document.getElementById('modal').classList.replace('hidden','flex');
+    }
+
+    function cerrar() { document.getElementById('modal').classList.replace('flex','hidden'); }
+
+    function guardar() {
+      var id = document.getElementById('e-id').value, nom = document.getElementById('e-nom').value.trim();
+      if (!nom) return;
+      var obj = { id: id ? Number(id) : Date.now(), nom: nom, tel: document.getElementById('e-tel').value.trim(), dir: document.getElementById('e-dir').value.trim(), not: document.getElementById('e-not').value, dia: document.getElementById('e-dia').value, tip: document.getElementById('e-tip').value, cos: Number(document.getElementById('e-cos').value) || 0, pag: Number(document.getElementById('e-pag').value) || 0 };
+      if (id) { var i = clientes.findIndex(function(x) { return x.id == id; }); clientes[i] = obj; } else { clientes.push(obj); }
+      cerrar(); save();
+    }
+
+    function pagar(id) { var i = clientes.findIndex(function(x) { return x.id === id; }); clientes[i].pag = clientes[i].cos; save(); }
+    function borrar(id) { if (confirm('?')) { clientes = clientes.filter(function(x) { return x.id !== id; }); save(); } }
+    function reiniciarMes() { if (confirm('?')) { clientes.forEach(function(c) { if (c.tip === 'Mes') c.pag = 0; }); save(); } }
+
+    render();
+  </script>
+</body>
+</html>
