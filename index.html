@@ -6,120 +6,160 @@
   <title>Jardineros Pro</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/lawn-mower.png">
-  <link rel="icon" href="https://img.icons8.com/color/180/lawn-mowre.png">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="apple-touch-icon" href="https://icons8.com">
+  <link rel="icon" href="https://icons8.com">
+  <script src="https://tailwindcss.com"></script>
+  <script src="https://jsdelivr.net"></script>
 </head>
 <body class="bg-gray-100 pb-24 text-gray-800 font-sans">
 
-  <header class="bg-gradient-to-r from-emerald-800 to-emerald-600 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center max-w-md mx-auto">
-    <div>
-      <h1 class="text-xl font-bold flex items-center gap-1.5">🌿 Jardineros Pro</h1>
-      <p class="text-xs text-emerald-100" id="header-cap">0 / 500</p>
+  <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-emerald-800 to-emerald-600">
+    <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl space-y-4">
+      <div class="text-center space-y-1">
+        <span class="text-4xl">🌿</span>
+        <h1 class="text-2xl font-extrabold text-gray-800">Jardineros Pro</h1>
+        <p class="text-xs text-emerald-700 font-bold bg-emerald-50 inline-block px-3 py-1 rounded-full">🎁 14 Días de Prueba Gratis • Luego $14.99/mes</p>
+      </div>
+      <div class="space-y-3 pt-2">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase">Correo Electrónico / Email</label>
+          <input type="email" id="auth-email" placeholder="tu@correo.com" class="w-full border rounded-xl p-3 mt-1 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase">Contraseña / Password</label>
+          <input type="password" id="auth-pass" placeholder="Mínimo 6 caracteres" class="w-full border rounded-xl p-3 mt-1 text-sm">
+        </div>
+        <p id="auth-err" class="text-xs text-red-600 font-semibold text-center hidden"></p>
+        <button onclick="iniciarSesion()" class="w-full bg-emerald-700 text-white py-3 rounded-xl font-bold text-sm shadow">Iniciar Sesión / Sign In</button>
+        <button onclick="registrarCuenta()" class="w-full bg-emerald-50 text-emerald-800 border border-emerald-200 py-3 rounded-xl font-bold text-sm">Crear Cuenta (14 Días Gratis)</button>
+      </div>
     </div>
-    <div class="flex gap-2">
-      <button onclick="toggleLang()" id="btn-lang" class="bg-emerald-900/60 text-white px-2.5 py-1.5 rounded-full text-xs font-bold border border-emerald-400/50">🇺🇸 EN</button>
-      <button onclick="abrirModal()" id="btn-add" class="bg-white text-emerald-800 px-3.5 py-1.5 rounded-full text-sm font-bold shadow">+ Cliente</button>
+  </div>
+
+  <div id="paywall-screen" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-900/90">
+    <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl text-center space-y-4">
+      <span class="text-4xl">🔒</span>
+      <h2 class="text-xl font-extrabold text-gray-800">Tu Prueba de 14 Días Terminó</h2>
+      <p class="text-xs text-gray-500">Activa tu <strong>Plan Pro (Hasta 500 Clientes)</strong> para seguir administrando tu ruta, cobros y mensajes SMS en la nube.</p>
+      <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl">
+        <p class="text-2xl font-extrabold text-emerald-800">$14.99 <span class="text-xs font-normal text-gray-600">/ mes</span></p>
+        <p class="text-[11px] text-emerald-700 mt-1">✓ Hasta 500 clientes • ✓ Respaldo en la nube • ✓ Bilingüe</p>
+      </div>
+      <a id="btn-stripe" href="#" target="_blank" class="block w-full bg-emerald-700 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg">💳 Suscribirme Ahora ($14.99/mes)</a>
+      <button onclick="cerrarSesion()" class="text-xs text-gray-400 underline pt-2">Cerrar sesión</button>
     </div>
-  </header>
+  </div>
 
-  <main class="max-w-md mx-auto p-4 space-y-4">
-    <section id="tab-dashboard" class="space-y-4">
-      <div class="grid grid-cols-3 gap-2.5 text-center">
-        <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100">
-          <p class="text-[10px] font-bold text-gray-400 uppercase" data-t="tot">Total Clientes</p>
-          <p class="text-2xl font-extrabold mt-1 text-gray-800" id="dash-tot">0</p>
-        </div>
-        <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-red-100">
-          <p class="text-[10px] font-bold text-red-400 uppercase" data-t="due">Por Cobrar</p>
-          <p class="text-2xl font-extrabold text-red-600 mt-1" id="dash-due">$0</p>
-        </div>
-        <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-emerald-100">
-          <p class="text-[10px] font-bold text-emerald-500 uppercase" data-t="paid">Cobrado Mes</p>
-          <p class="text-2xl font-extrabold text-emerald-600 mt-1" id="dash-paid">$0</p>
-        </div>
+  <div id="app-screen" class="hidden">
+    <header class="bg-gradient-to-r from-emerald-800 to-emerald-600 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center max-w-md mx-auto">
+      <div>
+        <h1 class="text-xl font-bold flex items-center gap-1.5">🌿 Jardineros Pro</h1>
+        <p class="text-[11px] text-emerald-100" id="header-cap">0 / 500 • Nube Activa</p>
       </div>
-
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-        <h2 class="font-bold text-gray-800 mb-3 flex justify-between items-center">
-          <span data-t="todayTitle">📅 Ruta de Visitas (Hoy)</span>
-          <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full" id="dia-hoy-badge">Hoy</span>
-        </h2>
-        <div id="lista-hoy" class="space-y-2"></div>
+      <div class="flex gap-1.5">
+        <button onclick="toggleLang()" id="btn-lang" class="bg-emerald-900/60 text-white px-2.5 py-1.5 rounded-full text-xs font-bold border border-emerald-400/50">🇺🇸 EN</button>
+        <button onclick="abrirModal()" id="btn-add" class="bg-white text-emerald-800 px-3 py-1.5 rounded-full text-xs font-bold shadow">+ Cliente</button>
+        <button onclick="cerrarSesion()" class="bg-red-900/60 text-white px-2.5 py-1.5 rounded-full text-xs font-bold" title="Salir">🚪</button>
       </div>
-
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-        <h2 class="font-bold text-gray-800 mb-3 flex justify-between items-center">
-          <span data-t="pend">⚠️ Pendientes de Pago</span>
-          <span class="text-xs font-normal text-gray-400" data-t="tap">Toca para editar</span>
-        </h2>
-        <div id="lista-deudores" class="space-y-2"></div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3">
-        <button onclick="abrirModal()" class="bg-emerald-700 text-white p-3.5 rounded-2xl font-bold text-sm shadow-sm flex items-center justify-center gap-2">
-          <span>➕</span><span data-t="qAdd">Nuevo Cliente</span>
-        </button>
-        <button onclick="verTab('clientes')" class="bg-white text-emerald-800 border border-emerald-200 p-3.5 rounded-2xl font-bold text-sm shadow-sm flex items-center justify-center gap-2">
-          <span>📋</span><span data-t="qList">Ver Todos</span>
-        </button>
-      </div>
-    </section>
-
-    <section id="tab-clientes" class="hidden space-y-3">
-      <div class="flex gap-2 overflow-x-auto pb-1" id="filtros-dias"></div>
-      <p class="text-xs text-gray-400 text-center" data-t="tip">💡 Toca cualquier tarjeta para editar nombre, dirección o precio</p>
-      <div id="lista-clientes" class="space-y-3"></div>
-    </section>
-
-    <section id="tab-libreta" class="hidden">
-      <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-        <div class="p-3.5 bg-emerald-50 border-b border-emerald-100">
-          <h2 class="font-bold text-emerald-900 text-sm" data-t="ledger">📒 Libreta de Estado General</h2>
-        </div>
-        <table class="w-full text-left text-xs">
-          <thead class="bg-gray-50 text-gray-500 border-b">
-            <tr><th class="p-3" data-t="col1">Cliente</th><th class="p-3" data-t="col2">Cargo</th><th class="p-3" data-t="col3">Pagado</th><th class="p-3" data-t="col4">Estado</th></tr>
-          </thead>
-          <tbody id="tabla-libreta" class="divide-y divide-gray-100"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section id="tab-conta" class="hidden space-y-4">
-      <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3 border border-gray-100">
-        <div class="flex justify-between items-center">
-          <h2 class="font-bold text-gray-800" data-t="acc">📊 Contabilidad</h2>
-          <select class="border rounded-lg px-2 py-1 text-sm bg-gray-50 font-semibold"><option>2026</option><option>2027</option></select>
-        </div>
-        <div class="p-3 bg-emerald-50 rounded-xl flex justify-between items-center">
-          <span class="text-sm text-emerald-800 font-medium" data-t="inc">Ingresos del Mes:</span>
-          <span class="text-lg font-extrabold text-emerald-700" id="conta-inc">$0.00</span>
-        </div>
-        <div class="p-3 bg-red-50 rounded-xl flex justify-between items-center">
-          <span class="text-sm text-red-800 font-medium" data-t="rem">Pendiente en Calle:</span>
-          <span class="text-lg font-extrabold text-red-600" id="conta-rem">$0.00</span>
-        </div>
-        <div class="pt-2">
-          <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
-            <span data-t="cap">Capacidad Plan Pro</span>
-            <span id="conta-txt">0 / 500</span>
+    </header>
+    <main class="max-w-md mx-auto p-4 space-y-4">
+      <section id="tab-dashboard" class="space-y-4">
+        <div class="grid grid-cols-3 gap-2.5 text-center">
+          <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100">
+            <p class="text-[10px] font-bold text-gray-400 uppercase" data-t="tot">Total Clientes</p>
+            <p class="text-2xl font-extrabold mt-1 text-gray-800" id="dash-tot">0</p>
           </div>
-          <div class="w-full bg-gray-200 rounded-full h-2.5">
-            <div id="conta-bar" class="bg-emerald-600 h-2.5 rounded-full" style="width: 0%"></div>
+          <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-red-100">
+            <p class="text-[10px] font-bold text-red-400 uppercase" data-t="due">Por Cobrar</p>
+            <p class="text-2xl font-extrabold text-red-600 mt-1" id="dash-due">$0</p>
+          </div>
+          <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-emerald-100">
+            <p class="text-[10px] font-bold text-emerald-500 uppercase" data-t="paid">Cobrado Mes</p>
+            <p class="text-2xl font-extrabold text-emerald-600 mt-1" id="dash-paid">$0</p>
           </div>
         </div>
-        <button onclick="reiniciarMes()" class="w-full mt-4 bg-gray-800 text-white py-3 rounded-xl text-xs font-bold" data-t="rst">🔄 Iniciar Nuevo Mes (Reiniciar Pagos)</button>
-      </div>
-    </section>
-  </main>
 
-  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 z-20 max-w-md mx-auto shadow-lg">
-    <button onclick="verTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center text-emerald-700 font-bold text-xs"><span class="text-lg">🏠</span><span data-t="n1">Dashboard</span></button>
-    <button onclick="verTab('clientes')" id="nav-clientes" class="flex flex-col items-center text-gray-400 text-xs"><span class="text-lg">👥</span><span data-t="n2">Clientes</span></button>
-    <button onclick="verTab('libreta')" id="nav-libreta" class="flex flex-col items-center text-gray-400 text-xs"><span class="text-lg">📒</span><span data-t="n3">Libreta</span></button>
-    <button onclick="verTab('conta')" id="nav-conta" class="flex flex-col items-center text-gray-400 text-xs"><span class="text-lg">📊</span><span data-t="n4">Conta</span></button>
-  </nav>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+          <h2 class="font-bold text-gray-800 mb-3 flex justify-between items-center">
+            <span data-t="todayTitle">📅 Ruta de Visitas (Hoy)</span>
+            <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full" id="dia-hoy-badge">Hoy</span>
+          </h2>
+          <div id="lista-hoy" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+          <h2 class="font-bold text-gray-800 mb-3 flex justify-between items-center">
+            <span data-t="pend">⚠️ Pendientes de Pago</span>
+            <span class="text-xs font-normal text-gray-400" data-t="tap">Toca para editar</span>
+          </h2>
+          <div id="lista-deudores" class="space-y-2"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="abrirModal()" class="bg-emerald-700 text-white p-3.5 rounded-2xl font-bold text-sm shadow-sm flex items-center justify-center gap-2">
+            <span>➕</span><span data-t="qAdd">Nuevo Cliente</span>
+          </button>
+          <button onclick="verTab('clientes')" class="bg-white text-emerald-800 border border-emerald-200 p-3.5 rounded-2xl font-bold text-sm shadow-sm flex items-center justify-center gap-2">
+            <span>📋</span><span data-t="qList">Ver Todos</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="tab-clientes" class="hidden space-y-3">
+        <div class="flex gap-2 overflow-x-auto pb-1" id="filtros-dias"></div>
+        <p class="text-xs text-gray-400 text-center" data-t="tip">💡 Toca cualquier tarjeta para editar nombre, dirección o precio</p>
+        <div id="lista-clientes" class="space-y-3"></div>
+      </section>
+
+      <section id="tab-libreta" class="hidden">
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+          <div class="p-3.5 bg-emerald-50 border-b border-emerald-100">
+            <h2 class="font-bold text-emerald-900 text-sm" data-t="ledger">📒 Libreta de Estado General</h2>
+          </div>
+          <table class="w-full text-left text-xs">
+            <thead class="bg-gray-50 text-gray-500 border-b">
+              <tr><th class="p-3" data-t="col1">Cliente</th><th class="p-3" data-t="col2">Cargo</th><th class="p-3" data-t="col3">Pagado</th><th class="p-3" data-t="col4">Estado</th></tr>
+            </thead>
+            <tbody id="tabla-libreta" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-conta" class="hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3 border border-gray-100">
+          <div class="flex justify-between items-center">
+            <h2 class="font-bold text-gray-800" data-t="acc">📊 Contabilidad</h2>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full" id="sub-status">Plan Activo</span>
+          </div>
+          <div class="p-3 bg-emerald-50 rounded-xl flex justify-between items-center">
+            <span class="text-sm text-emerald-800 font-medium" data-t="inc">Ingresos del Mes:</span>
+            <span class="text-lg font-extrabold text-emerald-700" id="conta-inc">$0.00</span>
+          </div>
+          <div class="p-3 bg-red-50 rounded-xl flex justify-between items-center">
+            <span class="text-sm text-red-800 font-medium" data-t="rem">Pendiente en Calle:</span>
+            <span class="text-lg font-extrabold text-red-600" id="conta-rem">$0.00</span>
+          </div>
+          <div class="pt-2">
+            <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+              <span data-t="cap">Capacidad Plan Pro</span>
+              <span id="conta-txt">0 / 500</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+              <div id="conta-bar" class="bg-emerald-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+          </div>
+          <button onclick="reiniciarMes()" class="w-full mt-4 bg-gray-800 text-white py-3 rounded-xl text-xs font-bold" data-t="rst">🔄 Iniciar Nuevo Mes (Reiniciar Pagos)</button>
+        </div>
+      </section>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 z-20 max-w-md mx-auto shadow-lg">
+      <button onclick="verTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center text-emerald-700 font-bold text-xs"><span class="text-lg">🏠</span><span data-t="n1">Dashboard</span></button>
+      <button onclick="verTab('clientes')" id="nav-clientes" class="flex flex-col items-center text-gray-400 text-xs"><span class="text-lg">👥</span><span data-t="n2">Clientes</span></button>
+      <button onclick="verTab('libreta')" id="nav-libreta" class="flex flex-col items-center text-gray-400 text-xs"><span class="text-lg">📒</span><span data-t="n3">Libreta</span></button>
+      <button onclick="verTab('conta')" id="nav-conta" class="flex flex-col items-center text-gray-400 text-xs"><span class="text-lg">📊</span><span data-t="n4">Conta</span></button>
+    </nav>
+  </div>
 
   <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl">
@@ -149,13 +189,14 @@
     </div>
   </div>
   <script>
-    var lang = localStorage.getItem('j_lang') || 'es';
-    var clientes = JSON.parse(localStorage.getItem('j_cli')) || [
-      { id: 1, nom: 'Cornel Jones', tel: '16615550199', dir: 'Sun Village, CA', not: 'Poda completa', dia: 'Lunes', tip: 'Mes', cos: 270, pag: 0 },
-      { id: 2, nom: 'María Gómez', tel: '16615550144', dir: 'Palmdale, CA', not: 'Abono orgánico', dia: 'Miércoles', tip: 'Mes', cos: 150, pag: 150 }
-    ];
-    var filtro = 'Todos';
+    var SUPA_URL = 'https://supabase.co';
+    var SUPA_KEY = 'sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjCsW';
+    var db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    var currentUser = null;
 
+    var lang = localStorage.getItem('j_lang') || 'es';
+    var clientes = [];
+    var filtro = 'Todos';
     var diasSemana = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
     var hoyNombre = diasSemana[new Date().getDay()];
 
@@ -164,8 +205,57 @@
       en: { add:'+ Client', tot:'Total Clients', due:'To Collect', paid:'Collected Mo.', todayTitle:'📅 Today\'s Route', noToday:'No visits scheduled for today.', qAdd:'Add Client', qList:'All Clients', pend:'⚠️ Pending Payments', tap:'Tap to edit', tip:'💡 Tap card to edit details', ledger:'📒 General Ledger', col1:'Client', col2:'Charge', col3:'Paid', col4:'Status', acc:'📊 Accounting', inc:'Monthly Income:', rem:'Pending Balance:', cap:'Pro Plan Capacity', rst:'🔄 Start New Month', n1:'Dashboard', n2:'Clients', n3:'Ledger', n4:'Account', f1:'Name', f2:'Garden Notes', f3:'Day', f4:'Billing', f5:'Rate ($)', f6:'Paid ($)', f7:'Phone Number', f8:'Address', b1:'Cancel', b2:'Save', ok:'Paid', owes:'Owes $', payBtn:'$ Pay', editBtn:'📝 Edit', delBtn:'Delete', noTel:'Add a phone number first.', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['All','Mon','Tue','Wed','Thu','Fri','Sat'] }
     };
 
+    function showErr(m) { var e = document.getElementById('auth-err'); e.innerText = m; e.classList.remove('hidden'); }
+
+    async function registrarCuenta() {
+      var email = document.getElementById('auth-email').value.trim();
+      var password = document.getElementById('auth-pass').value;
+      if (!email || password.length < 6) return showErr('Ingresa correo válido y contraseña de 6+ caracteres.');
+      var res = await db.auth.signUp({ email: email, password: password });
+      if (res.error) return showErr(res.error.message);
+      await db.from('suscripciones').insert([{ email: email }]);
+      verificarAcceso();
+    }
+
+    async function iniciarSesion() {
+      var email = document.getElementById('auth-email').value.trim();
+      var password = document.getElementById('auth-pass').value;
+      var res = await db.auth.signInWithPassword({ email: email, password: password });
+      if (res.error) return showErr('Correo o contraseña incorrectos.');
+      verificarAcceso();
+    }
+
+    async function cerrarSesion() {
+      await db.auth.signOut();
+      location.reload();
+    }
+
+    async function verificarAcceso() {
+      var ses = await db.auth.getSession();
+      if (!ses.data.session) return;
+      currentUser = ses.data.session.user;
+      document.getElementById('auth-screen').classList.add('hidden');
+
+      var sub = await db.from('suscripciones').select('*').eq('email', currentUser.email).single();
+      var hoy = new Date().toISOString().split('T')[0];
+
+      if (!sub.data || !sub.data.activo || sub.data.vence < hoy) {
+        document.getElementById('paywall-screen').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('sub-status').innerText = sub.data.plan + ' (Vence: ' + sub.data.vence + ')';
+      document.getElementById('app-screen').classList.remove('hidden');
+      cargarClientes();
+    }
+
+    async function cargarClientes() {
+      var res = await db.from('clientes').select('*').order('id', { ascending: false });
+      clientes = res.data || [];
+      render();
+    }
+
     function toggleLang() { lang = (lang === 'es') ? 'en' : 'es'; localStorage.setItem('j_lang', lang); render(); }
-    function save() { localStorage.setItem('j_cli', JSON.stringify(clientes)); render(); }
 
     function verTab(t) {
       ['dashboard','clientes','libreta','conta'].forEach(function(x) {
@@ -188,6 +278,7 @@
         : (debe > 0 ? 'Hi ' + c.nom + ', greetings from Jardineros Pro. Friendly reminder of your pending balance of $' + debe + ' for lawn care service.' : 'Hi ' + c.nom + ', greetings from Jardineros Pro confirming our upcoming lawn care visit.');
       window.location.href = 'sms:' + num + '&body=' + encodeURIComponent(msg);
     }
+
     function render() {
       var t = txt[lang];
       document.getElementById('btn-lang').innerText = (lang === 'es') ? '🇺🇸 EN' : '🇲🇽 ES';
@@ -198,7 +289,7 @@
       var tot = clientes.length, cob = 0, due = 0;
       clientes.forEach(function(c) { cob += Number(c.pag); var d = Number(c.cos) - Number(c.pag); if (d > 0) due += d; });
 
-      document.getElementById('header-cap').innerText = tot + ' / 500';
+      document.getElementById('header-cap').innerText = tot + ' / 500 • Nube Activa';
       document.getElementById('dash-tot').innerText = tot;
       document.getElementById('dash-due').innerText = '$' + due;
       document.getElementById('dash-paid').innerText = '$' + cob;
@@ -209,7 +300,7 @@
 
       var hoyList = clientes.filter(function(c) { return c.dia === hoyNombre; });
       document.getElementById('lista-hoy').innerHTML = hoyList.length ? hoyList.map(function(c) {
-        return '<div onclick="editar(' + c.id + ')" class="flex justify-between items-center p-2.5 bg-emerald-50/70 border border-emerald-100 rounded-xl cursor-pointer"><div><p class="font-bold text-sm text-gray-800">' + c.nom + '</p><p class="text-[11px] text-gray-500">' + (c.dir || c.not || '') + '</p></div><span class="text-xs font-bold text-emerald-700">$' + c.cos + '</span></div>';
+        return '<div onclick="editar(' + c.id + ')" class="flex justify-between items-center p-2.5 bg-emerald-50/70 border border-emerald-100 rounded-xl cursor-pointer"><div><p class="font-bold text-sm text-gray-800">' + c.nom + '</p><p class="text-[11px] text-gray-500">' + (c.dir || c.nota || '') + '</p></div><span class="text-xs font-bold text-emerald-700">$' + c.cos + '</span></div>';
       }).join('') : '<p class="text-xs text-gray-400 text-center py-2">' + t.noToday + '</p>';
 
       document.getElementById('filtros-dias').innerHTML = t.days.map(function(d, i) {
@@ -227,7 +318,7 @@
         var d = c.cos - c.pag;
         var badge = (d <= 0) ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700';
         var st = (d <= 0) ? t.ok : (t.owes + d);
-        return '<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3"><div onclick="editar(' + c.id + ')" class="cursor-pointer space-y-1"><div class="flex justify-between"><h3 class="font-bold text-base">' + c.nom + '</h3><span class="' + badge + ' text-[11px] font-bold px-2.5 py-0.5 rounded-full">' + st + '</span></div><p class="text-xs text-gray-500">' + (c.dir ? '📍 ' + c.dir : '') + ' ' + (c.not ? '• ' + c.not : '') + '</p><div class="flex gap-3 text-xs font-semibold text-gray-600 pt-1"><span>📅 ' + c.dia + '</span><span>💳 ' + c.tip + ': $' + c.cos + '</span></div></div><div class="grid grid-cols-4 gap-1.5 pt-2 border-t"><button onclick="pagar(' + c.id + ')" class="bg-amber-500 text-white py-1.5 rounded-lg text-xs font-bold">' + t.payBtn + '</button><button onclick="enviarSMS(' + c.id + ')" class="bg-sky-600 text-white py-1.5 rounded-lg text-xs font-bold">✉️ SMS</button><button onclick="editar(' + c.id + ')" class="bg-gray-100 text-gray-700 py-1.5 rounded-lg text-xs font-bold">' + t.editBtn + '</button><button onclick="borrar(' + c.id + ')" class="bg-rose-100 text-rose-700 py-1.5 rounded-lg text-xs font-bold">' + t.delBtn + '</button></div></div>';
+        return '<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3"><div onclick="editar(' + c.id + ')" class="cursor-pointer space-y-1"><div class="flex justify-between"><h3 class="font-bold text-base">' + c.nom + '</h3><span class="' + badge + ' text-[11px] font-bold px-2.5 py-0.5 rounded-full">' + st + '</span></div><p class="text-xs text-gray-500">' + (c.dir ? '📍 ' + c.dir : '') + ' ' + (c.nota ? '• ' + c.nota : '') + '</p><div class="flex gap-3 text-xs font-semibold text-gray-600 pt-1"><span>📅 ' + c.dia + '</span><span>💳 ' + c.tip + ': $' + c.cos + '</span></div></div><div class="grid grid-cols-4 gap-1.5 pt-2 border-t"><button onclick="pagar(' + c.id + ')" class="bg-amber-500 text-white py-1.5 rounded-lg text-xs font-bold">' + t.payBtn + '</button><button onclick="enviarSMS(' + c.id + ')" class="bg-sky-600 text-white py-1.5 rounded-lg text-xs font-bold">✉️ SMS</button><button onclick="editar(' + c.id + ')" class="bg-gray-100 text-gray-700 py-1.5 rounded-lg text-xs font-bold">' + t.editBtn + '</button><button onclick="borrar(' + c.id + ')" class="bg-rose-100 text-rose-700 py-1.5 rounded-lg text-xs font-bold">' + t.delBtn + '</button></div></div>';
       }).join('');
 
       document.getElementById('tabla-libreta').innerHTML = clientes.map(function(c) {
@@ -250,7 +341,7 @@
       if (!c) return;
       document.getElementById('e-id').value = c.id; document.getElementById('e-nom').value = c.nom;
       document.getElementById('e-tel').value = c.tel || ''; document.getElementById('e-dir').value = c.dir || '';
-      document.getElementById('e-not').value = c.not || ''; document.getElementById('e-dia').value = c.dia;
+      document.getElementById('e-not').value = c.nota || ''; document.getElementById('e-dia').value = c.dia;
       document.getElementById('e-tip').value = c.tip; document.getElementById('e-cos').value = c.cos;
       document.getElementById('e-pag').value = c.pag;
       document.getElementById('modal').classList.replace('hidden','flex');
@@ -258,19 +349,47 @@
 
     function cerrar() { document.getElementById('modal').classList.replace('flex','hidden'); }
 
-    function guardar() {
+    async function guardar() {
       var id = document.getElementById('e-id').value, nom = document.getElementById('e-nom').value.trim();
       if (!nom) return;
-      var obj = { id: id ? Number(id) : Date.now(), nom: nom, tel: document.getElementById('e-tel').value.trim(), dir: document.getElementById('e-dir').value.trim(), not: document.getElementById('e-not').value, dia: document.getElementById('e-dia').value, tip: document.getElementById('e-tip').value, cos: Number(document.getElementById('e-cos').value) || 0, pag: Number(document.getElementById('e-pag').value) || 0 };
-      if (id) { var i = clientes.findIndex(function(x) { return x.id == id; }); clientes[i] = obj; } else { clientes.push(obj); }
-      cerrar(); save();
+      var obj = {
+        id: id ? Number(id) : Date.now(),
+        user_id: currentUser.id,
+        nom: nom,
+        tel: document.getElementById('e-tel').value.trim(),
+        dir: document.getElementById('e-dir').value.trim(),
+        nota: document.getElementById('e-not').value,
+        dia: document.getElementById('e-dia').value,
+        tip: document.getElementById('e-tip').value,
+        cos: Number(document.getElementById('e-cos').value) || 0,
+        pag: Number(document.getElementById('e-pag').value) || 0
+      };
+      await db.from('clientes').upsert(obj);
+      cerrar();
+      cargarClientes();
     }
 
-    function pagar(id) { var i = clientes.findIndex(function(x) { return x.id === id; }); clientes[i].pag = clientes[i].cos; save(); }
-    function borrar(id) { if (confirm('?')) { clientes = clientes.filter(function(x) { return x.id !== id; }); save(); } }
-    function reiniciarMes() { if (confirm('?')) { clientes.forEach(function(c) { if (c.tip === 'Mes') c.pag = 0; }); save(); } }
+    async function pagar(id) {
+      var c = clientes.find(function(x) { return x.id === id; });
+      await db.from('clientes').update({ pag: c.cos }).eq('id', id);
+      cargarClientes();
+    }
 
-    render();
+    async function borrar(id) {
+      if (confirm('?')) {
+        await db.from('clientes').delete().eq('id', id);
+        cargarClientes();
+      }
+    }
+
+    async function reiniciarMes() {
+      if (confirm('?')) {
+        await db.from('clientes').update({ pag: 0 }).eq('user_id', currentUser.id).eq('tip', 'Mes');
+        cargarClientes();
+      }
+    }
+
+    verificarAcceso();
   </script>
 </body>
 </html>
