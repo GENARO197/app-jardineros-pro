@@ -2,170 +2,172 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Jardineros Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jardineros Pro - Gestión de Rutas y Cobros</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans antialiased">
+<body class="bg-gray-100 text-gray-800 min-h-screen">
 
-  <div id="loading-screen" class="fixed inset-0 bg-emerald-800 text-white flex flex-col items-center justify-center z-50">
-    <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mb-4"></div>
-    <p class="font-bold text-lg">Conectando Jardineros Pro...</p>
-  </div>
-
-  <!-- PANTALLA DE INICIO DE SESIÓN / REGISTRO -->
-  <div id="auth-screen" class="hidden min-h-screen bg-gradient-to-br from-emerald-800 to-green-900 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-7">
+  <!-- PANTALLA DE LOGIN / REGISTRO -->
+  <div id="auth-screen" class="min-h-screen bg-gradient-to-br from-emerald-800 via-emerald-700 to-green-900 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8">
       <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 text-3xl mb-3">🌿</div>
-        <h1 class="text-2xl font-extrabold text-slate-800">Jardineros Pro</h1>
-        <p class="text-sm text-slate-500 mt-1">Control de clientes, rutas, cobros y SMS</p>
-        <div class="mt-3 inline-block bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold px-3 py-1.5 rounded-full">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 text-3xl mb-3">
+          🌱
+        </div>
+        <h1 class="text-2xl font-extrabold text-gray-900">Jardineros Pro</h1>
+        <p class="text-sm text-gray-500 mt-1">Tu ruta, clientes y cobros en la nube</p>
+        <div class="mt-3 inline-block bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-full">
           🎁 14 Días de Prueba Gratis • Luego $14.99/mes
         </div>
       </div>
 
-      <div id="auth-error" class="hidden mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium"></div>
-      <div id="auth-msg" class="hidden mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium"></div>
+      <div id="auth-error" class="hidden mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm text-center"></div>
+      <div id="auth-msg" class="hidden mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm text-center"></div>
 
-      <form id="auth-form" class="space-y-4">
+      <div class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Correo Electrónico</label>
-          <input type="email" id="auth-email" required placeholder="tucorreo@gmail.com"
-            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none text-base" />
+          <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Correo Electrónico</label>
+          <input id="email-input" type="email" placeholder="tu@correo.com" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Contraseña (Mín. 6 letras/números)</label>
-          <input type="password" id="auth-password" required minlength="6" placeholder="••••••••"
-            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none text-base" />
+          <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Contraseña (mínimo 6 letras/números)</label>
+          <input id="pass-input" type="password" placeholder="••••••" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
         </div>
 
-        <button type="submit" id="btn-login"
-          class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl shadow-md transition text-base">
+        <button onclick="iniciarSesion()" id="btn-login" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg transition">
           Iniciar Sesión
         </button>
 
-        <button type="button" id="btn-signup"
-          class="w-full py-3.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl shadow-md transition text-base">
+        <button onclick="crearCuenta()" id="btn-signup" class="w-full py-3.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-white font-bold transition">
           Crear Cuenta (14 Días Gratis)
         </button>
 
-        <div class="text-center pt-1">
-          <button type="button" id="btn-reset" class="text-xs font-semibold text-emerald-700 hover:underline">
-            ¿Olvidaste tu contraseña? Recuperar aquí
+        <div class="text-center pt-2">
+          <button onclick="recuperarClave()" class="text-xs text-emerald-700 hover:underline font-medium">
+            ¿Olvidaste tu contraseña?
           </button>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 
-  <!-- PANTALLA DE BLOQUEO / SUSCRIPCIÓN ($14.99/MES) -->
+  <!-- PANTALLA DE CANDADO (SUSCRIPCIÓN VENCIDA) -->
   <div id="paywall-screen" class="hidden min-h-screen bg-slate-900 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-7 text-center">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 text-amber-600 text-3xl mb-4">🔒</div>
-      <h2 class="text-2xl font-extrabold text-slate-800">Tu Prueba de 14 Días Terminó</h2>
-      <p class="text-sm text-slate-600 mt-2">
-        Activa tu suscripción mensual para seguir administrando hasta <strong>500 clientes</strong> en la nube, rutas y recordatorios SMS.
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center">
+      <div class="text-5xl mb-4">🔒</div>
+      <h2 class="text-2xl font-extrabold text-gray-900">Tu Prueba de 14 Días Terminó</h2>
+      <p class="text-sm text-gray-600 mt-2">
+        Activa tu Plan Pro (Hasta 500 Clientes) para seguir administrando tu ruta, cobros y mensajes SMS en la nube.
       </p>
 
-      <div class="my-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
-        <p class="text-xs font-bold uppercase text-emerald-700">Plan Profesional Mensual</p>
-        <p class="text-4xl font-black text-emerald-800 mt-1">$14.99 <span class="text-sm font-medium text-emerald-600">/ mes</span></p>
-        <p class="text-xs text-slate-500 mt-1">Cancela cuando quieras • Respaldo automático en la nube</p>
+      <div class="my-6 p-5 rounded-2xl bg-emerald-50 border border-emerald-200">
+        <div class="text-3xl font-black text-emerald-800">$14.99 <span class="text-sm font-normal text-gray-600">/ mes</span></div>
+        <p class="text-xs text-emerald-700 mt-2 font-medium">
+          ✓ Hasta 500 clientes • ✓ Respaldo en la nube • ✓ Bilingüe
+        </p>
       </div>
 
       <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" rel="noopener noreferrer"
-        class="block w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg text-base transition">
+         class="block w-full py-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-base shadow-lg transition">
         💳 Suscribirme Ahora ($14.99/mes)
       </a>
 
-      <button type="button" id="btn-logout-paywall" class="mt-4 text-xs text-slate-400 hover:text-slate-600 underline">
-        Cerrar sesión (<span id="paywall-email"></span>)
+      <button onclick="verificarSuscripcion()" class="mt-4 w-full py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold">
+        Ya pagué, verificar acceso
+      </button>
+
+      <button onclick="cerrarSesion()" class="mt-4 text-xs text-gray-500 underline">
+        Cerrar sesión
       </button>
     </div>
   </div>
 
   <!-- PANEL PRINCIPAL DE LA APLICACIÓN -->
-  <div id="app-screen" class="hidden min-h-screen pb-24">
-    <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-30">
-      <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
+  <div id="app-screen" class="hidden pb-24">
+    <!-- HEADER -->
+    <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-20">
+      <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
         <div>
-          <h1 class="text-lg font-extrabold flex items-center gap-1.5">🌿 Jardineros Pro</h1>
-          <p class="text-xs text-emerald-200"><span id="client-count">0</span> / 500 clientes • <span id="plan-badge" class="font-semibold text-amber-300">Nube Activa</span></p>
+          <h1 class="text-xl font-extrabold flex items-center gap-2">🌱 Jardineros Pro</h1>
+          <p id="status-badge" class="text-xs text-emerald-200 mt-0.5">Cargando nube...</p>
         </div>
         <div class="flex items-center gap-2">
-          <button id="btn-open-modal" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold text-xs px-3.5 py-2 rounded-xl shadow">
+          <button onclick="abrirModalCliente()" class="bg-white text-emerald-800 font-bold px-3.5 py-2 rounded-xl text-sm shadow hover:bg-emerald-50">
             + Cliente
           </button>
-          <button id="btn-logout" class="bg-emerald-900/80 hover:bg-emerald-950 text-emerald-100 text-xs px-3 py-2 rounded-xl">
+          <button onclick="cerrarSesion()" title="Cerrar sesión" class="bg-emerald-900/70 hover:bg-emerald-950 px-3 py-2 rounded-xl text-xs">
             Salir
           </button>
         </div>
       </div>
-
-      <!-- PESTAÑAS -->
-      <div class="max-w-3xl mx-auto px-4 flex border-t border-emerald-700 text-xs font-bold">
-        <button data-tab="clientes" class="tab-btn flex-1 py-2.5 text-center border-b-2 border-amber-400 text-white">👥 Clientes</button>
-        <button data-tab="rutas" class="tab-btn flex-1 py-2.5 text-center border-b-2 border-transparent text-emerald-200">📅 Rutas</button>
-        <button data-tab="cobros" class="tab-btn flex-1 py-2.5 text-center border-b-2 border-transparent text-emerald-200">💵 Cobros</button>
-      </div>
     </header>
 
-    <main class="max-w-3xl mx-auto px-4 pt-4">
-      <!-- BUSCADOR -->
-      <div class="mb-4">
-        <input type="text" id="search-input" placeholder="🔍 Buscar cliente por nombre, dirección o día..."
-          class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 shadow-sm text-sm focus:ring-2 focus:ring-emerald-600 outline-none" />
+    <!-- RESUMEN RÁPIDO -->
+    <div class="max-w-3xl mx-auto px-4 mt-4 grid grid-cols-3 gap-3">
+      <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 text-center">
+        <div class="text-xs text-gray-500 font-semibold">Clientes</div>
+        <div id="stat-clientes" class="text-xl font-extrabold text-gray-900 mt-0.5">0</div>
       </div>
+      <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 text-center">
+        <div class="text-xs text-gray-500 font-semibold">Por Cobrar</div>
+        <div id="stat-pendiente" class="text-xl font-extrabold text-amber-600 mt-0.5">$0</div>
+      </div>
+      <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 text-center">
+        <div class="text-xs text-gray-500 font-semibold">Cobrado</div>
+        <div id="stat-cobrado" class="text-xl font-extrabold text-emerald-600 mt-0.5">$0</div>
+      </div>
+    </div>
 
-      <!-- SECCIÓN CLIENTES -->
-      <section id="tab-clientes" class="space-y-3"></section>
+    <!-- BUSCADOR Y FILTRO DÍA -->
+    <div class="max-w-3xl mx-auto px-4 mt-4 flex flex-col sm:flex-row gap-2">
+      <input id="search-input" oninput="renderClientes()" type="text" placeholder="🔍 Buscar por nombre, dirección o teléfono..."
+             class="flex-1 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+      <select id="filter-dia" onchange="renderClientes()" class="px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-medium">
+        <option value="TODOS">Todos los días</option>
+        <option value="Lunes">Lunes</option>
+        <option value="Martes">Martes</option>
+        <option value="Miércoles">Miércoles</option>
+        <option value="Jueves">Jueves</option>
+        <option value="Viernes">Viernes</option>
+        <option value="Sábado">Sábado</option>
+      </select>
+    </div>
 
-      <!-- SECCIÓN RUTAS -->
-      <section id="tab-rutas" class="hidden space-y-3"></section>
-
-      <!-- SECCIÓN COBROS -->
-      <section id="tab-cobros" class="hidden space-y-3"></section>
-    </main>
+    <!-- LISTA DE CLIENTES -->
+    <div id="clientes-list" class="max-w-3xl mx-auto px-4 mt-4 space-y-3"></div>
   </div>
 
   <!-- MODAL AGREGAR / EDITAR CLIENTE -->
-  <div id="client-modal" class="hidden fixed inset-0 bg-black/60 z-40 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl">
-      <div class="flex items-center justify-between mb-4">
-        <h3 id="modal-title" class="text-lg font-extrabold text-slate-800">Nuevo Cliente</h3>
-        <button id="btn-close-modal" class="text-slate-400 hover:text-slate-700 text-2xl leading-none">&times;</button>
+  <div id="cliente-modal" class="hidden fixed inset-0 bg-black/60 z-30 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modal-title" class="text-lg font-extrabold text-gray-900">Nuevo Cliente</h3>
+        <button onclick="cerrarModalCliente()" class="text-gray-400 hover:text-gray-700 text-xl font-bold">&times;</button>
       </div>
-
-      <form id="client-form" class="space-y-3.5">
-        <input type="hidden" id="client-id" />
+      <input type="hidden" id="edit-id" />
+      <div class="space-y-3">
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Nombre Completo *</label>
-          <input type="text" id="c-nombre" required placeholder="Ej. Juan Pérez"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          <label class="block text-xs font-bold text-gray-600 mb-1">Nombre del Cliente *</label>
+          <input id="c-nombre" type="text" placeholder="Ej. Juan Pérez" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Teléfono (para SMS)</label>
+          <input id="c-telefono" type="tel" placeholder="Ej. 6615551234" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Dirección</label>
+          <input id="c-direccion" type="text" placeholder="Ej. 123 Main St" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Teléfono (SMS) *</label>
-            <input type="tel" id="c-telefono" required placeholder="Ej. 6615551234"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Tarifa ($ USD) *</label>
-            <input type="number" step="0.01" id="c-precio" required placeholder="80"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Dirección</label>
-          <input type="text" id="c-direccion" placeholder="Calle, número y ciudad"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Día de Servicio</label>
-            <select id="c-dia" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+            <label class="block text-xs font-bold text-gray-600 mb-1">Día de Visita</label>
+            <select id="c-dia" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm">
               <option value="Lunes">Lunes</option>
               <option value="Martes">Martes</option>
               <option value="Miércoles">Miércoles</option>
@@ -175,382 +177,300 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Frecuencia</label>
-            <select id="c-frecuencia" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
-              <option value="Semanal">Semanal</option>
-              <option value="Quincenal">Quincenal</option>
-              <option value="Mensual">Mensual</option>
-            </select>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Precio ($)</label>
+            <input id="c-precio" type="number" step="0.01" placeholder="50" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Estado de Pago</label>
-          <select id="c-pagado" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
-            <option value="pendiente">⏳ Pendiente de pago</option>
-            <option value="pagado">✅ Pagado al día</option>
-          </select>
+          <label class="block text-xs font-bold text-gray-600 mb-1">Notas del servicio</label>
+          <input id="c-notas" type="text" placeholder="Ej. Cortar atrás, cerrar portón" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
         </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Notas del jardín</label>
-          <textarea id="c-notas" rows="2" placeholder="Código de portón, perro en patio, etc."
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm"></textarea>
-        </div>
-
-        <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow text-sm">
-          Guardar Cliente en la Nube
+        <button onclick="guardarCliente()" class="w-full mt-2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow">
+          Guardar Cliente
         </button>
-      </form>
+      </div>
     </div>
   </div>
 
   <script>
-    const SUPA_URL = "https://rymrhjpmvptrizetcjsfo.supabase.co";
-    const SUPA_KEY = "sb_publishable_2jMF-6t8D61jE45SkLcOUQ_sgBkjQ2M";
+    const SUPA_URL = "https://rjmrhjpmvptnzetzjsfo.supabase.co";
+    const SUPA_KEY = "sb_publishable_2jMF-6t8D61jE45SkLcOUQ_sgBkj_lI";
     const OWNER_EMAIL = "gena197590@gmail.com";
-
-    const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
     let currentUser = null;
     let clientes = [];
-    let currentTab = "clientes";
 
-    const $ = (id) => document.getElementById(id);
-
-    function showScreen(screenId) {
-      ["loading-screen", "auth-screen", "paywall-screen", "app-screen"].forEach(id => {
-        $(id).classList.add("hidden");
-      });
-      $(screenId).classList.remove("hidden");
+    function showError(msg) {
+      const el = document.getElementById("auth-error");
+      el.textContent = msg;
+      el.classList.remove("hidden");
+      document.getElementById("auth-msg").classList.add("hidden");
     }
 
-    function showAuthError(msg) {
-      $("auth-error").textContent = msg;
-      $("auth-error").classList.remove("hidden");
-      $("auth-msg").classList.add("hidden");
+    function showSuccess(msg) {
+      const el = document.getElementById("auth-msg");
+      el.textContent = msg;
+      el.classList.remove("hidden");
+      document.getElementById("auth-error").classList.add("hidden");
     }
 
-    function showAuthMsg(msg) {
-      $("auth-msg").textContent = msg;
-      $("auth-msg").classList.remove("hidden");
-      $("auth-error").classList.add("hidden");
+    async function iniciarSesion() {
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      const password = document.getElementById("pass-input").value;
+      if (!email || !password) return showError("Escribe tu correo y contraseña.");
+      const { data, error } = await db.auth.signInWithPassword({ email, password });
+      if (error) return showError("Error al entrar: " + error.message);
+      currentUser = data.user;
+      await verificarSuscripcion();
     }
 
-    async function checkAccessAndLoad(user) {
-      currentUser = user;
-      const email = (user.email || "").toLowerCase().trim();
+    async function crearCuenta() {
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      const password = document.getElementById("pass-input").value;
+      if (!email || password.length < 6) return showError("Escribe un correo válido y contraseña de al menos 6 caracteres.");
+      const { data, error } = await db.auth.signUp({ email, password });
+      if (error) return showError("No se pudo crear cuenta: " + error.message);
+      if (data.user) {
+        currentUser = data.user;
+        const vence = new Date();
+        vence.setDate(vence.getDate() + 14);
+        await db.from("suscripciones").upsert({
+          email: email,
+          activa: true,
+          vence: vence.toISOString()
+        }, { onConflict: "email" });
+        await verificarSuscripcion();
+      } else {
+        showSuccess("Cuenta creada. Revisa tu correo o inicia sesión.");
+      }
+    }
 
-      // El dueño entra siempre directo y sin candado
-      if (email === OWNER_EMAIL) {
-        $("plan-badge").textContent = "👑 Dueño Vitalicio";
-        showScreen("app-screen");
-        await loadClientes();
+    async function recuperarClave() {
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      if (!email) return showError("Escribe primero tu correo arriba y luego toca ¿Olvidaste tu contraseña?");
+      const { error } = await db.auth.resetPasswordForEmail(email);
+      if (error) return showError(error.message);
+      showSuccess("Te enviamos un enlace a " + email + " para cambiar tu contraseña.");
+    }
+
+    async function cerrarSesion() {
+      await db.auth.signOut();
+      currentUser = null;
+      document.getElementById("app-screen").classList.add("hidden");
+      document.getElementById("paywall-screen").classList.add("hidden");
+      document.getElementById("auth-screen").classList.remove("hidden");
+    }
+
+    async function verificarSuscripcion() {
+      if (!currentUser) return;
+      const userEmail = (currentUser.email || "").trim().toLowerCase();
+
+      // Acceso directo garantizado para el dueño
+      if (userEmail === OWNER_EMAIL) {
+        mostrarApp("👑 Dueño Vitalicio • Nube Activa");
         return;
       }
 
-      try {
-        const { data, error } = await sb
-          .from("suscripciones")
-          .select("*")
-          .eq("email", email)
-          .maybeSingle();
+      const { data, error } = await db
+        .from("suscripciones")
+        .select("*")
+        .eq("email", userEmail)
+        .maybeSingle();
 
-        const now = new Date();
+      if (!data) {
+        // Si es nuevo usuario sin registro aún, darle 14 días gratis
+        const vence = new Date();
+        vence.setDate(vence.getDate() + 14);
+        await db.from("suscripciones").insert({
+          email: userEmail,
+          activa: true,
+          vence: vence.toISOString()
+        });
+        mostrarApp("🎁 Prueba Gratis (14 días) • Nube Activa");
+        return;
+      }
 
-        if (!data) {
-          // Crear prueba gratuita de 14 días automáticamente
-          const vence = new Date();
-          vence.setDate(vence.getDate() + 14);
-          await sb.from("suscripciones").insert([{
-            email: email,
-            activa: true,
-            vence: vence.toISOString()
-          }]);
-          $("plan-badge").textContent = "Prueba Gratis (14 días)";
-          showScreen("app-screen");
-          await loadClientes();
-          return;
-        }
+      const ahora = new Date();
+      const fechaVence = data.vence ? new Date(data.vence) : new Date(0);
+      const estaActiva = (data.activa === true || data.activo === true) && fechaVence > ahora;
 
-        const venceDate = data.vence ? new Date(data.vence) : new Date(0);
-        const isValid = (data.activa === true || data.activo === true) && venceDate > now;
-
-        if (isValid) {
-          const dias = Math.ceil((venceDate - now) / (1000 * 60 * 60 * 24));
-          $("plan-badge").textContent = dias > 365 ? "Plan Pro Activo" : `Activo (${dias} días)`;
-          showScreen("app-screen");
-          await loadClientes();
-        } else {
-          $("paywall-email").textContent = email;
-          showScreen("paywall-screen");
-        }
-      } catch (err) {
-        $("paywall-email").textContent = email;
-        showScreen("paywall-screen");
+      if (estaActiva) {
+        const diasRestantes = Math.ceil((fechaVence - ahora) / (1000 * 60 * 60 * 24));
+        mostrarApp("✓ Plan Activo (" + diasRestantes + " días) • Nube Activa");
+      } else {
+        document.getElementById("auth-screen").classList.add("hidden");
+        document.getElementById("app-screen").classList.add("hidden");
+        document.getElementById("paywall-screen").classList.remove("hidden");
       }
     }
 
-    async function loadClientes() {
-      const { data, error } = await sb
+    async function mostrarApp(badgeText) {
+      document.getElementById("auth-screen").classList.add("hidden");
+      document.getElementById("paywall-screen").classList.add("hidden");
+      document.getElementById("app-screen").classList.remove("hidden");
+      document.getElementById("status-badge").textContent = badgeText;
+      await cargarClientes();
+    }
+
+    async function cargarClientes() {
+      const userEmail = (currentUser.email || "").trim().toLowerCase();
+      const { data, error } = await db
         .from("clientes")
         .select("*")
-        .eq("user_id", currentUser.id)
-        .order("created_at", { ascending: false });
+        .eq("jardinero_email", userEmail)
+        .order("id", { ascending: false });
 
       if (!error && data) {
         clientes = data;
       } else {
-        clientes = [];
+        // Fallback por si la columna se llama user_id o similar
+        const res2 = await db.from("clientes").select("*").order("id", { ascending: false });
+        clientes = res2.data || [];
       }
-      $("client-count").textContent = clientes.length;
-      renderAll();
+      renderClientes();
     }
 
-    function renderAll() {
-      const q = ($("search-input").value || "").toLowerCase().trim();
-      const filtered = clientes.filter(c =>
-        (c.nombre || "").toLowerCase().includes(q) ||
-        (c.direccion || "").toLowerCase().includes(q) ||
-        (c.dia || "").toLowerCase().includes(q)
-      );
+    function renderClientes() {
+      const q = document.getElementById("search-input").value.toLowerCase();
+      const diaFiltro = document.getElementById("filter-dia").value;
 
-      // 1. CLIENTES
-      const cContainer = $("tab-clientes");
-      if (filtered.length === 0) {
-        cContainer.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200 text-slate-500 text-sm">
-          No hay clientes registrados todavía. Toca <strong>+ Cliente</strong> arriba para agregar el primero.
+      const filtrados = clientes.filter(c => {
+        const matchTexto = (c.nombre || "").toLowerCase().includes(q) ||
+                           (c.direccion || "").toLowerCase().includes(q) ||
+                           (c.telefono || "").toLowerCase().includes(q);
+        const matchDia = diaFiltro === "TODOS" || c.dia === diaFiltro;
+        return matchTexto && matchDia;
+      });
+
+      let totalPendiente = 0;
+      let totalCobrado = 0;
+      clientes.forEach(c => {
+        const p = parseFloat(c.precio) || 0;
+        if (c.pagado) totalCobrado += p;
+        else totalPendiente += p;
+      });
+
+      document.getElementById("stat-clientes").textContent = clientes.length + " / 500";
+      document.getElementById("stat-pendiente").textContent = "$" + totalPendiente.toFixed(0);
+      document.getElementById("stat-cobrado").textContent = "$" + totalCobrado.toFixed(0);
+
+      const cont = document.getElementById("clientes-list");
+      if (filtrados.length === 0) {
+        cont.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center text-gray-400 text-sm border border-gray-100">
+          No hay clientes aquí todavía. Toca <b>+ Cliente</b> arriba para agregar el primero.
         </div>`;
-      } else {
-        cContainer.innerHTML = filtered.map(c => {
-          const telClean = (c.telefono || "").replace(/[^0-9]/g, "");
-          const smsBody = encodeURIComponent(`Hola ${c.nombre}, te saludamos de Jardineros Pro. Te recordamos tu servicio de jardinería programado el ${c.dia}. ¡Gracias!`);
-          const isPaid = c.pagado === "pagado";
-          return `
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-              <div class="flex justify-between items-start">
-                <div>
-                  <h3 class="font-extrabold text-slate-800 text-base">${c.nombre}</h3>
-                  <p class="text-xs text-slate-500 mt-0.5">📍 ${c.direccion || "Sin dirección"}</p>
-                  <p class="text-xs text-emerald-700 font-semibold mt-1">📅 ${c.dia} (${c.frecuencia}) • 💵 $${Number(c.precio || 0).toFixed(2)}</p>
-                </div>
-                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${isPaid ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}">
-                  ${isPaid ? "✅ Pagado" : "⏳ Pendiente"}
-                </span>
-              </div>
-              ${c.notas ? `<p class="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg mt-2">📝 ${c.notas}</p>` : ""}
-              <div class="flex gap-2 mt-3 pt-3 border-t border-slate-100 text-xs font-bold">
-                <a href="sms:${telClean}?&body=${smsBody}" class="flex-1 py-2 text-center bg-sky-50 text-sky-700 rounded-xl border border-sky-200">💬 Enviar SMS</a>
-                <button onclick="togglePago('${c.id}', '${isPaid ? "pendiente" : "pagado"}')" class="flex-1 py-2 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200">
-                  ${isPaid ? "Marcar Pendiente" : "Marcar Pagado"}
-                </button>
-                <button onclick="editCliente('${c.id}')" class="px-3 py-2 bg-slate-100 text-slate-700 rounded-xl">✏️</button>
-                <button onclick="deleteCliente('${c.id}')" class="px-3 py-2 bg-red-50 text-red-600 rounded-xl">🗑️</button>
-              </div>
-            </div>
-          `;
-        }).join("");
+        return;
       }
 
-      // 2. RUTAS POR DÍA
-      const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-      $("tab-rutas").innerHTML = dias.map(dia => {
-        const delDia = filtered.filter(c => c.dia === dia);
+      cont.innerHTML = filtrados.map(c => {
+        const pagadoBadge = c.pagado
+          ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Pagado ✓</span>`
+          : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Pendiente</span>`;
+        const telLimpio = (c.telefono || "").replace(/[^0-9]/g, "");
+        const smsTexto = encodeURIComponent(`Hola ${c.nombre}, te recordamos tu servicio de jardinería ($${c.precio || 0}). ¡Gracias!`);
+
         return `
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
-            <div class="flex justify-between items-center mb-2">
-              <h3 class="font-extrabold text-emerald-800">${dia}</h3>
-              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">${delDia.length} trabajos</span>
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-extrabold text-gray-900 text-base">${c.nombre || "Sin nombre"}</h3>
+                <p class="text-xs text-gray-500 mt-0.5">📍 ${c.direccion || "Sin dirección"} • 🗓️ ${c.dia || "Sin día"}</p>
+                ${c.notas ? `<p class="text-xs text-gray-400 mt-1">📝 ${c.notas}</p>` : ""}
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-700">$${c.precio || 0}</div>
+                <div class="mt-1">${pagadoBadge}</div>
+              </div>
             </div>
-            ${delDia.length === 0 ? `<p class="text-xs text-slate-400">Sin rutas asignadas</p>` :
-              `<ul class="divide-y divide-slate-100 text-xs">
-                ${delDia.map(c => `<li class="py-2 flex justify-between"><span><strong>${c.nombre}</strong> — ${c.direccion || ""}</span><span class="font-bold text-emerald-700">$${c.precio}</span></li>`).join("")}
-              </ul>`
-            }
+
+            <div class="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-2">
+              <button onclick="togglePagado(${c.id}, ${!c.pagado})" class="flex-1 py-2 px-3 rounded-xl text-xs font-bold ${c.pagado ? 'bg-gray-100 text-gray-700' : 'bg-emerald-600 text-white'}">
+                ${c.pagado ? 'Marcar Pendiente' : '💵 Marcar Pagado'}
+              </button>
+              ${telLimpio ? `<a href="sms:${telLimpio}?body=${smsTexto}" class="py-2 px-3 rounded-xl text-xs font-bold bg-blue-50 text-blue-700">💬 SMS</a>` : ""}
+              <button onclick="editarCliente(${c.id})" class="py-2 px-3 rounded-xl text-xs font-bold bg-gray-100 text-gray-700">✏️</button>
+              <button onclick="eliminarCliente(${c.id})" class="py-2 px-3 rounded-xl text-xs font-bold bg-red-50 text-red-600">🗑️</button>
+            </div>
           </div>
         `;
       }).join("");
-
-      // 3. COBROS
-      const totalCobrado = clientes.filter(c => c.pagado === "pagado").reduce((s, c) => s + Number(c.precio || 0), 0);
-      const totalPendiente = clientes.filter(c => c.pagado !== "pagado").reduce((s, c) => s + Number(c.precio || 0), 0);
-      $("tab-cobros").innerHTML = `
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-emerald-600 text-white rounded-2xl p-4 shadow">
-            <p class="text-xs uppercase font-bold text-emerald-100">Cobrado</p>
-            <p class="text-2xl font-black mt-1">$${totalCobrado.toFixed(2)}</p>
-          </div>
-          <div class="bg-amber-500 text-white rounded-2xl p-4 shadow">
-            <p class="text-xs uppercase font-bold text-amber-100">Por Cobrar</p>
-            <p class="text-2xl font-black mt-1">$${totalPendiente.toFixed(2)}</p>
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 mt-3">
-          <h4 class="font-bold text-sm text-slate-700 mb-2">Clientes Pendientes de Pago</h4>
-          ${clientes.filter(c => c.pagado !== "pagado").map(c => `
-            <div class="flex justify-between items-center py-2 border-b border-slate-100 text-xs">
-              <div><strong>${c.nombre}</strong><br><span class="text-slate-400">${c.dia}</span></div>
-              <button onclick="togglePago('${c.id}', 'pagado')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-bold">Cobrar $${c.precio}</button>
-            </div>
-          `).join("") || `<p class="text-xs text-slate-400">¡Todos los clientes están al día!</p>`}
-        </div>
-      `;
     }
 
-    window.togglePago = async (id, nuevoEstado) => {
-      await sb.from("clientes").update({ pagado: nuevoEstado }).eq("id", id);
-      await loadClientes();
-    };
+    function abrirModalCliente() {
+      if (clientes.length >= 500) return alert("Has alcanzado el límite de 500 clientes.");
+      document.getElementById("modal-title").textContent = "Nuevo Cliente";
+      document.getElementById("edit-id").value = "";
+      document.getElementById("c-nombre").value = "";
+      document.getElementById("c-telefono").value = "";
+      document.getElementById("c-direccion").value = "";
+      document.getElementById("c-dia").value = "Lunes";
+      document.getElementById("c-precio").value = "";
+      document.getElementById("c-notas").value = "";
+      document.getElementById("cliente-modal").classList.remove("hidden");
+    }
 
-    window.deleteCliente = async (id) => {
-      if (!confirm("¿Eliminar este cliente?")) return;
-      await sb.from("clientes").delete().eq("id", id);
-      await loadClientes();
-    };
+    function cerrarModalCliente() {
+      document.getElementById("cliente-modal").classList.add("hidden");
+    }
 
-    window.editCliente = (id) => {
+    function editarCliente(id) {
       const c = clientes.find(x => x.id === id);
       if (!c) return;
-      $("modal-title").textContent = "Editar Cliente";
-      $("client-id").value = c.id;
-      $("c-nombre").value = c.nombre || "";
-      $("c-telefono").value = c.telefono || "";
-      $("c-precio").value = c.precio || "";
-      $("c-direccion").value = c.direccion || "";
-      $("c-dia").value = c.dia || "Lunes";
-      $("c-frecuencia").value = c.frecuencia || "Semanal";
-      $("c-pagado").value = c.pagado || "pendiente";
-      $("c-notas").value = c.notas || "";
-      $("client-modal").classList.remove("hidden");
-    };
+      document.getElementById("modal-title").textContent = "Editar Cliente";
+      document.getElementById("edit-id").value = c.id;
+      document.getElementById("c-nombre").value = c.nombre || "";
+      document.getElementById("c-telefono").value = c.telefono || "";
+      document.getElementById("c-direccion").value = c.direccion || "";
+      document.getElementById("c-dia").value = c.dia || "Lunes";
+      document.getElementById("c-precio").value = c.precio || "";
+      document.getElementById("c-notas").value = c.notas || "";
+      document.getElementById("cliente-modal").classList.remove("hidden");
+    }
 
-    // EVENTOS DE AUTENTICACIÓN
-    $("auth-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = $("auth-email").value.trim();
-      const password = $("auth-password").value;
-      $("auth-error").classList.add("hidden");
-
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) {
-        showAuthError("No se pudo entrar: " + error.message);
-      } else if (data.user) {
-        await checkAccessAndLoad(data.user);
-      }
-    });
-
-    $("btn-signup").addEventListener("click", async () => {
-      const email = $("auth-email").value.trim();
-      const password = $("auth-password").value;
-      if (!email || password.length < 6) {
-        showAuthError("Escribe un correo válido y una contraseña de al menos 6 caracteres.");
-        return;
-      }
-      const { data, error } = await sb.auth.signUp({ email, password });
-      if (error) {
-        showAuthError("Error al crear cuenta: " + error.message);
-      } else if (data.user) {
-        if (data.session) {
-          await checkAccessAndLoad(data.user);
-        } else {
-          showAuthMsg("¡Cuenta creada! Revisa tu correo para confirmar o presiona Iniciar Sesión.");
-        }
-      }
-    });
-
-    $("btn-reset").addEventListener("click", async () => {
-      const email = $("auth-email").value.trim();
-      if (!email) {
-        showAuthError("Escribe primero tu correo electrónico arriba para enviarte el enlace de recuperación.");
-        return;
-      }
-      const { error } = await sb.auth.resetPasswordForEmail(email);
-      if (error) {
-        showAuthError("Error: " + error.message);
-      } else {
-        showAuthMsg("Te enviamos un correo para restablecer tu contraseña. Revisa tu bandeja de entrada.");
-      }
-    });
-
-    $("btn-logout").addEventListener("click", async () => {
-      await sb.auth.signOut();
-      showScreen("auth-screen");
-    });
-
-    $("btn-logout-paywall").addEventListener("click", async () => {
-      await sb.auth.signOut();
-      showScreen("auth-screen");
-    });
-
-    // EVENTOS DE MODAL Y PESTAÑAS
-    $("btn-open-modal").addEventListener("click", () => {
-      if (clientes.length >= 500) {
-        alert("Has alcanzado el límite de 500 clientes de tu plan.");
-        return;
-      }
-      $("modal-title").textContent = "Nuevo Cliente";
-      $("client-form").reset();
-      $("client-id").value = "";
-      $("client-modal").classList.remove("hidden");
-    });
-
-    $("btn-close-modal").addEventListener("click", () => {
-      $("client-modal").classList.add("hidden");
-    });
-
-    $("client-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const id = $("client-id").value;
+    async function guardarCliente() {
+      const id = document.getElementById("edit-id").value;
+      const nombre = document.getElementById("c-nombre").value.trim();
+      if (!nombre) return alert("Escribe el nombre del cliente.");
       const payload = {
-        user_id: currentUser.id,
-        nombre: $("c-nombre").value.trim(),
-        telefono: $("c-telefono").value.trim(),
-        precio: parseFloat($("c-precio").value) || 0,
-        direccion: $("c-direccion").value.trim(),
-        dia: $("c-dia").value,
-        frecuencia: $("c-frecuencia").value,
-        pagado: $("c-pagado").value,
-        notas: $("c-notas").value.trim()
+        nombre,
+        telefono: document.getElementById("c-telefono").value.trim(),
+        direccion: document.getElementById("c-direccion").value.trim(),
+        dia: document.getElementById("c-dia").value,
+        precio: parseFloat(document.getElementById("c-precio").value) || 0,
+        notas: document.getElementById("c-notas").value.trim(),
+        jardinero_email: (currentUser.email || "").trim().toLowerCase()
       };
 
       if (id) {
-        await sb.from("clientes").update(payload).eq("id", id);
+        await db.from("clientes").update(payload).eq("id", id);
       } else {
-        await sb.from("clientes").insert([payload]);
+        payload.pagado = false;
+        await db.from("clientes").insert(payload);
       }
+      cerrarModalCliente();
+      await cargarClientes();
+    }
 
-      $("client-modal").classList.add("hidden");
-      await loadClientes();
-    });
+    async function togglePagado(id, nuevoEstado) {
+      await db.from("clientes").update({ pagado: nuevoEstado }).eq("id", id);
+      await cargarClientes();
+    }
 
-    $("search-input").addEventListener("input", renderAll);
+    async function eliminarCliente(id) {
+      if (!confirm("¿Eliminar este cliente?")) return;
+      await db.from("clientes").delete().eq("id", id);
+      await cargarClientes();
+    }
 
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tab-btn").forEach(b => {
-          b.classList.remove("border-amber-400", "text-white");
-          b.classList.add("border-transparent", "text-emerald-200");
-        });
-        btn.classList.add("border-amber-400", "text-white");
-        btn.classList.remove("border-transparent", "text-emerald-200");
-
-        const tab = btn.dataset.tab;
-        ["clientes", "rutas", "cobros"].forEach(t => $(`tab-${t}`).classList.add("hidden"));
-        $(`tab-${tab}`).classList.remove("hidden");
-      });
-    });
-
-    // INICIALIZACIÓN
-    (async () => {
-      try {
-        const { data: { session } } = await sb.auth.getSession();
-        if (session && session.user) {
-          await checkAccessAndLoad(session.user);
-        } else {
-          showScreen("auth-screen");
-        }
-      } catch (e) {
-        showScreen("auth-screen");
+    // Revisar si ya hay sesión abierta al cargar
+    window.addEventListener("DOMContentLoaded", async () => {
+      const { data } = await db.auth.getSession();
+      if (data && data.session && data.session.user) {
+        currentUser = data.session.user;
+        await verificarSuscripcion();
       }
-    })();
+    });
   </script>
 </body>
 </html>
