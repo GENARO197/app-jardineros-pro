@@ -2,54 +2,52 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jardineros Pro - Gestión de Rutas y Cobros</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Jardineros Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen">
+<body class="bg-slate-100 text-slate-800 min-h-screen">
 
-  <!-- PANTALLA DE LOGIN / REGISTRO -->
-  <div id="auth-screen" class="min-h-screen bg-gradient-to-br from-emerald-800 via-emerald-700 to-green-900 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8">
-      <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 text-3xl mb-3">
-          🌱
-        </div>
-        <h1 class="text-2xl font-extrabold text-gray-900">Jardineros Pro</h1>
-        <p class="text-sm text-gray-500 mt-1">Tu ruta, clientes y cobros en la nube</p>
-        <div class="mt-3 inline-block bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-full">
-          🎁 14 Días de Prueba Gratis • Luego $14.99/mes
-        </div>
+  <!-- PANTALLA DE ACCESO (LOGIN / REGISTRO) -->
+  <div id="auth-screen" class="min-h-screen bg-gradient-to-br from-emerald-800 via-emerald-700 to-green-600 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-7">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">🌿 Jardineros Pro</span>
+        <button onclick="toggleLang()" class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full" id="lang-btn-auth">EN / ES</button>
       </div>
 
-      <div id="auth-error" class="hidden mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm text-center"></div>
-      <div id="auth-msg" class="hidden mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm text-center"></div>
+      <h1 class="text-2xl font-extrabold text-slate-900 text-center mb-1" data-es="Administra tu Ruta" data-en="Manage Your Route">Administra tu Ruta</h1>
+      <p class="text-center text-sm text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 rounded-xl py-2 px-3 mb-5" data-es="🎁 14 Días de Prueba Gratis • Luego $14.99/mes" data-en="🎁 14-Day Free Trial • Then $14.99/mo">
+        🎁 14 Días de Prueba Gratis • Luego $14.99/mes
+      </p>
+
+      <div id="auth-error" class="hidden mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium"></div>
+      <div id="auth-success" class="hidden mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium"></div>
 
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Correo Electrónico</label>
-          <input id="email-input" type="email" placeholder="tu@correo.com" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1" data-es="Correo Electrónico" data-en="Email Address">Correo Electrónico</label>
+          <input id="auth-email" type="email" placeholder="ejemplo@gmail.com" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-base" />
         </div>
         <div>
-          <label class="block text-xs font-bold uppercase text-gray-600 mb-1">Contraseña (mínimo 6 letras/números)</label>
-          <input id="pass-input" type="password" placeholder="••••••" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1" data-es="Contraseña" data-en="Password">Contraseña</label>
+          <input id="auth-password" type="password" placeholder="••••••" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-base" />
         </div>
 
-        <button onclick="iniciarSesion()" id="btn-login" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg transition">
+        <button onclick="handleLogin()" id="btn-login" class="w-full bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white font-bold py-3.5 rounded-xl shadow-lg transition text-base" data-es="Iniciar Sesión" data-en="Log In">
           Iniciar Sesión
         </button>
 
-        <button onclick="crearCuenta()" id="btn-signup" class="w-full py-3.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-white font-bold transition">
+        <button onclick="handleSignup()" id="btn-signup" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-2 border-emerald-600 font-bold py-3 rounded-xl transition text-base" data-es="Crear Cuenta (14 Días Gratis)" data-en="Create Account (14 Days Free)">
           Crear Cuenta (14 Días Gratis)
         </button>
 
-        <div class="text-center pt-2">
-          <button onclick="recuperarClave()" class="text-xs text-emerald-700 hover:underline font-medium">
+        <div class="text-center pt-1">
+          <button onclick="handleForgotPassword()" class="text-xs font-semibold text-slate-500 hover:text-emerald-700 underline" data-es="¿Olvidaste tu contraseña?" data-en="Forgot your password?">
             ¿Olvidaste tu contraseña?
           </button>
         </div>
@@ -57,418 +55,501 @@
     </div>
   </div>
 
-  <!-- PANTALLA DE CANDADO (SUSCRIPCIÓN VENCIDA) -->
-  <div id="paywall-screen" class="hidden min-h-screen bg-slate-900 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center">
-      <div class="text-5xl mb-4">🔒</div>
-      <h2 class="text-2xl font-extrabold text-gray-900">Tu Prueba de 14 Días Terminó</h2>
-      <p class="text-sm text-gray-600 mt-2">
+  <!-- PANTALLA DE BLOQUEO (CANDADO DÍA 15 -> STRIPE $14.99/MES) -->
+  <div id="lock-screen" class="hidden min-h-screen bg-slate-900/95 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-7 text-center">
+      <div class="text-5xl mb-3">🔒</div>
+      <h2 class="text-2xl font-extrabold text-slate-900 mb-2" data-es="Tu Prueba de 14 Días Terminó" data-en="Your 14-Day Trial Ended">Tu Prueba de 14 Días Terminó</h2>
+      <p class="text-sm text-slate-600 mb-5" data-es="Activa tu Plan Pro (Hasta 500 Clientes) para seguir administrando tu ruta, cobros y mensajes SMS en la nube." data-en="Activate your Pro Plan (Up to 500 Clients) to keep managing your route, billing, and cloud SMS.">
         Activa tu Plan Pro (Hasta 500 Clientes) para seguir administrando tu ruta, cobros y mensajes SMS en la nube.
       </p>
 
-      <div class="my-6 p-5 rounded-2xl bg-emerald-50 border border-emerald-200">
-        <div class="text-3xl font-black text-emerald-800">$14.99 <span class="text-sm font-normal text-gray-600">/ mes</span></div>
-        <p class="text-xs text-emerald-700 mt-2 font-medium">
-          ✓ Hasta 500 clientes • ✓ Respaldo en la nube • ✓ Bilingüe
-        </p>
+      <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-5">
+        <div class="text-3xl font-black text-emerald-800">$14.99 <span class="text-sm font-semibold text-emerald-700">/ mes</span></div>
+        <div class="text-xs text-emerald-800 font-medium mt-1">✓ Hasta 500 clientes • ✓ Respaldo en la nube • ✓ Bilingüe</div>
       </div>
 
-      <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" rel="noopener noreferrer"
-         class="block w-full py-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-base shadow-lg transition">
+      <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" rel="noopener noreferrer" class="block w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-4 rounded-xl shadow-lg text-base mb-4">
         💳 Suscribirme Ahora ($14.99/mes)
       </a>
 
-      <button onclick="verificarSuscripcion()" class="mt-4 w-full py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold">
-        Ya pagué, verificar acceso
-      </button>
-
-      <button onclick="cerrarSesion()" class="mt-4 text-xs text-gray-500 underline">
-        Cerrar sesión
-      </button>
+      <button onclick="logout()" class="text-sm font-semibold text-slate-500 underline" data-es="Cerrar sesión" data-en="Log out">Cerrar sesión</button>
     </div>
   </div>
 
   <!-- PANEL PRINCIPAL DE LA APLICACIÓN -->
   <div id="app-screen" class="hidden pb-24">
-    <!-- HEADER -->
-    <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-20">
-      <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+    <!-- Encabezado -->
+    <header class="bg-emerald-800 text-white px-4 py-4 shadow-md sticky top-0 z-20">
+      <div class="max-w-3xl mx-auto flex items-center justify-between">
         <div>
-          <h1 class="text-xl font-extrabold flex items-center gap-2">🌱 Jardineros Pro</h1>
-          <p id="status-badge" class="text-xs text-emerald-200 mt-0.5">Cargando nube...</p>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🌿</span>
+            <h1 class="font-extrabold text-lg leading-tight">Jardineros Pro</h1>
+          </div>
+          <p class="text-xs text-emerald-200 mt-0.5" id="status-badge">0 / 500 • Nube Activa</p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="abrirModalCliente()" class="bg-white text-emerald-800 font-bold px-3.5 py-2 rounded-xl text-sm shadow hover:bg-emerald-50">
-            + Cliente
-          </button>
-          <button onclick="cerrarSesion()" title="Cerrar sesión" class="bg-emerald-900/70 hover:bg-emerald-950 px-3 py-2 rounded-xl text-xs">
-            Salir
-          </button>
+          <button onclick="toggleLang()" class="bg-emerald-700 hover:bg-emerald-600 text-xs font-bold px-3 py-1.5 rounded-lg">ES/EN</button>
+          <button onclick="logout()" class="bg-emerald-900 hover:bg-red-700 text-xs font-bold px-3 py-1.5 rounded-lg" data-es="Salir" data-en="Exit">Salir</button>
         </div>
       </div>
     </header>
 
-    <!-- RESUMEN RÁPIDO -->
-    <div class="max-w-3xl mx-auto px-4 mt-4 grid grid-cols-3 gap-3">
-      <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 text-center">
-        <div class="text-xs text-gray-500 font-semibold">Clientes</div>
-        <div id="stat-clientes" class="text-xl font-extrabold text-gray-900 mt-0.5">0</div>
-      </div>
-      <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 text-center">
-        <div class="text-xs text-gray-500 font-semibold">Por Cobrar</div>
-        <div id="stat-pendiente" class="text-xl font-extrabold text-amber-600 mt-0.5">$0</div>
-      </div>
-      <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 text-center">
-        <div class="text-xs text-gray-500 font-semibold">Cobrado</div>
-        <div id="stat-cobrado" class="text-xl font-extrabold text-emerald-600 mt-0.5">$0</div>
+    <!-- Navegación de Pestañas -->
+    <div class="bg-white border-b border-slate-200 sticky top-[68px] z-10">
+      <div class="max-w-3xl mx-auto flex">
+        <button onclick="switchTab('clientes')" id="tab-clientes" class="flex-1 py-3 text-sm font-bold text-emerald-800 border-b-2 border-emerald-700" data-es="📋 Clientes y Ruta" data-en="📋 Clients & Route">📋 Clientes y Ruta</button>
+        <button onclick="switchTab('pagos')" id="tab-pagos" class="flex-1 py-3 text-sm font-bold text-slate-500" data-es="💰 Cobros y Respaldo" data-en="💰 Billing & Backup">💰 Cobros y Respaldo</button>
       </div>
     </div>
 
-    <!-- BUSCADOR Y FILTRO DÍA -->
-    <div class="max-w-3xl mx-auto px-4 mt-4 flex flex-col sm:flex-row gap-2">
-      <input id="search-input" oninput="renderClientes()" type="text" placeholder="🔍 Buscar por nombre, dirección o teléfono..."
-             class="flex-1 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-      <select id="filter-dia" onchange="renderClientes()" class="px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-medium">
-        <option value="TODOS">Todos los días</option>
-        <option value="Lunes">Lunes</option>
-        <option value="Martes">Martes</option>
-        <option value="Miércoles">Miércoles</option>
-        <option value="Jueves">Jueves</option>
-        <option value="Viernes">Viernes</option>
-        <option value="Sábado">Sábado</option>
-      </select>
-    </div>
+    <!-- SECCIÓN 1: CLIENTES Y RUTA -->
+    <main id="view-clientes" class="max-w-3xl mx-auto p-4 space-y-4">
+      <div class="flex gap-2">
+        <input id="search-input" oninput="renderClients()" type="text" placeholder="Buscar cliente o dirección..." class="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600" />
+        <button onclick="openClientModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-3 rounded-xl shadow text-sm whitespace-nowrap" data-es="+ Cliente" data-en="+ Client">+ Cliente</button>
+      </div>
 
-    <!-- LISTA DE CLIENTES -->
-    <div id="clientes-list" class="max-w-3xl mx-auto px-4 mt-4 space-y-3"></div>
+      <!-- Filtro por día -->
+      <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs font-bold">
+        <button onclick="setDayFilter('Todos')" class="day-pill bg-emerald-700 text-white px-3 py-1.5 rounded-full" data-day="Todos">Todos</button>
+        <button onclick="setDayFilter('Lunes')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Lunes">Lun</button>
+        <button onclick="setDayFilter('Martes')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Martes">Mar</button>
+        <button onclick="setDayFilter('Miércoles')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Miércoles">Mié</button>
+        <button onclick="setDayFilter('Jueves')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Jueves">Jue</button>
+        <button onclick="setDayFilter('Viernes')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Viernes">Vie</button>
+        <button onclick="setDayFilter('Sábado')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Sábado">Sáb</button>
+      </div>
+
+      <!-- Lista de Clientes -->
+      <div id="clients-list" class="space-y-3"></div>
+    </main>
+
+    <!-- SECCIÓN 2: COBROS Y RESPALDO -->
+    <section id="view-pagos" class="hidden max-w-3xl mx-auto p-4 space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+          <div class="text-xs font-bold text-slate-500 uppercase" data-es="Ingresos Mensuales Est." data-en="Est. Monthly Income">Ingresos Mensuales Est.</div>
+          <div class="text-2xl font-black text-emerald-700 mt-1" id="total-monthly">$0.00</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+          <div class="text-xs font-bold text-slate-500 uppercase" data-es="Clientes Activos" data-en="Active Clients">Clientes Activos</div>
+          <div class="text-2xl font-black text-slate-800 mt-1" id="total-clients-count">0</div>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+        <h3 class="font-bold text-slate-900" data-es="📦 Copia de Seguridad" data-en="📦 Backup Data">📦 Copia de Seguridad</h3>
+        <p class="text-xs text-slate-600" data-es="Descarga un archivo con todos tus clientes o restaura una copia anterior." data-en="Download a backup file of all your clients or restore a previous copy.">Descarga un archivo con todos tus clientes o restaura una copia anterior.</p>
+        <div class="flex gap-2">
+          <button onclick="exportBackup()" class="flex-1 bg-slate-800 text-white font-bold py-2.5 px-3 rounded-xl text-xs">⬇️ Descargar Copia</button>
+          <label class="flex-1 bg-slate-100 border border-slate-300 text-slate-800 font-bold py-2.5 px-3 rounded-xl text-xs text-center cursor-pointer">
+            ⬆️ Cargar Copia
+            <input type="file" accept=".json" onchange="importBackup(event)" class="hidden" />
+          </label>
+        </div>
+      </div>
+    </section>
   </div>
 
   <!-- MODAL AGREGAR / EDITAR CLIENTE -->
-  <div id="cliente-modal" class="hidden fixed inset-0 bg-black/60 z-30 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center mb-4">
-        <h3 id="modal-title" class="text-lg font-extrabold text-gray-900">Nuevo Cliente</h3>
-        <button onclick="cerrarModalCliente()" class="text-gray-400 hover:text-gray-700 text-xl font-bold">&times;</button>
+  <div id="client-modal" class="hidden fixed inset-0 bg-black/60 z-30 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="font-extrabold text-lg text-slate-900" id="modal-title">Nuevo Cliente</h3>
+        <button onclick="closeClientModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold">✕</button>
       </div>
-      <input type="hidden" id="edit-id" />
+      <input type="hidden" id="edit-client-id" />
       <div class="space-y-3">
-        <div>
-          <label class="block text-xs font-bold text-gray-600 mb-1">Nombre del Cliente *</label>
-          <input id="c-nombre" type="text" placeholder="Ej. Juan Pérez" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
+        <input id="c-name" type="text" placeholder="Nombre del cliente *" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm" />
+        <input id="c-phone" type="tel" placeholder="Teléfono (para SMS)" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm" />
+        <input id="c-address" type="text" placeholder="Dirección completa" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm" />
+        <div class="grid grid-cols-2 gap-2">
+          <select id="c-day" class="px-3 py-3 rounded-xl border border-slate-300 text-sm bg-white">
+            <option value="Lunes">Lunes</option>
+            <option value="Martes">Martes</option>
+            <option value="Miércoles">Miércoles</option>
+            <option value="Jueves">Jueves</option>
+            <option value="Viernes">Viernes</option>
+            <option value="Sábado">Sábado</option>
+          </select>
+          <input id="c-price" type="number" step="0.01" placeholder="Precio mensual ($)" class="px-3 py-3 rounded-xl border border-slate-300 text-sm" />
         </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-600 mb-1">Teléfono (para SMS)</label>
-          <input id="c-telefono" type="tel" placeholder="Ej. 6615551234" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-600 mb-1">Dirección</label>
-          <input id="c-direccion" type="text" placeholder="Ej. 123 Main St" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">Día de Visita</label>
-            <select id="c-dia" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm">
-              <option value="Lunes">Lunes</option>
-              <option value="Martes">Martes</option>
-              <option value="Miércoles">Miércoles</option>
-              <option value="Jueves">Jueves</option>
-              <option value="Viernes">Viernes</option>
-              <option value="Sábado">Sábado</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-600 mb-1">Precio ($)</label>
-            <input id="c-precio" type="number" step="0.01" placeholder="50" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-600 mb-1">Notas del servicio</label>
-          <input id="c-notas" type="text" placeholder="Ej. Cortar atrás, cerrar portón" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 text-sm" />
-        </div>
-        <button onclick="guardarCliente()" class="w-full mt-2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow">
-          Guardar Cliente
-        </button>
+        <input id="c-notes" type="text" placeholder="Notas (ej. código de puerta, perro)" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm" />
       </div>
+      <button onclick="saveClient()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 rounded-xl shadow text-base">Guardar Cliente</button>
     </div>
   </div>
 
   <script>
-    const SUPA_URL = "https://rjmrhjpmvptnzetzjsfo.supabase.co";
-    const SUPA_KEY = "sb_publishable_2jMF-6t8D61jE45SkLcOUQ_sgBkj_lI";
-    const OWNER_EMAIL = "gena197590@gmail.com";
-    const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    const OWNER_EMAIL = 'gena197590@gmail.com';
+    const SUPA_URL = 'https://rymrhjpmvptrizetcjsfo.supabase.co';
+    const SUPA_KEY = 'sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkj';
 
+    let supabaseClient = null;
+    try {
+      if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+      }
+    } catch (e) {
+      console.warn('Supabase init fallback:', e);
+    }
+
+    let currentLang = 'es';
     let currentUser = null;
-    let clientes = [];
+    let clients = [];
+    let selectedDay = 'Todos';
 
-    function showError(msg) {
-      const el = document.getElementById("auth-error");
-      el.textContent = msg;
-      el.classList.remove("hidden");
-      document.getElementById("auth-msg").classList.add("hidden");
-    }
-
-    function showSuccess(msg) {
-      const el = document.getElementById("auth-msg");
-      el.textContent = msg;
-      el.classList.remove("hidden");
-      document.getElementById("auth-error").classList.add("hidden");
-    }
-
-    async function iniciarSesion() {
-      const email = document.getElementById("email-input").value.trim().toLowerCase();
-      const password = document.getElementById("pass-input").value;
-      if (!email || !password) return showError("Escribe tu correo y contraseña.");
-      const { data, error } = await db.auth.signInWithPassword({ email, password });
-      if (error) return showError("Error al entrar: " + error.message);
-      currentUser = data.user;
-      await verificarSuscripcion();
-    }
-
-    async function crearCuenta() {
-      const email = document.getElementById("email-input").value.trim().toLowerCase();
-      const password = document.getElementById("pass-input").value;
-      if (!email || password.length < 6) return showError("Escribe un correo válido y contraseña de al menos 6 caracteres.");
-      const { data, error } = await db.auth.signUp({ email, password });
-      if (error) return showError("No se pudo crear cuenta: " + error.message);
-      if (data.user) {
-        currentUser = data.user;
-        const vence = new Date();
-        vence.setDate(vence.getDate() + 14);
-        await db.from("suscripciones").upsert({
-          email: email,
-          activa: true,
-          vence: vence.toISOString()
-        }, { onConflict: "email" });
-        await verificarSuscripcion();
+    function showMsg(type, text) {
+      const errEl = document.getElementById('auth-error');
+      const okEl = document.getElementById('auth-success');
+      errEl.classList.add('hidden');
+      okEl.classList.add('hidden');
+      if (type === 'error') {
+        errEl.textContent = text;
+        errEl.classList.remove('hidden');
       } else {
-        showSuccess("Cuenta creada. Revisa tu correo o inicia sesión.");
+        okEl.textContent = text;
+        okEl.classList.remove('hidden');
       }
     }
 
-    async function recuperarClave() {
-      const email = document.getElementById("email-input").value.trim().toLowerCase();
-      if (!email) return showError("Escribe primero tu correo arriba y luego toca ¿Olvidaste tu contraseña?");
-      const { error } = await db.auth.resetPasswordForEmail(email);
-      if (error) return showError(error.message);
-      showSuccess("Te enviamos un enlace a " + email + " para cambiar tu contraseña.");
+    function toggleLang() {
+      currentLang = currentLang === 'es' ? 'en' : 'es';
+      document.querySelectorAll('[data-es]').forEach(el => {
+        el.textContent = el.getAttribute('data-' + currentLang);
+      });
     }
 
-    async function cerrarSesion() {
-      await db.auth.signOut();
+    function getLocalUsers() {
+      return JSON.parse(localStorage.getItem('jp_users') || '{}');
+    }
+    function saveLocalUsers(users) {
+      localStorage.setItem('jp_users', JSON.stringify(users));
+    }
+
+    async function handleSignup() {
+      const email = document.getElementById('auth-email').value.trim().toLowerCase();
+      const password = document.getElementById('auth-password').value;
+      if (!email || password.length < 6) {
+        showMsg('error', currentLang === 'es' ? 'Escribe un correo válido y contraseña de al menos 6 caracteres.' : 'Enter a valid email and at least 6-character password.');
+        return;
+      }
+
+      const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+      const users = getLocalUsers();
+      users[email] = { password, vence: email === OWNER_EMAIL ? '2036-01-01T00:00:00Z' : trialEnd, activa: true };
+      saveLocalUsers(users);
+
+      if (supabaseClient) {
+        try {
+          await supabaseClient.auth.signUp({ email, password });
+          await supabaseClient.from('suscripciones').upsert({
+            email,
+            activa: true,
+            vence: email === OWNER_EMAIL ? '2036-01-01T00:00:00Z' : trialEnd
+          });
+        } catch (e) {}
+      }
+
+      await enterApp(email);
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('auth-email').value.trim().toLowerCase();
+      const password = document.getElementById('auth-password').value;
+      if (!email || !password) {
+        showMsg('error', currentLang === 'es' ? 'Ingresa tu correo y contraseña.' : 'Enter your email and password.');
+        return;
+      }
+
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          if (!error && data && data.user) {
+            await enterApp(email);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const users = getLocalUsers();
+      if (users[email] && users[email].password === password) {
+        await enterApp(email);
+      } else if (!users[email] && email === OWNER_EMAIL) {
+        users[email] = { password, vence: '2036-01-01T00:00:00Z', activa: true };
+        saveLocalUsers(users);
+        await enterApp(email);
+      } else {
+        showMsg('error', currentLang === 'es' ? 'Correo o contraseña incorrectos. Si es tu primera vez, toca "Crear Cuenta".' : 'Invalid email or password. If new, tap "Create Account".');
+      }
+    }
+
+    async function handleForgotPassword() {
+      const email = document.getElementById('auth-email').value.trim().toLowerCase();
+      if (!email) {
+        showMsg('error', 'Escribe tu correo arriba primero y luego toca "¿Olvidaste tu contraseña?".');
+        return;
+      }
+      if (supabaseClient) {
+        try {
+          await supabaseClient.auth.resetPasswordForEmail(email);
+        } catch (e) {}
+      }
+      showMsg('success', 'Si tu correo está registrado, te enviamos instrucciones de recuperación (o crea una clave nueva si eres el dueño).');
+    }
+
+    async function enterApp(email) {
+      currentUser = email;
+      localStorage.setItem('jp_current_user', email);
+
+      let isAllowed = false;
+      let badgeText = '';
+
+      if (email === OWNER_EMAIL) {
+        isAllowed = true;
+        badgeText = '👑 Dueño Vitalicio • Nube Activa';
+      } else {
+        let subData = null;
+        if (supabaseClient) {
+          try {
+            const { data } = await supabaseClient.from('suscripciones').select('*').eq('email', email).single();
+            if (data) subData = data;
+          } catch (e) {}
+        }
+        if (!subData) {
+          const users = getLocalUsers();
+          subData = users[email] || { activa: true, vence: new Date(Date.now() + 14 * 86400000).toISOString() };
+        }
+        const now = new Date();
+        const venceDate = new Date(subData.vence);
+        if (subData.activa && venceDate > now) {
+          isAllowed = true;
+          const daysLeft = Math.ceil((venceDate - now) / 86400000);
+          badgeText = `${daysLeft} días restantes • Nube Activa`;
+        }
+      }
+
+      document.getElementById('auth-screen').classList.add('hidden');
+      if (!isAllowed) {
+        document.getElementById('app-screen').classList.add('hidden');
+        document.getElementById('lock-screen').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('lock-screen').classList.add('hidden');
+      document.getElementById('app-screen').classList.remove('hidden');
+      await loadClients();
+      document.getElementById('status-badge').textContent = `${clients.length} / 500 • ${badgeText}`;
+    }
+
+    function logout() {
+      localStorage.removeItem('jp_current_user');
       currentUser = null;
-      document.getElementById("app-screen").classList.add("hidden");
-      document.getElementById("paywall-screen").classList.add("hidden");
-      document.getElementById("auth-screen").classList.remove("hidden");
+      document.getElementById('app-screen').classList.add('hidden');
+      document.getElementById('lock-screen').classList.add('hidden');
+      document.getElementById('auth-screen').classList.remove('hidden');
     }
 
-    async function verificarSuscripcion() {
-      if (!currentUser) return;
-      const userEmail = (currentUser.email || "").trim().toLowerCase();
+    async function loadClients() {
+      const localKey = 'jp_clients_' + currentUser;
+      clients = JSON.parse(localStorage.getItem(localKey) || '[]');
 
-      // Acceso directo garantizado para el dueño
-      if (userEmail === OWNER_EMAIL) {
-        mostrarApp("👑 Dueño Vitalicio • Nube Activa");
-        return;
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient.from('clientes_jardin').select('*').eq('user_email', currentUser);
+          if (!error && Array.isArray(data) && data.length > 0) {
+            clients = data;
+            localStorage.setItem(localKey, JSON.stringify(clients));
+          }
+        } catch (e) {}
       }
-
-      const { data, error } = await db
-        .from("suscripciones")
-        .select("*")
-        .eq("email", userEmail)
-        .maybeSingle();
-
-      if (!data) {
-        // Si es nuevo usuario sin registro aún, darle 14 días gratis
-        const vence = new Date();
-        vence.setDate(vence.getDate() + 14);
-        await db.from("suscripciones").insert({
-          email: userEmail,
-          activa: true,
-          vence: vence.toISOString()
-        });
-        mostrarApp("🎁 Prueba Gratis (14 días) • Nube Activa");
-        return;
-      }
-
-      const ahora = new Date();
-      const fechaVence = data.vence ? new Date(data.vence) : new Date(0);
-      const estaActiva = (data.activa === true || data.activo === true) && fechaVence > ahora;
-
-      if (estaActiva) {
-        const diasRestantes = Math.ceil((fechaVence - ahora) / (1000 * 60 * 60 * 24));
-        mostrarApp("✓ Plan Activo (" + diasRestantes + " días) • Nube Activa");
-      } else {
-        document.getElementById("auth-screen").classList.add("hidden");
-        document.getElementById("app-screen").classList.add("hidden");
-        document.getElementById("paywall-screen").classList.remove("hidden");
-      }
+      renderClients();
     }
 
-    async function mostrarApp(badgeText) {
-      document.getElementById("auth-screen").classList.add("hidden");
-      document.getElementById("paywall-screen").classList.add("hidden");
-      document.getElementById("app-screen").classList.remove("hidden");
-      document.getElementById("status-badge").textContent = badgeText;
-      await cargarClientes();
-    }
-
-    async function cargarClientes() {
-      const userEmail = (currentUser.email || "").trim().toLowerCase();
-      const { data, error } = await db
-        .from("clientes")
-        .select("*")
-        .eq("jardinero_email", userEmail)
-        .order("id", { ascending: false });
-
-      if (!error && data) {
-        clientes = data;
-      } else {
-        // Fallback por si la columna se llama user_id o similar
-        const res2 = await db.from("clientes").select("*").order("id", { ascending: false });
-        clientes = res2.data || [];
+    async function syncClients() {
+      const localKey = 'jp_clients_' + currentUser;
+      localStorage.setItem(localKey, JSON.stringify(clients));
+      if (supabaseClient) {
+        try {
+          for (const c of clients) {
+            await supabaseClient.from('clientes_jardin').upsert({ ...c, user_email: currentUser });
+          }
+        } catch (e) {}
       }
-      renderClientes();
+      renderClients();
     }
 
-    function renderClientes() {
-      const q = document.getElementById("search-input").value.toLowerCase();
-      const diaFiltro = document.getElementById("filter-dia").value;
+    function switchTab(tab) {
+      document.getElementById('view-clientes').classList.toggle('hidden', tab !== 'clientes');
+      document.getElementById('view-pagos').classList.toggle('hidden', tab !== 'pagos');
+      document.getElementById('tab-clientes').className = tab === 'clientes' ? 'flex-1 py-3 text-sm font-bold text-emerald-800 border-b-2 border-emerald-700' : 'flex-1 py-3 text-sm font-bold text-slate-500';
+      document.getElementById('tab-pagos').className = tab === 'pagos' ? 'flex-1 py-3 text-sm font-bold text-emerald-800 border-b-2 border-emerald-700' : 'flex-1 py-3 text-sm font-bold text-slate-500';
+    }
 
-      const filtrados = clientes.filter(c => {
-        const matchTexto = (c.nombre || "").toLowerCase().includes(q) ||
-                           (c.direccion || "").toLowerCase().includes(q) ||
-                           (c.telefono || "").toLowerCase().includes(q);
-        const matchDia = diaFiltro === "TODOS" || c.dia === diaFiltro;
-        return matchTexto && matchDia;
+    function setDayFilter(day) {
+      selectedDay = day;
+      document.querySelectorAll('.day-pill').forEach(btn => {
+        if (btn.getAttribute('data-day') === day) {
+          btn.className = 'day-pill bg-emerald-700 text-white px-3 py-1.5 rounded-full';
+        } else {
+          btn.className = 'day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full';
+        }
+      });
+      renderClients();
+    }
+
+    function renderClients() {
+      const q = (document.getElementById('search-input').value || '').toLowerCase();
+      const list = document.getElementById('clients-list');
+      list.innerHTML = '';
+
+      let totalMonthly = 0;
+      clients.forEach(c => { totalMonthly += parseFloat(c.price || 0); });
+      document.getElementById('total-monthly').textContent = '$' + totalMonthly.toFixed(2);
+      document.getElementById('total-clients-count').textContent = clients.length;
+
+      const filtered = clients.filter(c => {
+        const matchDay = selectedDay === 'Todos' || c.day === selectedDay;
+        const matchQ = (c.name || '').toLowerCase().includes(q) || (c.address || '').toLowerCase().includes(q);
+        return matchDay && matchQ;
       });
 
-      let totalPendiente = 0;
-      let totalCobrado = 0;
-      clientes.forEach(c => {
-        const p = parseFloat(c.precio) || 0;
-        if (c.pagado) totalCobrado += p;
-        else totalPendiente += p;
-      });
-
-      document.getElementById("stat-clientes").textContent = clientes.length + " / 500";
-      document.getElementById("stat-pendiente").textContent = "$" + totalPendiente.toFixed(0);
-      document.getElementById("stat-cobrado").textContent = "$" + totalCobrado.toFixed(0);
-
-      const cont = document.getElementById("clientes-list");
-      if (filtrados.length === 0) {
-        cont.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center text-gray-400 text-sm border border-gray-100">
-          No hay clientes aquí todavía. Toca <b>+ Cliente</b> arriba para agregar el primero.
-        </div>`;
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="text-center py-10 text-slate-400 text-sm">No hay clientes en esta vista. Toca "+ Cliente" para agregar uno.</div>';
         return;
       }
 
-      cont.innerHTML = filtrados.map(c => {
-        const pagadoBadge = c.pagado
-          ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Pagado ✓</span>`
-          : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Pendiente</span>`;
-        const telLimpio = (c.telefono || "").replace(/[^0-9]/g, "");
-        const smsTexto = encodeURIComponent(`Hola ${c.nombre}, te recordamos tu servicio de jardinería ($${c.precio || 0}). ¡Gracias!`);
+      filtered.forEach(c => {
+        const mapUrl = 'https://maps.google.com/?q=' + encodeURIComponent(c.address || '');
+        const smsText = encodeURIComponent(`Hola ${c.name}, hoy toca servicio de jardinería. ¡Gracias!`);
+        const smsUrl = `sms:${c.phone || ''}?body=${smsText}`;
 
-        return `
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-extrabold text-gray-900 text-base">${c.nombre || "Sin nombre"}</h3>
-                <p class="text-xs text-gray-500 mt-0.5">📍 ${c.direccion || "Sin dirección"} • 🗓️ ${c.dia || "Sin día"}</p>
-                ${c.notas ? `<p class="text-xs text-gray-400 mt-1">📝 ${c.notas}</p>` : ""}
-              </div>
-              <div class="text-right">
-                <div class="text-lg font-black text-emerald-700">$${c.precio || 0}</div>
-                <div class="mt-1">${pagadoBadge}</div>
-              </div>
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-2.5';
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold uppercase bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-full">${c.day || 'Lunes'}</span>
+              <h4 class="font-extrabold text-base text-slate-900 mt-1">${c.name}</h4>
+              <p class="text-xs text-slate-500">${c.address || 'Sin dirección'}</p>
+              ${c.notes ? `<p class="text-xs text-amber-700 mt-1">📝 ${c.notes}</p>` : ''}
             </div>
-
-            <div class="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-2">
-              <button onclick="togglePagado(${c.id}, ${!c.pagado})" class="flex-1 py-2 px-3 rounded-xl text-xs font-bold ${c.pagado ? 'bg-gray-100 text-gray-700' : 'bg-emerald-600 text-white'}">
-                ${c.pagado ? 'Marcar Pendiente' : '💵 Marcar Pagado'}
-              </button>
-              ${telLimpio ? `<a href="sms:${telLimpio}?body=${smsTexto}" class="py-2 px-3 rounded-xl text-xs font-bold bg-blue-50 text-blue-700">💬 SMS</a>` : ""}
-              <button onclick="editarCliente(${c.id})" class="py-2 px-3 rounded-xl text-xs font-bold bg-gray-100 text-gray-700">✏️</button>
-              <button onclick="eliminarCliente(${c.id})" class="py-2 px-3 rounded-xl text-xs font-bold bg-red-50 text-red-600">🗑️</button>
+            <div class="text-right">
+              <div class="font-black text-emerald-700 text-base">$${parseFloat(c.price || 0).toFixed(2)}</div>
+              <button onclick="deleteClient('${c.id}')" class="text-xs text-red-500 hover:underline mt-1">Eliminar</button>
             </div>
           </div>
+          <div class="flex gap-2 pt-1">
+            ${c.address ? `<a href="${mapUrl}" target="_blank" class="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-xl text-xs">📍 Mapa</a>` : ''}
+            ${c.phone ? `<a href="${smsUrl}" class="flex-1 text-center bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold py-2 rounded-xl text-xs">💬 Enviar SMS</a>` : ''}
+            <button onclick="editClient('${c.id}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-xl text-xs">✏️ Editar</button>
+          </div>
         `;
-      }).join("");
+        list.appendChild(card);
+      });
     }
 
-    function abrirModalCliente() {
-      if (clientes.length >= 500) return alert("Has alcanzado el límite de 500 clientes.");
-      document.getElementById("modal-title").textContent = "Nuevo Cliente";
-      document.getElementById("edit-id").value = "";
-      document.getElementById("c-nombre").value = "";
-      document.getElementById("c-telefono").value = "";
-      document.getElementById("c-direccion").value = "";
-      document.getElementById("c-dia").value = "Lunes";
-      document.getElementById("c-precio").value = "";
-      document.getElementById("c-notas").value = "";
-      document.getElementById("cliente-modal").classList.remove("hidden");
+    function openClientModal() {
+      if (clients.length >= 500) {
+        alert('Has alcanzado el límite de 500 clientes.');
+        return;
+      }
+      document.getElementById('modal-title').textContent = 'Nuevo Cliente';
+      document.getElementById('edit-client-id').value = '';
+      document.getElementById('c-name').value = '';
+      document.getElementById('c-phone').value = '';
+      document.getElementById('c-address').value = '';
+      document.getElementById('c-day').value = 'Lunes';
+      document.getElementById('c-price').value = '';
+      document.getElementById('c-notes').value = '';
+      document.getElementById('client-modal').classList.remove('hidden');
     }
 
-    function cerrarModalCliente() {
-      document.getElementById("cliente-modal").classList.add("hidden");
-    }
-
-    function editarCliente(id) {
-      const c = clientes.find(x => x.id === id);
+    function editClient(id) {
+      const c = clients.find(x => x.id === id);
       if (!c) return;
-      document.getElementById("modal-title").textContent = "Editar Cliente";
-      document.getElementById("edit-id").value = c.id;
-      document.getElementById("c-nombre").value = c.nombre || "";
-      document.getElementById("c-telefono").value = c.telefono || "";
-      document.getElementById("c-direccion").value = c.direccion || "";
-      document.getElementById("c-dia").value = c.dia || "Lunes";
-      document.getElementById("c-precio").value = c.precio || "";
-      document.getElementById("c-notas").value = c.notas || "";
-      document.getElementById("cliente-modal").classList.remove("hidden");
+      document.getElementById('modal-title').textContent = 'Editar Cliente';
+      document.getElementById('edit-client-id').value = c.id;
+      document.getElementById('c-name').value = c.name || '';
+      document.getElementById('c-phone').value = c.phone || '';
+      document.getElementById('c-address').value = c.address || '';
+      document.getElementById('c-day').value = c.day || 'Lunes';
+      document.getElementById('c-price').value = c.price || '';
+      document.getElementById('c-notes').value = c.notes || '';
+      document.getElementById('client-modal').classList.remove('hidden');
     }
 
-    async function guardarCliente() {
-      const id = document.getElementById("edit-id").value;
-      const nombre = document.getElementById("c-nombre").value.trim();
-      if (!nombre) return alert("Escribe el nombre del cliente.");
-      const payload = {
-        nombre,
-        telefono: document.getElementById("c-telefono").value.trim(),
-        direccion: document.getElementById("c-direccion").value.trim(),
-        dia: document.getElementById("c-dia").value,
-        precio: parseFloat(document.getElementById("c-precio").value) || 0,
-        notas: document.getElementById("c-notas").value.trim(),
-        jardinero_email: (currentUser.email || "").trim().toLowerCase()
+    function closeClientModal() {
+      document.getElementById('client-modal').classList.add('hidden');
+    }
+
+    async function saveClient() {
+      const name = document.getElementById('c-name').value.trim();
+      if (!name) {
+        alert('Por favor escribe el nombre del cliente.');
+        return;
+      }
+      const id = document.getElementById('edit-client-id').value || ('c_' + Date.now());
+      const item = {
+        id,
+        name,
+        phone: document.getElementById('c-phone').value.trim(),
+        address: document.getElementById('c-address').value.trim(),
+        day: document.getElementById('c-day').value,
+        price: parseFloat(document.getElementById('c-price').value || '0'),
+        notes: document.getElementById('c-notes').value.trim()
       };
 
-      if (id) {
-        await db.from("clientes").update(payload).eq("id", id);
-      } else {
-        payload.pagado = false;
-        await db.from("clientes").insert(payload);
+      const idx = clients.findIndex(x => x.id === id);
+      if (idx >= 0) clients[idx] = item;
+      else clients.unshift(item);
+
+      closeClientModal();
+      await syncClients();
+    }
+
+    async function deleteClient(id) {
+      if (!confirm('¿Eliminar este cliente?')) return;
+      clients = clients.filter(x => x.id !== id);
+      if (supabaseClient) {
+        try { await supabaseClient.from('clientes_jardin').delete().eq('id', id); } catch (e) {}
       }
-      cerrarModalCliente();
-      await cargarClientes();
+      await syncClients();
     }
 
-    async function togglePagado(id, nuevoEstado) {
-      await db.from("clientes").update({ pagado: nuevoEstado }).eq("id", id);
-      await cargarClientes();
+    function exportBackup() {
+      const blob = new Blob([JSON.stringify(clients, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'respaldo_jardineros_pro.json';
+      a.click();
     }
 
-    async function eliminarCliente(id) {
-      if (!confirm("¿Eliminar este cliente?")) return;
-      await db.from("clientes").delete().eq("id", id);
-      await cargarClientes();
+    function importBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (Array.isArray(data)) {
+            clients = data;
+            await syncClients();
+            alert('Copia restaurada correctamente.');
+          }
+        } catch (err) {
+          alert('Archivo de respaldo no válido.');
+        }
+      };
+      reader.readAsText(file);
     }
 
-    // Revisar si ya hay sesión abierta al cargar
-    window.addEventListener("DOMContentLoaded", async () => {
-      const { data } = await db.auth.getSession();
-      if (data && data.session && data.session.user) {
-        currentUser = data.session.user;
-        await verificarSuscripcion();
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUser = localStorage.getItem('jp_current_user');
+      if (savedUser) {
+        enterApp(savedUser);
       }
     });
   </script>
