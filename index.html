@@ -1,199 +1,171 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Jardineros Pro</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/lawn-mower.png">
-  <link rel="icon" href="https://img.icons8.com/color/180/lawn-mower.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  </style>
 </head>
-<body class="bg-slate-100 text-slate-800 select-none">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased">
 
-  <!-- PANTALLA 1: INICIO DE SESIÓN / REGISTRO -->
-  <div id="pantalla-auth" class="min-h-screen bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-800 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8">
+  <div id="loading-screen" class="fixed inset-0 bg-emerald-800 text-white flex flex-col items-center justify-center z-50">
+    <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mb-4"></div>
+    <p class="font-bold text-lg">Conectando Jardineros Pro...</p>
+  </div>
+
+  <!-- PANTALLA DE INICIO DE SESIÓN / REGISTRO -->
+  <div id="auth-screen" class="hidden min-h-screen bg-gradient-to-br from-emerald-800 to-green-900 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-7">
       <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-100 text-3xl mb-3 shadow-inner">🌿</div>
-        <h1 class="text-2xl font-extrabold text-slate-900">Jardineros Pro</h1>
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 text-3xl mb-3">🌿</div>
+        <h1 class="text-2xl font-extrabold text-slate-800">Jardineros Pro</h1>
         <p class="text-sm text-slate-500 mt-1">Control de clientes, rutas, cobros y SMS</p>
-        <div class="mt-3 inline-block bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-full">
+        <div class="mt-3 inline-block bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold px-3 py-1.5 rounded-full">
           🎁 14 Días de Prueba Gratis • Luego $14.99/mes
         </div>
       </div>
 
-      <div id="auth-error" class="hidden mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium"></div>
-      <div id="auth-ok" class="hidden mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium"></div>
+      <div id="auth-error" class="hidden mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium"></div>
+      <div id="auth-msg" class="hidden mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-medium"></div>
 
-      <div class="space-y-3">
+      <form id="auth-form" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Correo Electrónico</label>
-          <input id="auth-email" type="email" placeholder="tu@correo.com" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-base">
+          <input type="email" id="auth-email" required placeholder="tucorreo@gmail.com"
+            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none text-base" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Contraseña (mín. 6 letras/números)</label>
-          <input id="auth-pass" type="password" placeholder="••••••" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-base">
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Contraseña (Mín. 6 letras/números)</label>
+          <input type="password" id="auth-password" required minlength="6" placeholder="••••••••"
+            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none text-base" />
         </div>
 
-        <button id="btn-login" onclick="iniciarSesion()" class="w-full py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white font-bold text-base shadow-lg transition">
+        <button type="submit" id="btn-login"
+          class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl shadow-md transition text-base">
           Iniciar Sesión
         </button>
 
-        <button id="btn-signup" onclick="crearCuenta()" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-bold text-base shadow transition">
+        <button type="button" id="btn-signup"
+          class="w-full py-3.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl shadow-md transition text-base">
           Crear Cuenta (14 Días Gratis)
         </button>
 
         <div class="text-center pt-1">
-          <button onclick="recuperarClave()" class="text-xs font-semibold text-emerald-700 hover:underline">
-            ¿Olvidaste tu contraseña?
+          <button type="button" id="btn-reset" class="text-xs font-semibold text-emerald-700 hover:underline">
+            ¿Olvidaste tu contraseña? Recuperar aquí
           </button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 
-  <!-- PANTALLA 2: CANDADO DE SUSCRIPCIÓN -->
-  <div id="pantalla-bloqueo" class="hidden min-h-screen bg-slate-900 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 text-center">
-      <div class="text-5xl mb-3">🔒</div>
-      <h2 class="text-2xl font-extrabold text-slate-900">Tu Prueba de 14 Días Terminó</h2>
+  <!-- PANTALLA DE BLOQUEO / SUSCRIPCIÓN ($14.99/MES) -->
+  <div id="paywall-screen" class="hidden min-h-screen bg-slate-900 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-7 text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 text-amber-600 text-3xl mb-4">🔒</div>
+      <h2 class="text-2xl font-extrabold text-slate-800">Tu Prueba de 14 Días Terminó</h2>
       <p class="text-sm text-slate-600 mt-2">
-        Activa tu <strong>Plan Pro (Hasta 500 Clientes)</strong> para seguir administrando tu ruta, cobros y mensajes SMS en la nube.
+        Activa tu suscripción mensual para seguir administrando hasta <strong>500 clientes</strong> en la nube, rutas y recordatorios SMS.
       </p>
 
-      <div class="my-5 p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
-        <div class="text-3xl font-black text-emerald-800">$14.99 <span class="text-sm font-normal text-slate-600">/ mes</span></div>
-        <div class="text-xs text-emerald-700 font-medium mt-1">✓ Hasta 500 clientes • ✓ Respaldo en la nube • ✓ Bilingüe</div>
+      <div class="my-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+        <p class="text-xs font-bold uppercase text-emerald-700">Plan Profesional Mensual</p>
+        <p class="text-4xl font-black text-emerald-800 mt-1">$14.99 <span class="text-sm font-medium text-emerald-600">/ mes</span></p>
+        <p class="text-xs text-slate-500 mt-1">Cancela cuando quieras • Respaldo automático en la nube</p>
       </div>
 
       <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" rel="noopener noreferrer"
-         class="block w-full py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-base shadow-lg transition mb-3">
+        class="block w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl shadow-lg text-base transition">
         💳 Suscribirme Ahora ($14.99/mes)
       </a>
 
-      <button onclick="verificarSuscripcion()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs mb-3">
-        Ya pagué • Verificar acceso
-      </button>
-
-      <button onclick="cerrarSesion()" class="text-xs text-slate-500 underline">
-        Cerrar sesión
+      <button type="button" id="btn-logout-paywall" class="mt-4 text-xs text-slate-400 hover:text-slate-600 underline">
+        Cerrar sesión (<span id="paywall-email"></span>)
       </button>
     </div>
   </div>
 
-  <!-- PANTALLA 3: APLICACIÓN PRINCIPAL -->
-  <div id="pantalla-app" class="hidden min-h-screen pb-24">
-    <!-- Barra Superior -->
-    <header class="bg-emerald-800 text-white px-4 py-4 shadow-md sticky top-0 z-20">
-      <div class="max-w-2xl mx-auto flex items-center justify-between">
+  <!-- PANEL PRINCIPAL DE LA APLICACIÓN -->
+  <div id="app-screen" class="hidden min-h-screen pb-24">
+    <header class="bg-emerald-800 text-white shadow-md sticky top-0 z-30">
+      <div class="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
         <div>
           <h1 class="text-lg font-extrabold flex items-center gap-1.5">🌿 Jardineros Pro</h1>
-          <p id="subtitulo-estado" class="text-xs text-emerald-200">0 / 500 • Nube Activa</p>
+          <p class="text-xs text-emerald-200"><span id="client-count">0</span> / 500 clientes • <span id="plan-badge" class="font-semibold text-amber-300">Nube Activa</span></p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="abrirModalCliente()" class="bg-white text-emerald-900 font-bold text-xs px-3.5 py-2 rounded-xl shadow active:scale-95">
+          <button id="btn-open-modal" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold text-xs px-3.5 py-2 rounded-xl shadow">
             + Cliente
           </button>
-          <button onclick="cerrarSesion()" title="Salir" class="bg-emerald-900/70 text-emerald-100 text-xs px-2.5 py-2 rounded-xl">
+          <button id="btn-logout" class="bg-emerald-900/80 hover:bg-emerald-950 text-emerald-100 text-xs px-3 py-2 rounded-xl">
             Salir
           </button>
         </div>
       </div>
+
+      <!-- PESTAÑAS -->
+      <div class="max-w-3xl mx-auto px-4 flex border-t border-emerald-700 text-xs font-bold">
+        <button data-tab="clientes" class="tab-btn flex-1 py-2.5 text-center border-b-2 border-amber-400 text-white">👥 Clientes</button>
+        <button data-tab="rutas" class="tab-btn flex-1 py-2.5 text-center border-b-2 border-transparent text-emerald-200">📅 Rutas</button>
+        <button data-tab="cobros" class="tab-btn flex-1 py-2.5 text-center border-b-2 border-transparent text-emerald-200">💵 Cobros</button>
+      </div>
     </header>
 
-    <!-- Contenido Principal -->
-    <main class="max-w-2xl mx-auto p-4">
-      <!-- Pestaña 1: Clientes -->
-      <section id="tab-clientes">
-        <div class="mb-3">
-          <input id="buscador" oninput="renderizarClientes()" type="text" placeholder="🔍 Buscar cliente, dirección o teléfono..."
-                 class="w-full px-4 py-3 rounded-2xl bg-white border border-slate-200 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600">
-        </div>
-        <div id="lista-clientes" class="space-y-3"></div>
-      </section>
-
-      <!-- Pestaña 2: Contabilidad / Resumen -->
-      <section id="tab-conta" class="hidden space-y-4">
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-            <div class="text-xs font-bold text-slate-400 uppercase">Total Clientes</div>
-            <div id="stat-clientes" class="text-2xl font-black text-slate-800 mt-1">0</div>
-          </div>
-          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-            <div class="text-xs font-bold text-slate-400 uppercase">Ingreso Mensual Est.</div>
-            <div id="stat-ingresos" class="text-2xl font-black text-emerald-700 mt-1">$0</div>
-          </div>
-          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-            <div class="text-xs font-bold text-slate-400 uppercase">Pagados este mes</div>
-            <div id="stat-pagados" class="text-2xl font-black text-emerald-600 mt-1">0</div>
-          </div>
-          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-            <div class="text-xs font-bold text-slate-400 uppercase">Pendientes de cobro</div>
-            <div id="stat-pendientes" class="text-2xl font-black text-amber-600 mt-1">0</div>
-          </div>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-          <h3 class="font-bold text-sm text-slate-800 mb-2">Tu Cuenta y Suscripción</h3>
-          <p id="info-cuenta" class="text-xs text-slate-600 leading-relaxed"></p>
-          <button onclick="reiniciarMes()" class="mt-3 w-full py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 font-bold text-xs">
-            🔄 Iniciar Nuevo Mes (Marcar todos como Pendientes)
-          </button>
-        </div>
-      </section>
-    </main>
-
-    <!-- Navegación Inferior -->
-    <nav class="fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 px-6 py-2.5 z-20">
-      <div class="max-w-2xl mx-auto flex justify-around">
-        <button onclick="cambiarTab('clientes')" id="nav-clientes" class="flex flex-col items-center text-emerald-700 font-bold text-xs">
-          <span class="text-xl">📋</span>
-          <span>Clientes</span>
-        </button>
-        <button onclick="cambiarTab('conta')" id="nav-conta" class="flex flex-col items-center text-slate-400 font-bold text-xs">
-          <span class="text-xl">💰</span>
-          <span>Resumen</span>
-        </button>
+    <main class="max-w-3xl mx-auto px-4 pt-4">
+      <!-- BUSCADOR -->
+      <div class="mb-4">
+        <input type="text" id="search-input" placeholder="🔍 Buscar cliente por nombre, dirección o día..."
+          class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 shadow-sm text-sm focus:ring-2 focus:ring-emerald-600 outline-none" />
       </div>
-    </nav>
+
+      <!-- SECCIÓN CLIENTES -->
+      <section id="tab-clientes" class="space-y-3"></section>
+
+      <!-- SECCIÓN RUTAS -->
+      <section id="tab-rutas" class="hidden space-y-3"></section>
+
+      <!-- SECCIÓN COBROS -->
+      <section id="tab-cobros" class="hidden space-y-3"></section>
+    </main>
   </div>
 
   <!-- MODAL AGREGAR / EDITAR CLIENTE -->
-  <div id="modal-cliente" class="hidden fixed inset-0 bg-black/60 z-30 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center mb-4">
-        <h3 id="modal-titulo" class="text-lg font-extrabold text-slate-900">Nuevo Cliente</h3>
-        <button onclick="cerrarModalCliente()" class="text-slate-400 text-2xl leading-none">&times;</button>
+  <div id="client-modal" class="hidden fixed inset-0 bg-black/60 z-40 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="modal-title" class="text-lg font-extrabold text-slate-800">Nuevo Cliente</h3>
+        <button id="btn-close-modal" class="text-slate-400 hover:text-slate-700 text-2xl leading-none">&times;</button>
       </div>
-      <input type="hidden" id="cli-id">
-      <div class="space-y-3">
+
+      <form id="client-form" class="space-y-3.5">
+        <input type="hidden" id="client-id" />
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Nombre completo *</label>
-          <input id="cli-nombre" type="text" placeholder="Ej. Juan Pérez" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Teléfono (para SMS)</label>
-          <input id="cli-telefono" type="tel" placeholder="Ej. 6615551234" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Dirección</label>
-          <input id="cli-direccion" type="text" placeholder="Ej. 123 Main St" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Nombre Completo *</label>
+          <input type="text" id="c-nombre" required placeholder="Ej. Juan Pérez"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Tarifa Mensual ($)</label>
-            <input id="cli-precio" type="number" placeholder="120" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Teléfono (SMS) *</label>
+            <input type="tel" id="c-telefono" required placeholder="Ej. 6615551234"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Día de Servicio</label>
-            <select id="cli-dia" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Tarifa ($ USD) *</label>
+            <input type="number" step="0.01" id="c-precio" required placeholder="80"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Dirección</label>
+          <input type="text" id="c-direccion" placeholder="Calle, número y ciudad"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Día de Servicio</label>
+            <select id="c-dia" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
               <option value="Lunes">Lunes</option>
               <option value="Martes">Martes</option>
               <option value="Miércoles">Miércoles</option>
@@ -202,336 +174,381 @@
               <option value="Sábado">Sábado</option>
             </select>
           </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Frecuencia</label>
+            <select id="c-frecuencia" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+              <option value="Semanal">Semanal</option>
+              <option value="Quincenal">Quincenal</option>
+              <option value="Mensual">Mensual</option>
+            </select>
+          </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Notas (perro, portón, etc.)</label>
-          <input id="cli-notas" type="text" placeholder="Ej. Código portón 4321" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm">
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Estado de Pago</label>
+          <select id="c-pagado" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+            <option value="pendiente">⏳ Pendiente de pago</option>
+            <option value="pagado">✅ Pagado al día</option>
+          </select>
         </div>
-        <button onclick="guardarCliente()" class="w-full py-3.5 rounded-xl bg-emerald-700 text-white font-bold text-sm shadow-lg mt-2">
-          Guardar Cliente
+        <div>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Notas del jardín</label>
+          <textarea id="c-notas" rows="2" placeholder="Código de portón, perro en patio, etc."
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow text-sm">
+          Guardar Cliente en la Nube
         </button>
-      </div>
+      </form>
     </div>
   </div>
 
   <script>
     const SUPA_URL = "https://rymrhjpmvptrizetcjsfo.supabase.co";
-    const SUPA_KEY = "sb_publishable_2jMF-6t8D61jE45SkLcOUQ_sgBkjI7k";
-    const DUENO_EMAIL = "gena197590@gmail.com";
+    const SUPA_KEY = "sb_publishable_2jMF-6t8D61jE45SkLcOUQ_sgBkjQ2M";
+    const OWNER_EMAIL = "gena197590@gmail.com";
+
     const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
-    let usuarioActual = null;
+    let currentUser = null;
     let clientes = [];
-    let infoSuscripcion = null;
+    let currentTab = "clientes";
 
-    function mostrarPantalla(id) {
-      ["pantalla-auth", "pantalla-bloqueo", "pantalla-app"].forEach(p => {
-        document.getElementById(p).classList.add("hidden");
+    const $ = (id) => document.getElementById(id);
+
+    function showScreen(screenId) {
+      ["loading-screen", "auth-screen", "paywall-screen", "app-screen"].forEach(id => {
+        $(id).classList.add("hidden");
       });
-      document.getElementById(id).classList.remove("hidden");
+      $(screenId).classList.remove("hidden");
     }
 
-    function mostrarMensajeAuth(texto, esError = true) {
-      const err = document.getElementById("auth-error");
-      const ok = document.getElementById("auth-ok");
-      err.classList.add("hidden");
-      ok.classList.add("hidden");
-      if (esError) {
-        err.textContent = texto;
-        err.classList.remove("hidden");
-      } else {
-        ok.textContent = texto;
-        ok.classList.remove("hidden");
-      }
+    function showAuthError(msg) {
+      $("auth-error").textContent = msg;
+      $("auth-error").classList.remove("hidden");
+      $("auth-msg").classList.add("hidden");
     }
 
-    async function iniciarSesion() {
-      const email = document.getElementById("auth-email").value.trim().toLowerCase();
-      const password = document.getElementById("auth-pass").value;
-      if (!email || !password) return mostrarMensajeAuth("Escribe tu correo y contraseña.");
-
-      const btn = document.getElementById("btn-login");
-      btn.textContent = "Entrando...";
-      btn.disabled = true;
-
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      btn.textContent = "Iniciar Sesión";
-      btn.disabled = false;
-
-      if (error) return mostrarMensajeAuth("Error: " + error.message);
-      usuarioActual = data.user;
-      await verificarSuscripcion();
+    function showAuthMsg(msg) {
+      $("auth-msg").textContent = msg;
+      $("auth-msg").classList.remove("hidden");
+      $("auth-error").classList.add("hidden");
     }
 
-    async function crearCuenta() {
-      const email = document.getElementById("auth-email").value.trim().toLowerCase();
-      const password = document.getElementById("auth-pass").value;
-      if (!email || password.length < 6) {
-        return mostrarMensajeAuth("Escribe tu correo y una contraseña de al menos 6 caracteres.");
-      }
+    async function checkAccessAndLoad(user) {
+      currentUser = user;
+      const email = (user.email || "").toLowerCase().trim();
 
-      const btn = document.getElementById("btn-signup");
-      btn.textContent = "Creando cuenta...";
-      btn.disabled = true;
-
-      const { data, error } = await sb.auth.signUp({ email, password });
-      btn.textContent = "Crear Cuenta (14 Días Gratis)";
-      btn.disabled = false;
-
-      if (error) return mostrarMensajeAuth("Error: " + error.message);
-      if (data.user) {
-        usuarioActual = data.user;
-        await verificarSuscripcion();
-      } else {
-        mostrarMensajeAuth("Cuenta creada. Revisa tu correo o presiona Iniciar Sesión.", false);
-      }
-    }
-
-    async function recuperarClave() {
-      const email = document.getElementById("auth-email").value.trim().toLowerCase();
-      if (!email) return mostrarMensajeAuth("Escribe primero tu correo arriba y vuelve a tocar ¿Olvidaste tu contraseña?");
-      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
-      if (error) return mostrarMensajeAuth("Error: " + error.message);
-      mostrarMensajeAuth("Te enviamos un enlace a tu correo para crear una nueva contraseña.", false);
-    }
-
-    async function cerrarSesion() {
-      await sb.auth.signOut();
-      usuarioActual = null;
-      clientes = [];
-      mostrarPantalla("pantalla-auth");
-    }
-
-    async function verificarSuscripcion() {
-      if (!usuarioActual) return mostrarPantalla("pantalla-auth");
-      const email = usuarioActual.email.toLowerCase();
-
-      // Acceso vitalicio garantizado para el dueño
-      if (email === DUENO_EMAIL) {
-        infoSuscripcion = { activa: true, vence: "2036-01-01", esDueno: true };
-        mostrarPantalla("pantalla-app");
-        await cargarClientes();
+      // El dueño entra siempre directo y sin candado
+      if (email === OWNER_EMAIL) {
+        $("plan-badge").textContent = "👑 Dueño Vitalicio";
+        showScreen("app-screen");
+        await loadClientes();
         return;
       }
 
-      const { data, error } = await sb
-        .from("suscripciones")
-        .select("*")
-        .eq("email", email)
-        .maybeSingle();
+      try {
+        const { data, error } = await sb
+          .from("suscripciones")
+          .select("*")
+          .eq("email", email)
+          .maybeSingle();
 
-      if (!data) {
-        // Registrar prueba gratis de 14 días automáticamente
-        const fechaVence = new Date();
-        fechaVence.setDate(fechaVence.getDate() + 14);
-        const nueva = { email, activa: true, vence: fechaVence.toISOString() };
-        await sb.from("suscripciones").insert([nueva]);
-        infoSuscripcion = nueva;
-        mostrarPantalla("pantalla-app");
-        await cargarClientes();
-        return;
-      }
+        const now = new Date();
 
-      const ahora = new Date();
-      const vence = new Date(data.vence);
-      if (data.activa && vence > ahora) {
-        infoSuscripcion = data;
-        mostrarPantalla("pantalla-app");
-        await cargarClientes();
-      } else {
-        mostrarPantalla("pantalla-bloqueo");
+        if (!data) {
+          // Crear prueba gratuita de 14 días automáticamente
+          const vence = new Date();
+          vence.setDate(vence.getDate() + 14);
+          await sb.from("suscripciones").insert([{
+            email: email,
+            activa: true,
+            vence: vence.toISOString()
+          }]);
+          $("plan-badge").textContent = "Prueba Gratis (14 días)";
+          showScreen("app-screen");
+          await loadClientes();
+          return;
+        }
+
+        const venceDate = data.vence ? new Date(data.vence) : new Date(0);
+        const isValid = (data.activa === true || data.activo === true) && venceDate > now;
+
+        if (isValid) {
+          const dias = Math.ceil((venceDate - now) / (1000 * 60 * 60 * 24));
+          $("plan-badge").textContent = dias > 365 ? "Plan Pro Activo" : `Activo (${dias} días)`;
+          showScreen("app-screen");
+          await loadClientes();
+        } else {
+          $("paywall-email").textContent = email;
+          showScreen("paywall-screen");
+        }
+      } catch (err) {
+        $("paywall-email").textContent = email;
+        showScreen("paywall-screen");
       }
     }
 
-    async function cargarClientes() {
+    async function loadClientes() {
       const { data, error } = await sb
-        .from("clientes_jardin")
+        .from("clientes")
         .select("*")
-        .eq("user_id", usuarioActual.id)
-        .order("nombre", { ascending: true });
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
 
       if (!error && data) {
         clientes = data;
       } else {
-        const respaldo = localStorage.getItem("jp_cli_" + usuarioActual.id);
-        clientes = respaldo ? JSON.parse(respaldo) : [];
+        clientes = [];
       }
-      actualizarResumen();
-      renderizarClientes();
+      $("client-count").textContent = clientes.length;
+      renderAll();
     }
 
-    function actualizarResumen() {
-      const total = clientes.length;
-      const ingresos = clientes.reduce((acc, c) => acc + (Number(c.precio) || 0), 0);
-      const pagados = clientes.filter(c => c.pagado).length;
-      const pendientes = total - pagados;
-
-      document.getElementById("subtitulo-estado").textContent = `${total} / 500 • Nube Activa`;
-      document.getElementById("stat-clientes").textContent = total;
-      document.getElementById("stat-ingresos").textContent = "$" + ingresos.toLocaleString();
-      document.getElementById("stat-pagados").textContent = pagados;
-      document.getElementById("stat-pendientes").textContent = pendientes;
-
-      if (infoSuscripcion?.esDueno) {
-        document.getElementById("info-cuenta").textContent = `👑 Cuenta de Dueño (${usuarioActual.email}) • Acceso Vitalicio Activo.`;
-      } else if (infoSuscripcion?.vence) {
-        const f = new Date(infoSuscripcion.vence).toLocaleDateString("es-MX");
-        document.getElementById("info-cuenta").textContent = `Usuario: ${usuarioActual.email} • Tu acceso está activo hasta el ${f}.`;
-      }
-    }
-
-    function renderizarClientes() {
-      const q = document.getElementById("buscador").value.toLowerCase();
-      const cont = document.getElementById("lista-clientes");
-      const filtrados = clientes.filter(c =>
+    function renderAll() {
+      const q = ($("search-input").value || "").toLowerCase().trim();
+      const filtered = clientes.filter(c =>
         (c.nombre || "").toLowerCase().includes(q) ||
         (c.direccion || "").toLowerCase().includes(q) ||
-        (c.telefono || "").includes(q)
+        (c.dia || "").toLowerCase().includes(q)
       );
 
-      if (filtrados.length === 0) {
-        cont.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center text-slate-400 text-sm">No hay clientes aún. Toca <strong>+ Cliente</strong> arriba para agregar el primero.</div>`;
-        return;
+      // 1. CLIENTES
+      const cContainer = $("tab-clientes");
+      if (filtered.length === 0) {
+        cContainer.innerHTML = `<div class="bg-white rounded-2xl p-8 text-center border border-slate-200 text-slate-500 text-sm">
+          No hay clientes registrados todavía. Toca <strong>+ Cliente</strong> arriba para agregar el primero.
+        </div>`;
+      } else {
+        cContainer.innerHTML = filtered.map(c => {
+          const telClean = (c.telefono || "").replace(/[^0-9]/g, "");
+          const smsBody = encodeURIComponent(`Hola ${c.nombre}, te saludamos de Jardineros Pro. Te recordamos tu servicio de jardinería programado el ${c.dia}. ¡Gracias!`);
+          const isPaid = c.pagado === "pagado";
+          return `
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="font-extrabold text-slate-800 text-base">${c.nombre}</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">📍 ${c.direccion || "Sin dirección"}</p>
+                  <p class="text-xs text-emerald-700 font-semibold mt-1">📅 ${c.dia} (${c.frecuencia}) • 💵 $${Number(c.precio || 0).toFixed(2)}</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${isPaid ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}">
+                  ${isPaid ? "✅ Pagado" : "⏳ Pendiente"}
+                </span>
+              </div>
+              ${c.notas ? `<p class="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg mt-2">📝 ${c.notas}</p>` : ""}
+              <div class="flex gap-2 mt-3 pt-3 border-t border-slate-100 text-xs font-bold">
+                <a href="sms:${telClean}?&body=${smsBody}" class="flex-1 py-2 text-center bg-sky-50 text-sky-700 rounded-xl border border-sky-200">💬 Enviar SMS</a>
+                <button onclick="togglePago('${c.id}', '${isPaid ? "pendiente" : "pagado"}')" class="flex-1 py-2 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200">
+                  ${isPaid ? "Marcar Pendiente" : "Marcar Pagado"}
+                </button>
+                <button onclick="editCliente('${c.id}')" class="px-3 py-2 bg-slate-100 text-slate-700 rounded-xl">✏️</button>
+                <button onclick="deleteCliente('${c.id}')" class="px-3 py-2 bg-red-50 text-red-600 rounded-xl">🗑️</button>
+              </div>
+            </div>
+          `;
+        }).join("");
       }
 
-      cont.innerHTML = filtrados.map(c => {
-        const msg = encodeURIComponent(`Hola ${c.nombre}, te saludo de tu servicio de jardinería. Tu mensualidad de $${c.precio || 0} está lista. ¡Muchas gracias!`);
-        const telLimpio = (c.telefono || "").replace(/[^0-9]/g, "");
+      // 2. RUTAS POR DÍA
+      const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      $("tab-rutas").innerHTML = dias.map(dia => {
+        const delDia = filtered.filter(c => c.dia === dia);
         return `
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-slate-900 text-base">${c.nombre}</h3>
-                <p class="text-xs text-slate-500 mt-0.5">📍 ${c.direccion || "Sin dirección"} • 📅 ${c.dia || "Lunes"}</p>
-                ${c.notas ? `<p class="text-xs text-amber-700 bg-amber-50 inline-block px-2 py-0.5 rounded mt-1">📝 ${c.notas}</p>` : ""}
-              </div>
-              <div class="text-right">
-                <div class="font-black text-emerald-700 text-lg">$${c.precio || 0}</div>
-                <button onclick="togglePago('${c.id}')" class="mt-1 text-xs font-bold px-2.5 py-1 rounded-full ${c.pagado ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                  ${c.pagado ? '✓ Pagado' : '⏳ Pendiente'}
-                </button>
-              </div>
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="font-extrabold text-emerald-800">${dia}</h3>
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">${delDia.length} trabajos</span>
             </div>
-            <div class="mt-3 pt-3 border-t border-slate-100 flex gap-2">
-              ${telLimpio ? `<a href="sms:${telLimpio}?&body=${msg}" class="flex-1 text-center py-2 rounded-xl bg-emerald-50 text-emerald-800 font-bold text-xs">💬 Enviar SMS</a>` : ""}
-              <button onclick="editarCliente('${c.id}')" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs">✏️ Editar</button>
-              <button onclick="eliminarCliente('${c.id}')" class="px-3 py-2 rounded-xl bg-red-50 text-red-600 font-bold text-xs">🗑️</button>
-            </div>
+            ${delDia.length === 0 ? `<p class="text-xs text-slate-400">Sin rutas asignadas</p>` :
+              `<ul class="divide-y divide-slate-100 text-xs">
+                ${delDia.map(c => `<li class="py-2 flex justify-between"><span><strong>${c.nombre}</strong> — ${c.direccion || ""}</span><span class="font-bold text-emerald-700">$${c.precio}</span></li>`).join("")}
+              </ul>`
+            }
           </div>
         `;
       }).join("");
+
+      // 3. COBROS
+      const totalCobrado = clientes.filter(c => c.pagado === "pagado").reduce((s, c) => s + Number(c.precio || 0), 0);
+      const totalPendiente = clientes.filter(c => c.pagado !== "pagado").reduce((s, c) => s + Number(c.precio || 0), 0);
+      $("tab-cobros").innerHTML = `
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-emerald-600 text-white rounded-2xl p-4 shadow">
+            <p class="text-xs uppercase font-bold text-emerald-100">Cobrado</p>
+            <p class="text-2xl font-black mt-1">$${totalCobrado.toFixed(2)}</p>
+          </div>
+          <div class="bg-amber-500 text-white rounded-2xl p-4 shadow">
+            <p class="text-xs uppercase font-bold text-amber-100">Por Cobrar</p>
+            <p class="text-2xl font-black mt-1">$${totalPendiente.toFixed(2)}</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 mt-3">
+          <h4 class="font-bold text-sm text-slate-700 mb-2">Clientes Pendientes de Pago</h4>
+          ${clientes.filter(c => c.pagado !== "pagado").map(c => `
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 text-xs">
+              <div><strong>${c.nombre}</strong><br><span class="text-slate-400">${c.dia}</span></div>
+              <button onclick="togglePago('${c.id}', 'pagado')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-bold">Cobrar $${c.precio}</button>
+            </div>
+          `).join("") || `<p class="text-xs text-slate-400">¡Todos los clientes están al día!</p>`}
+        </div>
+      `;
     }
 
-    function abrirModalCliente() {
-      if (clientes.length >= 500) return alert("Has alcanzado el límite de 500 clientes.");
-      document.getElementById("modal-titulo").textContent = "Nuevo Cliente";
-      document.getElementById("cli-id").value = "";
-      document.getElementById("cli-nombre").value = "";
-      document.getElementById("cli-telefono").value = "";
-      document.getElementById("cli-direccion").value = "";
-      document.getElementById("cli-precio").value = "";
-      document.getElementById("cli-dia").value = "Lunes";
-      document.getElementById("cli-notas").value = "";
-      document.getElementById("modal-cliente").classList.remove("hidden");
-    }
+    window.togglePago = async (id, nuevoEstado) => {
+      await sb.from("clientes").update({ pagado: nuevoEstado }).eq("id", id);
+      await loadClientes();
+    };
 
-    function cerrarModalCliente() {
-      document.getElementById("modal-cliente").classList.add("hidden");
-    }
+    window.deleteCliente = async (id) => {
+      if (!confirm("¿Eliminar este cliente?")) return;
+      await sb.from("clientes").delete().eq("id", id);
+      await loadClientes();
+    };
 
-    function editarCliente(id) {
-      const c = clientes.find(x => String(x.id) === String(id));
+    window.editCliente = (id) => {
+      const c = clientes.find(x => x.id === id);
       if (!c) return;
-      document.getElementById("modal-titulo").textContent = "Editar Cliente";
-      document.getElementById("cli-id").value = c.id;
-      document.getElementById("cli-nombre").value = c.nombre || "";
-      document.getElementById("cli-telefono").value = c.telefono || "";
-      document.getElementById("cli-direccion").value = c.direccion || "";
-      document.getElementById("cli-precio").value = c.precio || "";
-      document.getElementById("cli-dia").value = c.dia || "Lunes";
-      document.getElementById("cli-notas").value = c.notas || "";
-      document.getElementById("modal-cliente").classList.remove("hidden");
-    }
+      $("modal-title").textContent = "Editar Cliente";
+      $("client-id").value = c.id;
+      $("c-nombre").value = c.nombre || "";
+      $("c-telefono").value = c.telefono || "";
+      $("c-precio").value = c.precio || "";
+      $("c-direccion").value = c.direccion || "";
+      $("c-dia").value = c.dia || "Lunes";
+      $("c-frecuencia").value = c.frecuencia || "Semanal";
+      $("c-pagado").value = c.pagado || "pendiente";
+      $("c-notas").value = c.notas || "";
+      $("client-modal").classList.remove("hidden");
+    };
 
-    async function guardarCliente() {
-      const id = document.getElementById("cli-id").value;
-      const nombre = document.getElementById("cli-nombre").value.trim();
-      if (!nombre) return alert("Escribe el nombre del cliente.");
+    // EVENTOS DE AUTENTICACIÓN
+    $("auth-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = $("auth-email").value.trim();
+      const password = $("auth-password").value;
+      $("auth-error").classList.add("hidden");
 
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) {
+        showAuthError("No se pudo entrar: " + error.message);
+      } else if (data.user) {
+        await checkAccessAndLoad(data.user);
+      }
+    });
+
+    $("btn-signup").addEventListener("click", async () => {
+      const email = $("auth-email").value.trim();
+      const password = $("auth-password").value;
+      if (!email || password.length < 6) {
+        showAuthError("Escribe un correo válido y una contraseña de al menos 6 caracteres.");
+        return;
+      }
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) {
+        showAuthError("Error al crear cuenta: " + error.message);
+      } else if (data.user) {
+        if (data.session) {
+          await checkAccessAndLoad(data.user);
+        } else {
+          showAuthMsg("¡Cuenta creada! Revisa tu correo para confirmar o presiona Iniciar Sesión.");
+        }
+      }
+    });
+
+    $("btn-reset").addEventListener("click", async () => {
+      const email = $("auth-email").value.trim();
+      if (!email) {
+        showAuthError("Escribe primero tu correo electrónico arriba para enviarte el enlace de recuperación.");
+        return;
+      }
+      const { error } = await sb.auth.resetPasswordForEmail(email);
+      if (error) {
+        showAuthError("Error: " + error.message);
+      } else {
+        showAuthMsg("Te enviamos un correo para restablecer tu contraseña. Revisa tu bandeja de entrada.");
+      }
+    });
+
+    $("btn-logout").addEventListener("click", async () => {
+      await sb.auth.signOut();
+      showScreen("auth-screen");
+    });
+
+    $("btn-logout-paywall").addEventListener("click", async () => {
+      await sb.auth.signOut();
+      showScreen("auth-screen");
+    });
+
+    // EVENTOS DE MODAL Y PESTAÑAS
+    $("btn-open-modal").addEventListener("click", () => {
+      if (clientes.length >= 500) {
+        alert("Has alcanzado el límite de 500 clientes de tu plan.");
+        return;
+      }
+      $("modal-title").textContent = "Nuevo Cliente";
+      $("client-form").reset();
+      $("client-id").value = "";
+      $("client-modal").classList.remove("hidden");
+    });
+
+    $("btn-close-modal").addEventListener("click", () => {
+      $("client-modal").classList.add("hidden");
+    });
+
+    $("client-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = $("client-id").value;
       const payload = {
-        user_id: usuarioActual.id,
-        nombre,
-        telefono: document.getElementById("cli-telefono").value.trim(),
-        direccion: document.getElementById("cli-direccion").value.trim(),
-        precio: Number(document.getElementById("cli-precio").value) || 0,
-        dia: document.getElementById("cli-dia").value,
-        notas: document.getElementById("cli-notas").value.trim()
+        user_id: currentUser.id,
+        nombre: $("c-nombre").value.trim(),
+        telefono: $("c-telefono").value.trim(),
+        precio: parseFloat($("c-precio").value) || 0,
+        direccion: $("c-direccion").value.trim(),
+        dia: $("c-dia").value,
+        frecuencia: $("c-frecuencia").value,
+        pagado: $("c-pagado").value,
+        notas: $("c-notas").value.trim()
       };
 
       if (id) {
-        await sb.from("clientes_jardin").update(payload).eq("id", id);
-        const idx = clientes.findIndex(x => String(x.id) === String(id));
-        if (idx >= 0) clientes[idx] = { ...clientes[idx], ...payload };
+        await sb.from("clientes").update(payload).eq("id", id);
       } else {
-        payload.pagado = false;
-        const { data } = await sb.from("clientes_jardin").insert([payload]).select();
-        if (data && data[0]) {
-          clientes.push(data[0]);
-        } else {
-          payload.id = Date.now();
-          clientes.push(payload);
-        }
+        await sb.from("clientes").insert([payload]);
       }
 
-      localStorage.setItem("jp_cli_" + usuarioActual.id, JSON.stringify(clientes));
-      cerrarModalCliente();
-      actualizarResumen();
-      renderizarClientes();
-    }
+      $("client-modal").classList.add("hidden");
+      await loadClientes();
+    });
 
-    async function togglePago(id) {
-      const c = clientes.find(x => String(x.id) === String(id));
-      if (!c) return;
-      c.pagado = !c.pagado;
-      await sb.from("clientes_jardin").update({ pagado: c.pagado }).eq("id", id);
-      localStorage.setItem("jp_cli_" + usuarioActual.id, JSON.stringify(clientes));
-      actualizarResumen();
-      renderizarClientes();
-    }
+    $("search-input").addEventListener("input", renderAll);
 
-    async function eliminarCliente(id) {
-      if (!confirm("¿Eliminar este cliente?")) return;
-      await sb.from("clientes_jardin").delete().eq("id", id);
-      clientes = clientes.filter(x => String(x.id) !== String(id));
-      localStorage.setItem("jp_cli_" + usuarioActual.id, JSON.stringify(clientes));
-      actualizarResumen();
-      renderizarClientes();
-    }
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => {
+          b.classList.remove("border-amber-400", "text-white");
+          b.classList.add("border-transparent", "text-emerald-200");
+        });
+        btn.classList.add("border-amber-400", "text-white");
+        btn.classList.remove("border-transparent", "text-emerald-200");
 
-    async function reiniciarMes() {
-      if (!confirm("¿Marcar a todos tus clientes como Pendientes para el nuevo mes?")) return;
-      for (const c of clientes) c.pagado = false;
-      await sb.from("clientes_jardin").update({ pagado: false }).eq("user_id", usuarioActual.id);
-      localStorage.setItem("jp_cli_" + usuarioActual.id, JSON.stringify(clientes));
-      actualizarResumen();
-      renderizarClientes();
-    }
+        const tab = btn.dataset.tab;
+        ["clientes", "rutas", "cobros"].forEach(t => $(`tab-${t}`).classList.add("hidden"));
+        $(`tab-${tab}`).classList.remove("hidden");
+      });
+    });
 
-    function cambiarTab(tab) {
-      document.getElementById("tab-clientes").classList.toggle("hidden", tab !== "clientes");
-      document.getElementById("tab-conta").classList.toggle("hidden", tab !== "conta");
-      document.getElementById("nav-clientes").className = tab === "clientes" ? "flex flex-col items-center text-emerald-700 font-bold text-xs" : "flex flex-col items-center text-slate-400 font-bold text-xs";
-      document.getElementById("nav-conta").className = tab === "conta" ? "flex flex-col items-center text-emerald-700 font-bold text-xs" : "flex flex-col items-center text-slate-400 font-bold text-xs";
-    }
-
-    // Comprobar sesión activa al abrir
+    // INICIALIZACIÓN
     (async () => {
-      const { data } = await sb.auth.getSession();
-      if (data && data.session && data.session.user) {
-        usuarioActual = data.session.user;
-        await verificarSuscripcion();
-      } else {
-        mostrarPantalla("pantalla-auth");
+      try {
+        const { data: { session } } = await sb.auth.getSession();
+        if (session && session.user) {
+          await checkAccessAndLoad(session.user);
+        } else {
+          showScreen("auth-screen");
+        }
+      } catch (e) {
+        showScreen("auth-screen");
       }
     })();
   </script>
