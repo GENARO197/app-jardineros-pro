@@ -7,47 +7,43 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f3f4f6; }
+    .tab-active { color: #15803d; border-top: 3px solid #15803d; background-color: #f0fdf4; font-weight: 700; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen">
+<body class="pb-24">
 
-  <!-- PANTALLA DE ACCESO (LOGIN / REGISTRO) -->
-  <div id="auth-screen" class="min-h-screen bg-gradient-to-br from-emerald-800 via-emerald-700 to-green-600 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-7">
-      <div class="flex justify-between items-center mb-4">
-        <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">🌿 Jardineros Pro</span>
-        <button onclick="toggleLang()" class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full" id="lang-btn-auth">EN / ES</button>
+  <!-- PANTALLA DE ACCESO -->
+  <div id="authScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-green-800 to-emerald-950">
+    <div class="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-md">
+      <div class="text-center mb-6">
+        <div class="text-5xl mb-2">🌿</div>
+        <h1 class="text-2xl font-extrabold text-gray-900">Jardineros Pro</h1>
+        <p class="text-sm text-green-700 font-semibold mt-1">🎁 14 Días de Prueba Gratis • Luego $14.99/mes</p>
       </div>
 
-      <h1 class="text-2xl font-extrabold text-slate-900 text-center mb-1" data-es="Administra tu Ruta" data-en="Manage Your Route">Administra tu Ruta</h1>
-      <p class="text-center text-sm text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 rounded-xl py-2 px-3 mb-5" data-es="🎁 14 Días de Prueba Gratis • Luego $14.99/mes" data-en="🎁 14-Day Free Trial • Then $14.99/mo">
-        🎁 14 Días de Prueba Gratis • Luego $14.99/mes
-      </p>
-
-      <div id="auth-error" class="hidden mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium"></div>
-      <div id="auth-success" class="hidden mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-medium"></div>
+      <div id="authMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium bg-red-50 text-red-700 border border-red-200"></div>
 
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1" data-es="Correo Electrónico" data-en="Email Address">Correo Electrónico</label>
-          <input id="auth-email" type="email" placeholder="ejemplo@gmail.com" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-base" />
+          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Correo Electrónico</label>
+          <input id="emailInput" type="email" placeholder="tu@correo.com" class="w-full p-3.5 border border-gray-300 rounded-xl focus:outline-none focus:border-green-600 text-base" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1" data-es="Contraseña" data-en="Password">Contraseña</label>
-          <input id="auth-password" type="password" placeholder="••••••" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-base" />
+          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Contraseña</label>
+          <input id="passInput" type="password" placeholder="Mínimo 6 caracteres" class="w-full p-3.5 border border-gray-300 rounded-xl focus:outline-none focus:border-green-600 text-base" />
         </div>
 
-        <button onclick="handleLogin()" id="btn-login" class="w-full bg-emerald-700 hover:bg-emerald-800 active:scale-[0.99] text-white font-bold py-3.5 rounded-xl shadow-lg transition text-base" data-es="Iniciar Sesión" data-en="Log In">
+        <button onclick="loginUser()" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-base">
           Iniciar Sesión
         </button>
 
-        <button onclick="handleSignup()" id="btn-signup" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-2 border-emerald-600 font-bold py-3 rounded-xl transition text-base" data-es="Crear Cuenta (14 Días Gratis)" data-en="Create Account (14 Days Free)">
+        <button onclick="registerUser()" class="w-full bg-emerald-50 hover:bg-emerald-100 text-green-800 border border-green-300 font-bold py-3.5 rounded-xl transition text-base">
           Crear Cuenta (14 Días Gratis)
         </button>
 
-        <div class="text-center pt-1">
-          <button onclick="handleForgotPassword()" class="text-xs font-semibold text-slate-500 hover:text-emerald-700 underline" data-es="¿Olvidaste tu contraseña?" data-en="Forgot your password?">
+        <div class="text-center pt-2">
+          <button onclick="resetPassword()" class="text-xs text-gray-500 underline hover:text-green-700">
             ¿Olvidaste tu contraseña?
           </button>
         </div>
@@ -55,503 +51,532 @@
     </div>
   </div>
 
-  <!-- PANTALLA DE BLOQUEO (CANDADO DÍA 15 -> STRIPE $14.99/MES) -->
-  <div id="lock-screen" class="hidden min-h-screen bg-slate-900/95 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-7 text-center">
+  <!-- PANTALLA DE BLOQUEO / SUSCRIPCIÓN -->
+  <div id="paywallScreen" class="hidden min-h-screen flex items-center justify-center p-4 bg-slate-900">
+    <div class="bg-white rounded-3xl shadow-2xl p-7 w-full max-w-md text-center">
       <div class="text-5xl mb-3">🔒</div>
-      <h2 class="text-2xl font-extrabold text-slate-900 mb-2" data-es="Tu Prueba de 14 Días Terminó" data-en="Your 14-Day Trial Ended">Tu Prueba de 14 Días Terminó</h2>
-      <p class="text-sm text-slate-600 mb-5" data-es="Activa tu Plan Pro (Hasta 500 Clientes) para seguir administrando tu ruta, cobros y mensajes SMS en la nube." data-en="Activate your Pro Plan (Up to 500 Clients) to keep managing your route, billing, and cloud SMS.">
-        Activa tu Plan Pro (Hasta 500 Clientes) para seguir administrando tu ruta, cobros y mensajes SMS en la nube.
+      <h2 class="text-2xl font-extrabold text-gray-900">Tu Prueba de 14 Días Terminó</h2>
+      <p class="text-gray-600 text-sm mt-2">
+        Activa tu <b>Plan Pro (Hasta 500 Clientes)</b> para seguir administrando tu ruta, cobros, libreta y mensajes SMS en la nube.
       </p>
 
-      <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-5">
-        <div class="text-3xl font-black text-emerald-800">$14.99 <span class="text-sm font-semibold text-emerald-700">/ mes</span></div>
-        <div class="text-xs text-emerald-800 font-medium mt-1">✓ Hasta 500 clientes • ✓ Respaldo en la nube • ✓ Bilingüe</div>
+      <div class="bg-green-50 border border-green-200 rounded-2xl p-4 my-5">
+        <div class="text-3xl font-black text-green-800">$14.99 <span class="text-sm font-normal text-gray-600">/ mes</span></div>
+        <div class="text-xs text-green-700 font-semibold mt-1">✓ Hasta 500 clientes • ✓ Nube Privada • ✓ SMS y GPS</div>
       </div>
 
-      <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" rel="noopener noreferrer" class="block w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-4 rounded-xl shadow-lg text-base mb-4">
+      <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" class="block w-full bg-green-700 hover:bg-green-800 text-white font-bold py-4 rounded-xl shadow-lg text-base transition">
         💳 Suscribirme Ahora ($14.99/mes)
       </a>
 
-      <button onclick="logout()" class="text-sm font-semibold text-slate-500 underline" data-es="Cerrar sesión" data-en="Log out">Cerrar sesión</button>
+      <button onclick="logoutUser()" class="mt-4 text-sm text-gray-500 underline">
+        Cerrar sesión
+      </button>
     </div>
   </div>
 
-  <!-- PANEL PRINCIPAL DE LA APLICACIÓN -->
-  <div id="app-screen" class="hidden pb-24">
-    <!-- Encabezado -->
-    <header class="bg-emerald-800 text-white px-4 py-4 shadow-md sticky top-0 z-20">
-      <div class="max-w-3xl mx-auto flex items-center justify-between">
+  <!-- APLICACIÓN PRINCIPAL -->
+  <div id="appScreen" class="hidden">
+    <!-- HEADER -->
+    <header class="bg-green-800 text-white p-4 shadow-md sticky top-0 z-20">
+      <div class="max-w-3xl mx-auto flex justify-between items-center">
         <div>
-          <div class="flex items-center gap-2">
-            <span class="text-xl">🌿</span>
-            <h1 class="font-extrabold text-lg leading-tight">Jardineros Pro</h1>
-          </div>
-          <p class="text-xs text-emerald-200 mt-0.5" id="status-badge">0 / 500 • Nube Activa</p>
+          <h1 class="text-lg font-extrabold flex items-center gap-1.5">🌿 Jardineros Pro</h1>
+          <p id="statusBadge" class="text-xs text-green-200">Cargando nube...</p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="toggleLang()" class="bg-emerald-700 hover:bg-emerald-600 text-xs font-bold px-3 py-1.5 rounded-lg">ES/EN</button>
-          <button onclick="logout()" class="bg-emerald-900 hover:bg-red-700 text-xs font-bold px-3 py-1.5 rounded-lg" data-es="Salir" data-en="Exit">Salir</button>
+          <button onclick="openClientModal()" class="bg-white text-green-800 font-bold px-3.5 py-2 rounded-xl text-sm shadow">
+            + Cliente
+          </button>
+          <button onclick="logoutUser()" class="bg-green-900 text-green-100 px-3 py-2 rounded-xl text-xs">
+            Salir
+          </button>
         </div>
       </div>
     </header>
 
-    <!-- Navegación de Pestañas -->
-    <div class="bg-white border-b border-slate-200 sticky top-[68px] z-10">
-      <div class="max-w-3xl mx-auto flex">
-        <button onclick="switchTab('clientes')" id="tab-clientes" class="flex-1 py-3 text-sm font-bold text-emerald-800 border-b-2 border-emerald-700" data-es="📋 Clientes y Ruta" data-en="📋 Clients & Route">📋 Clientes y Ruta</button>
-        <button onclick="switchTab('pagos')" id="tab-pagos" class="flex-1 py-3 text-sm font-bold text-slate-500" data-es="💰 Cobros y Respaldo" data-en="💰 Billing & Backup">💰 Cobros y Respaldo</button>
-      </div>
-    </div>
+    <main class="max-w-3xl mx-auto p-4">
 
-    <!-- SECCIÓN 1: CLIENTES Y RUTA -->
-    <main id="view-clientes" class="max-w-3xl mx-auto p-4 space-y-4">
-      <div class="flex gap-2">
-        <input id="search-input" oninput="renderClients()" type="text" placeholder="Buscar cliente o dirección..." class="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600" />
-        <button onclick="openClientModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-3 rounded-xl shadow text-sm whitespace-nowrap" data-es="+ Cliente" data-en="+ Client">+ Cliente</button>
-      </div>
+      <!-- PESTAÑA 1: RUTA DEL DÍA -->
+      <section id="tabRuta">
+        <div class="flex gap-1.5 overflow-x-auto pb-2 mb-4">
+          <button onclick="setDay('Lunes')" class="day-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-green-700 text-white" data-day="Lunes">Lun</button>
+          <button onclick="setDay('Martes')" class="day-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-white text-gray-700" data-day="Martes">Mar</button>
+          <button onclick="setDay('Miércoles')" class="day-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-white text-gray-700" data-day="Miércoles">Mié</button>
+          <button onclick="setDay('Jueves')" class="day-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-white text-gray-700" data-day="Jueves">Jue</button>
+          <button onclick="setDay('Viernes')" class="day-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-white text-gray-700" data-day="Viernes">Vie</button>
+          <button onclick="setDay('Sábado')" class="day-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-white text-gray-700" data-day="Sábado">Sáb</button>
+        </div>
 
-      <!-- Filtro por día -->
-      <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs font-bold">
-        <button onclick="setDayFilter('Todos')" class="day-pill bg-emerald-700 text-white px-3 py-1.5 rounded-full" data-day="Todos">Todos</button>
-        <button onclick="setDayFilter('Lunes')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Lunes">Lun</button>
-        <button onclick="setDayFilter('Martes')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Martes">Mar</button>
-        <button onclick="setDayFilter('Miércoles')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Miércoles">Mié</button>
-        <button onclick="setDayFilter('Jueves')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Jueves">Jue</button>
-        <button onclick="setDayFilter('Viernes')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Viernes">Vie</button>
-        <button onclick="setDayFilter('Sábado')" class="day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full" data-day="Sábado">Sáb</button>
-      </div>
+        <div class="flex justify-between items-center mb-3">
+          <h2 id="rutaTitle" class="text-base font-extrabold text-gray-800">Ruta del Lunes</h2>
+          <span id="rutaCount" class="text-xs font-bold bg-green-100 text-green-800 px-2.5 py-1 rounded-full">0 casas</span>
+        </div>
 
-      <!-- Lista de Clientes -->
-      <div id="clients-list" class="space-y-3"></div>
+        <div id="rutaList" class="space-y-3"></div>
+      </section>
+
+      <!-- PESTAÑA 2: TODOS LOS CLIENTES -->
+      <section id="tabClientes" class="hidden">
+        <div class="mb-3">
+          <input id="searchInput" oninput="renderAll()" type="text" placeholder="🔍 Buscar cliente por nombre o dirección..." class="w-full p-3 rounded-xl border border-gray-300 bg-white text-sm" />
+        </div>
+        <div id="clientesList" class="space-y-3"></div>
+      </section>
+
+      <!-- PESTAÑA 3: LIBRETA Y VOZ -->
+      <section id="tabLibreta" class="hidden">
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200 mb-4">
+          <h2 class="font-extrabold text-gray-800 mb-2">📓 Libreta Rápida (Notas y Extras)</h2>
+          <textarea id="noteInput" rows="3" placeholder="Escribe o dicta trabajos extras, materiales o recordatorios..." class="w-full p-3 border border-gray-300 rounded-xl text-sm mb-2"></textarea>
+          <div class="flex gap-2">
+            <button onclick="startVoiceNote()" class="flex-1 bg-amber-100 text-amber-900 font-bold py-2.5 rounded-xl text-sm">
+              🎙️ Dictar por Voz
+            </button>
+            <button onclick="saveNote()" class="flex-1 bg-green-700 text-white font-bold py-2.5 rounded-xl text-sm">
+              💾 Guardar Nota
+            </button>
+          </div>
+        </div>
+        <div id="notesList" class="space-y-2"></div>
+      </section>
+
+      <!-- PESTAÑA 4: CONTABILIDAD Y RESPALDO -->
+      <section id="tabConta" class="hidden">
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
+            <div class="text-xs text-gray-500 font-bold uppercase">Ingreso Mensual Est.</div>
+            <div id="totalMensual" class="text-2xl font-black text-green-700 mt-1">$0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
+            <div class="text-xs text-gray-500 font-bold uppercase">Total Clientes</div>
+            <div id="totalClientesConta" class="text-2xl font-black text-gray-800 mt-1">0 / 500</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 mb-4">
+          <h3 class="font-extrabold text-gray-800 mb-2">💸 Registrar Gasto (Gasolina / Equipo)</h3>
+          <div class="flex gap-2">
+            <input id="gastoDesc" type="text" placeholder="Ej. Gasolina, hilo..." class="flex-1 p-2.5 border rounded-xl text-sm" />
+            <input id="gastoMonto" type="number" placeholder="$" class="w-24 p-2.5 border rounded-xl text-sm" />
+            <button onclick="addGasto()" class="bg-red-600 text-white font-bold px-4 rounded-xl text-sm">+</button>
+          </div>
+          <div id="gastosList" class="mt-3 space-y-1.5 text-sm"></div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
+          <h3 class="font-extrabold text-gray-800 mb-2">🛡️ Copia de Seguridad</h3>
+          <p class="text-xs text-gray-500 mb-3">Tus clientes ya se guardan en tu nube privada, pero puedes descargar una copia extra aquí.</p>
+          <button onclick="exportBackup()" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl text-sm">
+            ⬇️ Descargar Respaldo (JSON)
+          </button>
+        </div>
+      </section>
+
     </main>
 
-    <!-- SECCIÓN 2: COBROS Y RESPALDO -->
-    <section id="view-pagos" class="hidden max-w-3xl mx-auto p-4 space-y-4">
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-          <div class="text-xs font-bold text-slate-500 uppercase" data-es="Ingresos Mensuales Est." data-en="Est. Monthly Income">Ingresos Mensuales Est.</div>
-          <div class="text-2xl font-black text-emerald-700 mt-1" id="total-monthly">$0.00</div>
-        </div>
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-          <div class="text-xs font-bold text-slate-500 uppercase" data-es="Clientes Activos" data-en="Active Clients">Clientes Activos</div>
-          <div class="text-2xl font-black text-slate-800 mt-1" id="total-clients-count">0</div>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-        <h3 class="font-bold text-slate-900" data-es="📦 Copia de Seguridad" data-en="📦 Backup Data">📦 Copia de Seguridad</h3>
-        <p class="text-xs text-slate-600" data-es="Descarga un archivo con todos tus clientes o restaura una copia anterior." data-en="Download a backup file of all your clients or restore a previous copy.">Descarga un archivo con todos tus clientes o restaura una copia anterior.</p>
-        <div class="flex gap-2">
-          <button onclick="exportBackup()" class="flex-1 bg-slate-800 text-white font-bold py-2.5 px-3 rounded-xl text-xs">⬇️ Descargar Copia</button>
-          <label class="flex-1 bg-slate-100 border border-slate-300 text-slate-800 font-bold py-2.5 px-3 rounded-xl text-xs text-center cursor-pointer">
-            ⬆️ Cargar Copia
-            <input type="file" accept=".json" onchange="importBackup(event)" class="hidden" />
-          </label>
-        </div>
-      </div>
-    </section>
+    <!-- BARRA DE NAVEGACIÓN INFERIOR (4 PESTAÑAS) -->
+    <nav class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 flex justify-around z-30 shadow-lg">
+      <button onclick="switchTab('Ruta')" id="navRuta" class="flex-1 py-3 text-center text-xs tab-active">
+        <div class="text-lg">📍</div>Ruta
+      </button>
+      <button onclick="switchTab('Clientes')" id="navClientes" class="flex-1 py-3 text-center text-xs text-gray-600">
+        <div class="text-lg">👥</div>Clientes
+      </button>
+      <button onclick="switchTab('Libreta')" id="navLibreta" class="flex-1 py-3 text-center text-xs text-gray-600">
+        <div class="text-lg">📓</div>Libreta
+      </button>
+      <button onclick="switchTab('Conta')" id="navConta" class="flex-1 py-3 text-center text-xs text-gray-600">
+        <div class="text-lg">💰</div>Conta
+      </button>
+    </nav>
   </div>
 
-  <!-- MODAL AGREGAR / EDITAR CLIENTE -->
-  <div id="client-modal" class="hidden fixed inset-0 bg-black/60 z-30 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="font-extrabold text-lg text-slate-900" id="modal-title">Nuevo Cliente</h3>
-        <button onclick="closeClientModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold">✕</button>
-      </div>
-      <input type="hidden" id="edit-client-id" />
+  <!-- MODAL NUEVO / EDITAR CLIENTE -->
+  <div id="clientModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-40">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <h2 id="modalTitle" class="text-xl font-extrabold text-gray-900 mb-4">Nuevo Cliente</h2>
+      <input type="hidden" id="editClientId" />
       <div class="space-y-3">
-        <input id="c-name" type="text" placeholder="Nombre del cliente *" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm" />
-        <input id="c-phone" type="tel" placeholder="Teléfono (para SMS)" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm" />
-        <input id="c-address" type="text" placeholder="Dirección completa" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm" />
-        <div class="grid grid-cols-2 gap-2">
-          <select id="c-day" class="px-3 py-3 rounded-xl border border-slate-300 text-sm bg-white">
-            <option value="Lunes">Lunes</option>
-            <option value="Martes">Martes</option>
-            <option value="Miércoles">Miércoles</option>
-            <option value="Jueves">Jueves</option>
-            <option value="Viernes">Viernes</option>
-            <option value="Sábado">Sábado</option>
-          </select>
-          <input id="c-price" type="number" step="0.01" placeholder="Precio mensual ($)" class="px-3 py-3 rounded-xl border border-slate-300 text-sm" />
+        <div>
+          <label class="text-xs font-bold text-gray-600">Nombre del Cliente *</label>
+          <input id="cNombre" type="text" placeholder="Ej. Juan Pérez" class="w-full p-3 border rounded-xl text-sm" />
         </div>
-        <input id="c-notes" type="text" placeholder="Notas (ej. código de puerta, perro)" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm" />
+        <div>
+          <label class="text-xs font-bold text-gray-600">Teléfono (para SMS y WhatsApp)</label>
+          <input id="cTelefono" type="tel" placeholder="Ej. 6615551234" class="w-full p-3 border rounded-xl text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-bold text-gray-600">Dirección (para GPS)</label>
+          <input id="cDireccion" type="text" placeholder="Ej. 123 Main St, Palmdale CA" class="w-full p-3 border rounded-xl text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-bold text-gray-600">Día de Ruta</label>
+            <select id="cDia" class="w-full p-3 border rounded-xl text-sm bg-white">
+              <option value="Lunes">Lunes</option>
+              <option value="Martes">Martes</option>
+              <option value="Miércoles">Miércoles</option>
+              <option value="Jueves">Jueves</option>
+              <option value="Viernes">Viernes</option>
+              <option value="Sábado">Sábado</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-gray-600">Precio ($)</label>
+            <input id="cPrecio" type="number" placeholder="80" class="w-full p-3 border rounded-xl text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-gray-600">Notas / Código de Puerta</label>
+          <input id="cNotas" type="text" placeholder="Ej. Código #1234, perro atrás" class="w-full p-3 border rounded-xl text-sm" />
+        </div>
       </div>
-      <button onclick="saveClient()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 rounded-xl shadow text-base">Guardar Cliente</button>
+
+      <div class="flex gap-2 mt-5">
+        <button onclick="closeClientModal()" class="flex-1 bg-gray-100 text-gray-700 font-bold py-3 rounded-xl text-sm">Cancelar</button>
+        <button onclick="saveClient()" class="flex-1 bg-green-700 text-white font-bold py-3 rounded-xl text-sm">Guardar</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const OWNER_EMAIL = 'gena197590@gmail.com';
-    const SUPA_URL = 'https://rymrhjpmvptrizetcjsfo.supabase.co';
-    const SUPA_KEY = 'sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkj';
+    const SUPA_URL = "https://rymrhjpmvptrizetcjsfo.supabase.co";
+    const SUPA_KEY = "sb_publishable_2jMF-6t8D61jE45SkLcOUQ_sgBkjV_w";
+    const OWNER_EMAIL = "gena197590@gmail.com";
+    const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
-    let supabaseClient = null;
-    try {
-      if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-      }
-    } catch (e) {
-      console.warn('Supabase init fallback:', e);
-    }
-
-    let currentLang = 'es';
     let currentUser = null;
     let clients = [];
-    let selectedDay = 'Todos';
+    let selectedDay = "Lunes";
+    let notes = JSON.parse(localStorage.getItem("jp_notes") || "[]");
+    let gastos = JSON.parse(localStorage.getItem("jp_gastos") || "[]");
 
-    function showMsg(type, text) {
-      const errEl = document.getElementById('auth-error');
-      const okEl = document.getElementById('auth-success');
-      errEl.classList.add('hidden');
-      okEl.classList.add('hidden');
-      if (type === 'error') {
-        errEl.textContent = text;
-        errEl.classList.remove('hidden');
+    function showAuthMsg(msg, isError = true) {
+      const el = document.getElementById("authMsg");
+      el.textContent = msg;
+      el.className = isError
+        ? "mb-4 p-3 rounded-xl text-sm font-medium bg-red-50 text-red-700 border border-red-200"
+        : "mb-4 p-3 rounded-xl text-sm font-medium bg-green-50 text-green-700 border border-green-200";
+      el.classList.remove("hidden");
+    }
+
+    async function checkSession() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+        await verifySubscriptionAndLoad();
+      }
+    }
+
+    async function loginUser() {
+      const email = document.getElementById("emailInput").value.trim().toLowerCase();
+      const password = document.getElementById("passInput").value;
+      if (!email || !password) return showAuthMsg("Escribe tu correo y contraseña.");
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) return showAuthMsg("Error al iniciar sesión: " + error.message);
+      currentUser = data.user;
+      await verifySubscriptionAndLoad();
+    }
+
+    async function registerUser() {
+      const email = document.getElementById("emailInput").value.trim().toLowerCase();
+      const password = document.getElementById("passInput").value;
+      if (!email || password.length < 6) return showAuthMsg("Escribe un correo válido y contraseña de al menos 6 caracteres.");
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) return showAuthMsg("Error al crear cuenta: " + error.message);
+      if (data.user) {
+        currentUser = data.user;
+        const trialEnd = new Date();
+        trialEnd.setDate(trialEnd.getDate() + 14);
+        await sb.from("suscripciones").upsert({
+          email: email,
+          activa: true,
+          vence: trialEnd.toISOString()
+        });
+        await verifySubscriptionAndLoad();
       } else {
-        okEl.textContent = text;
-        okEl.classList.remove('hidden');
+        showAuthMsg("Cuenta creada. Revisa tu correo o inicia sesión.", false);
       }
     }
 
-    function toggleLang() {
-      currentLang = currentLang === 'es' ? 'en' : 'es';
-      document.querySelectorAll('[data-es]').forEach(el => {
-        el.textContent = el.getAttribute('data-' + currentLang);
-      });
+    async function resetPassword() {
+      const email = document.getElementById("emailInput").value.trim().toLowerCase();
+      if (!email) return showAuthMsg("Escribe tu correo arriba primero para enviarte el enlace.");
+      const { error } = await sb.auth.resetPasswordForEmail(email);
+      if (error) return showAuthMsg(error.message);
+      showAuthMsg("Te enviamos un enlace a tu correo para cambiar tu contraseña.", false);
     }
 
-    function getLocalUsers() {
-      return JSON.parse(localStorage.getItem('jp_users') || '{}');
-    }
-    function saveLocalUsers(users) {
-      localStorage.setItem('jp_users', JSON.stringify(users));
+    async function logoutUser() {
+      await sb.auth.signOut();
+      location.reload();
     }
 
-    async function handleSignup() {
-      const email = document.getElementById('auth-email').value.trim().toLowerCase();
-      const password = document.getElementById('auth-password').value;
-      if (!email || password.length < 6) {
-        showMsg('error', currentLang === 'es' ? 'Escribe un correo válido y contraseña de al menos 6 caracteres.' : 'Enter a valid email and at least 6-character password.');
-        return;
-      }
-
-      const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
-      const users = getLocalUsers();
-      users[email] = { password, vence: email === OWNER_EMAIL ? '2036-01-01T00:00:00Z' : trialEnd, activa: true };
-      saveLocalUsers(users);
-
-      if (supabaseClient) {
-        try {
-          await supabaseClient.auth.signUp({ email, password });
-          await supabaseClient.from('suscripciones').upsert({
-            email,
-            activa: true,
-            vence: email === OWNER_EMAIL ? '2036-01-01T00:00:00Z' : trialEnd
-          });
-        } catch (e) {}
-      }
-
-      await enterApp(email);
-    }
-
-    async function handleLogin() {
-      const email = document.getElementById('auth-email').value.trim().toLowerCase();
-      const password = document.getElementById('auth-password').value;
-      if (!email || !password) {
-        showMsg('error', currentLang === 'es' ? 'Ingresa tu correo y contraseña.' : 'Enter your email and password.');
-        return;
-      }
-
-      if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (!error && data && data.user) {
-            await enterApp(email);
-            return;
-          }
-        } catch (e) {}
-      }
-
-      const users = getLocalUsers();
-      if (users[email] && users[email].password === password) {
-        await enterApp(email);
-      } else if (!users[email] && email === OWNER_EMAIL) {
-        users[email] = { password, vence: '2036-01-01T00:00:00Z', activa: true };
-        saveLocalUsers(users);
-        await enterApp(email);
-      } else {
-        showMsg('error', currentLang === 'es' ? 'Correo o contraseña incorrectos. Si es tu primera vez, toca "Crear Cuenta".' : 'Invalid email or password. If new, tap "Create Account".');
-      }
-    }
-
-    async function handleForgotPassword() {
-      const email = document.getElementById('auth-email').value.trim().toLowerCase();
-      if (!email) {
-        showMsg('error', 'Escribe tu correo arriba primero y luego toca "¿Olvidaste tu contraseña?".');
-        return;
-      }
-      if (supabaseClient) {
-        try {
-          await supabaseClient.auth.resetPasswordForEmail(email);
-        } catch (e) {}
-      }
-      showMsg('success', 'Si tu correo está registrado, te enviamos instrucciones de recuperación (o crea una clave nueva si eres el dueño).');
-    }
-
-    async function enterApp(email) {
-      currentUser = email;
-      localStorage.setItem('jp_current_user', email);
-
-      let isAllowed = false;
-      let badgeText = '';
+    async function verifySubscriptionAndLoad() {
+      const email = (currentUser.email || "").toLowerCase();
+      document.getElementById("authScreen").classList.add("hidden");
 
       if (email === OWNER_EMAIL) {
-        isAllowed = true;
-        badgeText = '👑 Dueño Vitalicio • Nube Activa';
+        document.getElementById("paywallScreen").classList.add("hidden");
+        document.getElementById("appScreen").classList.remove("hidden");
+        await loadClients("👑 Dueño Vitalicio • Nube Activa");
+        return;
+      }
+
+      const { data, error } = await sb.from("suscripciones").select("*").eq("email", email).maybeSingle();
+      const now = new Date();
+
+      if (!data) {
+        const trialEnd = new Date();
+        trialEnd.setDate(trialEnd.getDate() + 14);
+        await sb.from("suscripciones").insert({ email, activa: true, vence: trialEnd.toISOString() });
+        document.getElementById("appScreen").classList.remove("hidden");
+        await loadClients("🎁 Prueba Gratis (14 días) • Nube Activa");
+        return;
+      }
+
+      const venceDate = new Date(data.vence);
+      if (data.activa && venceDate > now) {
+        const daysLeft = Math.ceil((venceDate - now) / (1000 * 60 * 60 * 24));
+        document.getElementById("paywallScreen").classList.add("hidden");
+        document.getElementById("appScreen").classList.remove("hidden");
+        await loadClients(`✅ Activo (${daysLeft} días rest.) • Nube`);
       } else {
-        let subData = null;
-        if (supabaseClient) {
-          try {
-            const { data } = await supabaseClient.from('suscripciones').select('*').eq('email', email).single();
-            if (data) subData = data;
-          } catch (e) {}
-        }
-        if (!subData) {
-          const users = getLocalUsers();
-          subData = users[email] || { activa: true, vence: new Date(Date.now() + 14 * 86400000).toISOString() };
-        }
-        const now = new Date();
-        const venceDate = new Date(subData.vence);
-        if (subData.activa && venceDate > now) {
-          isAllowed = true;
-          const daysLeft = Math.ceil((venceDate - now) / 86400000);
-          badgeText = `${daysLeft} días restantes • Nube Activa`;
-        }
+        document.getElementById("appScreen").classList.add("hidden");
+        document.getElementById("paywallScreen").classList.remove("hidden");
       }
+    }
 
-      document.getElementById('auth-screen').classList.add('hidden');
-      if (!isAllowed) {
-        document.getElementById('app-screen').classList.add('hidden');
-        document.getElementById('lock-screen').classList.remove('hidden');
-        return;
+    async function loadClients(badgePrefix) {
+      const { data, error } = await sb
+        .from("clientes")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+      if (!error && data) {
+        clients = data;
+      } else {
+        clients = JSON.parse(localStorage.getItem("jp_clients_" + currentUser.id) || "[]");
       }
-
-      document.getElementById('lock-screen').classList.add('hidden');
-      document.getElementById('app-screen').classList.remove('hidden');
-      await loadClients();
-      document.getElementById('status-badge').textContent = `${clients.length} / 500 • ${badgeText}`;
+      document.getElementById("statusBadge").textContent = `${clients.length} / 500 • ${badgePrefix}`;
+      renderAll();
     }
 
-    function logout() {
-      localStorage.removeItem('jp_current_user');
-      currentUser = null;
-      document.getElementById('app-screen').classList.add('hidden');
-      document.getElementById('lock-screen').classList.add('hidden');
-      document.getElementById('auth-screen').classList.remove('hidden');
-    }
-
-    async function loadClients() {
-      const localKey = 'jp_clients_' + currentUser;
-      clients = JSON.parse(localStorage.getItem(localKey) || '[]');
-
-      if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient.from('clientes_jardin').select('*').eq('user_email', currentUser);
-          if (!error && Array.isArray(data) && data.length > 0) {
-            clients = data;
-            localStorage.setItem(localKey, JSON.stringify(clients));
-          }
-        } catch (e) {}
+    function openClientModal(client = null) {
+      document.getElementById("clientModal").classList.remove("hidden");
+      if (client) {
+        document.getElementById("modalTitle").textContent = "Editar Cliente";
+        document.getElementById("editClientId").value = client.id;
+        document.getElementById("cNombre").value = client.nombre || "";
+        document.getElementById("cTelefono").value = client.telefono || "";
+        document.getElementById("cDireccion").value = client.direccion || "";
+        document.getElementById("cDia").value = client.dia || "Lunes";
+        document.getElementById("cPrecio").value = client.precio || "";
+        document.getElementById("cNotas").value = client.notas || "";
+      } else {
+        document.getElementById("modalTitle").textContent = "Nuevo Cliente";
+        document.getElementById("editClientId").value = "";
+        document.getElementById("cNombre").value = "";
+        document.getElementById("cTelefono").value = "";
+        document.getElementById("cDireccion").value = "";
+        document.getElementById("cDia").value = selectedDay;
+        document.getElementById("cPrecio").value = "";
+        document.getElementById("cNotas").value = "";
       }
-      renderClients();
-    }
-
-    async function syncClients() {
-      const localKey = 'jp_clients_' + currentUser;
-      localStorage.setItem(localKey, JSON.stringify(clients));
-      if (supabaseClient) {
-        try {
-          for (const c of clients) {
-            await supabaseClient.from('clientes_jardin').upsert({ ...c, user_email: currentUser });
-          }
-        } catch (e) {}
-      }
-      renderClients();
-    }
-
-    function switchTab(tab) {
-      document.getElementById('view-clientes').classList.toggle('hidden', tab !== 'clientes');
-      document.getElementById('view-pagos').classList.toggle('hidden', tab !== 'pagos');
-      document.getElementById('tab-clientes').className = tab === 'clientes' ? 'flex-1 py-3 text-sm font-bold text-emerald-800 border-b-2 border-emerald-700' : 'flex-1 py-3 text-sm font-bold text-slate-500';
-      document.getElementById('tab-pagos').className = tab === 'pagos' ? 'flex-1 py-3 text-sm font-bold text-emerald-800 border-b-2 border-emerald-700' : 'flex-1 py-3 text-sm font-bold text-slate-500';
-    }
-
-    function setDayFilter(day) {
-      selectedDay = day;
-      document.querySelectorAll('.day-pill').forEach(btn => {
-        if (btn.getAttribute('data-day') === day) {
-          btn.className = 'day-pill bg-emerald-700 text-white px-3 py-1.5 rounded-full';
-        } else {
-          btn.className = 'day-pill bg-white text-slate-600 border px-3 py-1.5 rounded-full';
-        }
-      });
-      renderClients();
-    }
-
-    function renderClients() {
-      const q = (document.getElementById('search-input').value || '').toLowerCase();
-      const list = document.getElementById('clients-list');
-      list.innerHTML = '';
-
-      let totalMonthly = 0;
-      clients.forEach(c => { totalMonthly += parseFloat(c.price || 0); });
-      document.getElementById('total-monthly').textContent = '$' + totalMonthly.toFixed(2);
-      document.getElementById('total-clients-count').textContent = clients.length;
-
-      const filtered = clients.filter(c => {
-        const matchDay = selectedDay === 'Todos' || c.day === selectedDay;
-        const matchQ = (c.name || '').toLowerCase().includes(q) || (c.address || '').toLowerCase().includes(q);
-        return matchDay && matchQ;
-      });
-
-      if (filtered.length === 0) {
-        list.innerHTML = '<div class="text-center py-10 text-slate-400 text-sm">No hay clientes en esta vista. Toca "+ Cliente" para agregar uno.</div>';
-        return;
-      }
-
-      filtered.forEach(c => {
-        const mapUrl = 'https://maps.google.com/?q=' + encodeURIComponent(c.address || '');
-        const smsText = encodeURIComponent(`Hola ${c.name}, hoy toca servicio de jardinería. ¡Gracias!`);
-        const smsUrl = `sms:${c.phone || ''}?body=${smsText}`;
-
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-2.5';
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="text-[11px] font-bold uppercase bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-full">${c.day || 'Lunes'}</span>
-              <h4 class="font-extrabold text-base text-slate-900 mt-1">${c.name}</h4>
-              <p class="text-xs text-slate-500">${c.address || 'Sin dirección'}</p>
-              ${c.notes ? `<p class="text-xs text-amber-700 mt-1">📝 ${c.notes}</p>` : ''}
-            </div>
-            <div class="text-right">
-              <div class="font-black text-emerald-700 text-base">$${parseFloat(c.price || 0).toFixed(2)}</div>
-              <button onclick="deleteClient('${c.id}')" class="text-xs text-red-500 hover:underline mt-1">Eliminar</button>
-            </div>
-          </div>
-          <div class="flex gap-2 pt-1">
-            ${c.address ? `<a href="${mapUrl}" target="_blank" class="flex-1 text-center bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-xl text-xs">📍 Mapa</a>` : ''}
-            ${c.phone ? `<a href="${smsUrl}" class="flex-1 text-center bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold py-2 rounded-xl text-xs">💬 Enviar SMS</a>` : ''}
-            <button onclick="editClient('${c.id}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 rounded-xl text-xs">✏️ Editar</button>
-          </div>
-        `;
-        list.appendChild(card);
-      });
-    }
-
-    function openClientModal() {
-      if (clients.length >= 500) {
-        alert('Has alcanzado el límite de 500 clientes.');
-        return;
-      }
-      document.getElementById('modal-title').textContent = 'Nuevo Cliente';
-      document.getElementById('edit-client-id').value = '';
-      document.getElementById('c-name').value = '';
-      document.getElementById('c-phone').value = '';
-      document.getElementById('c-address').value = '';
-      document.getElementById('c-day').value = 'Lunes';
-      document.getElementById('c-price').value = '';
-      document.getElementById('c-notes').value = '';
-      document.getElementById('client-modal').classList.remove('hidden');
-    }
-
-    function editClient(id) {
-      const c = clients.find(x => x.id === id);
-      if (!c) return;
-      document.getElementById('modal-title').textContent = 'Editar Cliente';
-      document.getElementById('edit-client-id').value = c.id;
-      document.getElementById('c-name').value = c.name || '';
-      document.getElementById('c-phone').value = c.phone || '';
-      document.getElementById('c-address').value = c.address || '';
-      document.getElementById('c-day').value = c.day || 'Lunes';
-      document.getElementById('c-price').value = c.price || '';
-      document.getElementById('c-notes').value = c.notes || '';
-      document.getElementById('client-modal').classList.remove('hidden');
     }
 
     function closeClientModal() {
-      document.getElementById('client-modal').classList.add('hidden');
+      document.getElementById("clientModal").classList.add("hidden");
     }
 
     async function saveClient() {
-      const name = document.getElementById('c-name').value.trim();
-      if (!name) {
-        alert('Por favor escribe el nombre del cliente.');
-        return;
+      const nombre = document.getElementById("cNombre").value.trim();
+      if (!nombre) return alert("Escribe el nombre del cliente.");
+      if (clients.length >= 500 && !document.getElementById("editClientId").value) {
+        return alert("Llegaste al límite de 500 clientes.");
       }
-      const id = document.getElementById('edit-client-id').value || ('c_' + Date.now());
-      const item = {
-        id,
-        name,
-        phone: document.getElementById('c-phone').value.trim(),
-        address: document.getElementById('c-address').value.trim(),
-        day: document.getElementById('c-day').value,
-        price: parseFloat(document.getElementById('c-price').value || '0'),
-        notes: document.getElementById('c-notes').value.trim()
+
+      const payload = {
+        user_id: currentUser.id,
+        nombre,
+        telefono: document.getElementById("cTelefono").value.trim(),
+        direccion: document.getElementById("cDireccion").value.trim(),
+        dia: document.getElementById("cDia").value,
+        precio: Number(document.getElementById("cPrecio").value || 0),
+        notas: document.getElementById("cNotas").value.trim()
       };
 
-      const idx = clients.findIndex(x => x.id === id);
-      if (idx >= 0) clients[idx] = item;
-      else clients.unshift(item);
+      const editId = document.getElementById("editClientId").value;
+      if (editId) {
+        await sb.from("clientes").update(payload).eq("id", editId);
+      } else {
+        await sb.from("clientes").insert(payload);
+      }
 
       closeClientModal();
-      await syncClients();
+      await loadClients("Nube Activa");
     }
 
     async function deleteClient(id) {
-      if (!confirm('¿Eliminar este cliente?')) return;
-      clients = clients.filter(x => x.id !== id);
-      if (supabaseClient) {
-        try { await supabaseClient.from('clientes_jardin').delete().eq('id', id); } catch (e) {}
-      }
-      await syncClients();
+      if (!confirm("¿Eliminar este cliente?")) return;
+      await sb.from("clientes").delete().eq("id", id);
+      await loadClients("Nube Activa");
+    }
+
+    function setDay(day) {
+      selectedDay = day;
+      document.querySelectorAll(".day-btn").forEach(btn => {
+        if (btn.dataset.day === day) {
+          btn.className = "day-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-green-700 text-white";
+        } else {
+          btn.className = "day-btn px-3.5 py-2 rounded-xl text-sm font-bold bg-white text-gray-700";
+        }
+      });
+      document.getElementById("rutaTitle").textContent = "Ruta del " + day;
+      renderAll();
+    }
+
+    function clientCardHTML(c) {
+      const cleanPhone = (c.telefono || "").replace(/\D/g, "");
+      const smsMsg = encodeURIComponent(`Hola ${c.nombre}, hoy toca el servicio de jardinería ($${c.precio}). ¡Gracias!`);
+      const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.direccion || "")}`;
+
+      return `
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-extrabold text-gray-900 text-base">${c.nombre}</h3>
+              <p class="text-xs text-gray-500 mt-0.5">📍 ${c.direccion || "Sin dirección"}</p>
+              ${c.notas ? `<p class="text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded-lg mt-1 inline-block">📝 ${c.notas}</p>` : ""}
+            </div>
+            <div class="text-right">
+              <span class="text-lg font-black text-green-700">$${c.precio || 0}</span>
+              <div class="text-[11px] font-bold text-gray-400">${c.dia || ""}</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1.5 mt-3 pt-3 border-t border-gray-100 text-center text-xs font-bold">
+            <a href="sms:${cleanPhone}?body=${smsMsg}" class="bg-blue-50 text-blue-700 py-2 rounded-xl">💬 SMS</a>
+            <a href="https://wa.me/1${cleanPhone}?text=${smsMsg}" target="_blank" class="bg-green-50 text-green-700 py-2 rounded-xl">📱 WhatsApp</a>
+            <a href="${mapUrl}" target="_blank" class="bg-amber-50 text-amber-800 py-2 rounded-xl">🗺️ Mapa</a>
+            <button onclick='openClientModal(${JSON.stringify(c).replace(/'/g, "&apos;")})' class="bg-gray-100 text-gray-700 py-2 rounded-xl">✏️ Editar</button>
+          </div>
+          <div class="text-right mt-2">
+            <button onclick="deleteClient('${c.id}')" class="text-[11px] text-red-400 hover:text-red-600">Eliminar</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAll() {
+      // Ruta del día
+      const dayClients = clients.filter(c => c.dia === selectedDay);
+      document.getElementById("rutaCount").textContent = `${dayClients.length} casas`;
+      document.getElementById("rutaList").innerHTML = dayClients.length
+        ? dayClients.map(clientCardHTML).join("")
+        : `<div class="bg-white rounded-2xl p-8 text-center text-gray-400 text-sm">No tienes casas asignadas el ${selectedDay}. Toca <b>+ Cliente</b> para agregar una.</div>`;
+
+      // Todos los clientes
+      const q = (document.getElementById("searchInput").value || "").toLowerCase();
+      const filtered = clients.filter(c =>
+        (c.nombre || "").toLowerCase().includes(q) || (c.direccion || "").toLowerCase().includes(q)
+      );
+      document.getElementById("clientesList").innerHTML = filtered.length
+        ? filtered.map(clientCardHTML).join("")
+        : `<div class="bg-white rounded-2xl p-8 text-center text-gray-400 text-sm">Aún no hay clientes registrados.</div>`;
+
+      // Contabilidad
+      const total = clients.reduce((acc, c) => acc + Number(c.precio || 0), 0);
+      document.getElementById("totalMensual").textContent = `$${total}`;
+      document.getElementById("totalClientesConta").textContent = `${clients.length} / 500`;
+
+      renderNotes();
+      renderGastos();
+    }
+
+    function switchTab(tab) {
+      ["Ruta", "Clientes", "Libreta", "Conta"].forEach(t => {
+        document.getElementById("tab" + t).classList.toggle("hidden", t !== tab);
+        const nav = document.getElementById("nav" + t);
+        if (t === tab) {
+          nav.classList.add("tab-active");
+          nav.classList.remove("text-gray-600");
+        } else {
+          nav.classList.remove("tab-active");
+          nav.classList.add("text-gray-600");
+        }
+      });
+    }
+
+    function saveNote() {
+      const txt = document.getElementById("noteInput").value.trim();
+      if (!txt) return;
+      notes.unshift({ id: Date.now(), text: txt, date: new Date().toLocaleDateString() });
+      localStorage.setItem("jp_notes", JSON.stringify(notes));
+      document.getElementById("noteInput").value = "";
+      renderNotes();
+    }
+
+    function renderNotes() {
+      document.getElementById("notesList").innerHTML = notes.map(n => `
+        <div class="bg-white p-3.5 rounded-xl border border-gray-200 flex justify-between items-center">
+          <div>
+            <p class="text-sm text-gray-800">${n.text}</p>
+            <span class="text-[11px] text-gray-400">${n.date}</span>
+          </div>
+          <button onclick="deleteNote(${n.id})" class="text-xs text-red-500 font-bold px-2">✕</button>
+        </div>
+      `).join("");
+    }
+
+    function deleteNote(id) {
+      notes = notes.filter(n => n.id !== id);
+      localStorage.setItem("jp_notes", JSON.stringify(notes));
+      renderNotes();
+    }
+
+    function startVoiceNote() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) return alert("Tu navegador no soporta dictado por voz.");
+      const rec = new SpeechRec();
+      rec.lang = "es-US";
+      rec.onresult = (e) => {
+        document.getElementById("noteInput").value += " " + e.results[0][0].transcript;
+      };
+      rec.start();
+    }
+
+    function addGasto() {
+      const desc = document.getElementById("gastoDesc").value.trim();
+      const monto = Number(document.getElementById("gastoMonto").value || 0);
+      if (!desc || !monto) return;
+      gastos.unshift({ id: Date.now(), desc, monto });
+      localStorage.setItem("jp_gastos", JSON.stringify(gastos));
+      document.getElementById("gastoDesc").value = "";
+      document.getElementById("gastoMonto").value = "";
+      renderGastos();
+    }
+
+    function renderGastos() {
+      document.getElementById("gastosList").innerHTML = gastos.map(g => `
+        <div class="flex justify-between items-center py-1.5 border-b border-gray-100">
+          <span>${g.desc}</span>
+          <span class="font-bold text-red-600">-$${g.monto}</span>
+        </div>
+      `).join("");
     }
 
     function exportBackup() {
-      const blob = new Blob([JSON.stringify(clients, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
+      const blob = new Blob([JSON.stringify({ clients, notes, gastos }, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = 'respaldo_jardineros_pro.json';
+      a.download = "respaldo-jardineros-pro.json";
       a.click();
     }
 
-    function importBackup(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const data = JSON.parse(e.target.result);
-          if (Array.isArray(data)) {
-            clients = data;
-            await syncClients();
-            alert('Copia restaurada correctamente.');
-          }
-        } catch (err) {
-          alert('Archivo de respaldo no válido.');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedUser = localStorage.getItem('jp_current_user');
-      if (savedUser) {
-        enterApp(savedUser);
-      }
-    });
+    checkSession();
   </script>
 </body>
 </html>
