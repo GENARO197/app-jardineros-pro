@@ -9,10 +9,10 @@
   <link rel="apple-touch-icon" href="https://img.icons8.com/color/180/lawn-mower.png">
   <link rel="icon" href="https://img.icons8.com/color/180/lawn-mower.png">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-gray-100 pb-24 text-gray-800 font-sans">
 
+  <!-- PANTALLA DE ACCESO Y REGISTRO (100% RÁPIDA, SIN ERRORES DE RED) -->
   <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-emerald-800 to-emerald-600">
     <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl space-y-4">
       <div class="text-center space-y-1">
@@ -20,7 +20,8 @@
         <h1 class="text-2xl font-extrabold text-gray-800">Jardineros Pro</h1>
         <p class="text-xs text-emerald-700 font-bold bg-emerald-50 inline-block px-3 py-1 rounded-full">🎁 14 Días de Prueba Gratis • Luego $14.99/mes</p>
       </div>
-      <div class="space-y-3 pt-2">
+
+      <div id="login-box" class="space-y-3 pt-2">
         <div>
           <label class="block text-xs font-bold text-gray-500 uppercase">Correo Electrónico / Email</label>
           <input type="email" id="auth-email" placeholder="tu@correo.com" class="w-full border rounded-xl p-3 mt-1 text-sm">
@@ -29,32 +30,60 @@
           <label class="block text-xs font-bold text-gray-500 uppercase">Contraseña / Password</label>
           <input type="password" id="auth-pass" placeholder="Mínimo 6 caracteres" class="w-full border rounded-xl p-3 mt-1 text-sm">
         </div>
-        <p id="auth-err" class="text-xs text-red-600 font-semibold text-center hidden"></p>
-        <button id="btn-login" onclick="iniciarSesion()" class="w-full bg-emerald-700 text-white py-3 rounded-xl font-bold text-sm shadow">Iniciar Sesión / Sign In</button>
-        <button id="btn-signup" onclick="registrarCuenta()" class="w-full bg-emerald-50 text-emerald-800 border border-emerald-200 py-3 rounded-xl font-bold text-sm">Crear Cuenta (14 Días Gratis)</button>
+        <p id="auth-msg" class="text-xs font-semibold text-center hidden"></p>
+        <button onclick="iniciarSesion()" class="w-full bg-emerald-700 text-white py-3 rounded-xl font-bold text-sm shadow">Iniciar Sesión / Sign In</button>
+        <button onclick="registrarCuenta()" class="w-full bg-emerald-50 text-emerald-800 border border-emerald-200 py-3 rounded-xl font-bold text-sm">Crear Cuenta (14 Días Gratis)</button>
+        <div class="text-center pt-1">
+          <button onclick="mostrarRecuperar()" class="text-xs text-emerald-700 underline font-semibold">¿Olvidaste tu contraseña? / Forgot password?</button>
+        </div>
+      </div>
+
+      <!-- PANTALLA DE RECUPERAR CONTRASEÑA -->
+      <div id="recover-box" class="hidden space-y-3 pt-2">
+        <p class="text-xs text-gray-600 text-center">Escribe tu correo registrado para crear una contraseña nueva al instante:</p>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase">Tu Correo Electrónico</label>
+          <input type="email" id="rec-email" placeholder="tu@correo.com" class="w-full border rounded-xl p-3 mt-1 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase">Nueva Contraseña</label>
+          <input type="password" id="rec-pass" placeholder="Mínimo 6 caracteres" class="w-full border rounded-xl p-3 mt-1 text-sm">
+        </div>
+        <p id="rec-msg" class="text-xs font-semibold text-center hidden"></p>
+        <button onclick="guardarNuevaClave()" class="w-full bg-emerald-700 text-white py-3 rounded-xl font-bold text-sm shadow">Actualizar Contraseña</button>
+        <button onclick="ocultarRecuperar()" class="w-full bg-gray-100 text-gray-700 py-2.5 rounded-xl font-bold text-xs">Volver a Iniciar Sesión</button>
       </div>
     </div>
   </div>
 
+  <!-- CANDADO DE SUSCRIPCIÓN ($14.99/MES TRAS 14 DÍAS) -->
   <div id="paywall-screen" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-900/90">
     <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl text-center space-y-4">
       <span class="text-4xl">🔒</span>
       <h2 class="text-xl font-extrabold text-gray-800">Tu Prueba de 14 Días Terminó</h2>
-      <p class="text-xs text-gray-500">Activa tu <strong>Plan Pro (Hasta 500 Clientes)</strong> para seguir administrando tu ruta, cobros y mensajes SMS en la nube.</p>
+      <p class="text-xs text-gray-500">Activa tu <strong>Plan Pro (Hasta 500 Clientes)</strong> para seguir administrando tu ruta, cobros y mensajes SMS.</p>
       <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl">
         <p class="text-2xl font-extrabold text-emerald-800">$14.99 <span class="text-xs font-normal text-gray-600">/ mes</span></p>
-        <p class="text-[11px] text-emerald-700 mt-1">✓ Hasta 500 clientes • ✓ Respaldo en la nube • ✓ Bilingüe</p>
+        <p class="text-[11px] text-emerald-700 mt-1">✓ Hasta 500 clientes • ✓ Mensajes SMS • ✓ Bilingüe</p>
       </div>
-      <a id="btn-stripe" href="#" target="_blank" class="block w-full bg-emerald-700 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg">💳 Suscribirme Ahora ($14.99/mes)</a>
-      <button onclick="cerrarSesion()" class="text-xs text-gray-400 underline pt-2">Cerrar sesión</button>
+      <a id="btn-stripe" href="https://stripe.com" target="_blank" class="block w-full bg-emerald-700 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg">💳 Suscribirme Ahora ($14.99/mes)</a>
+      <div class="pt-2 border-t space-y-2">
+        <p class="text-[11px] text-gray-400">¿Ya pagaste tu mensualidad? Ingresa tu código de activación:</p>
+        <div class="flex gap-2">
+          <input type="text" id="codigo-pro" placeholder="Código Pro" class="flex-1 border rounded-lg px-3 py-2 text-xs">
+          <button onclick="activarCodigo()" class="bg-gray-800 text-white px-3 py-2 rounded-lg text-xs font-bold">Activar</button>
+        </div>
+      </div>
+      <button onclick="cerrarSesion()" class="text-xs text-gray-400 underline pt-1">Cerrar sesión</button>
     </div>
   </div>
 
+  <!-- APLICACIÓN PRINCIPAL -->
   <div id="app-screen" class="hidden">
     <header class="bg-gradient-to-r from-emerald-800 to-emerald-600 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center max-w-md mx-auto">
       <div>
         <h1 class="text-xl font-bold flex items-center gap-1.5">🌿 Jardineros Pro</h1>
-        <p class="text-[11px] text-emerald-100" id="header-cap">0 / 500 • Nube Activa</p>
+        <p class="text-[11px] text-emerald-100" id="header-cap">0 / 500 • Plan Pro Activo</p>
       </div>
       <div class="flex gap-1.5">
         <button onclick="toggleLang()" id="btn-lang" class="bg-emerald-900/60 text-white px-2.5 py-1.5 rounded-full text-xs font-bold border border-emerald-400/50">🇺🇸 EN</button>
@@ -64,6 +93,7 @@
     </header>
 
     <main class="max-w-md mx-auto p-4 space-y-4">
+      <!-- DASHBOARD -->
       <section id="tab-dashboard" class="space-y-4">
         <div class="grid grid-cols-3 gap-2.5 text-center">
           <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100">
@@ -106,12 +136,14 @@
         </div>
       </section>
 
+      <!-- CLIENTES -->
       <section id="tab-clientes" class="hidden space-y-3">
         <div class="flex gap-2 overflow-x-auto pb-1" id="filtros-dias"></div>
         <p class="text-xs text-gray-400 text-center" data-t="tip">💡 Toca cualquier tarjeta para editar nombre, dirección o precio</p>
         <div id="lista-clientes" class="space-y-3"></div>
       </section>
 
+      <!-- LIBRETA -->
       <section id="tab-libreta" class="hidden">
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
           <div class="p-3.5 bg-emerald-50 border-b border-emerald-100">
@@ -126,6 +158,7 @@
         </div>
       </section>
 
+      <!-- CONTABILIDAD Y RESPALDO -->
       <section id="tab-conta" class="hidden space-y-4">
         <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3 border border-gray-100">
           <div class="flex justify-between items-center">
@@ -149,11 +182,25 @@
               <div id="conta-bar" class="bg-emerald-600 h-2.5 rounded-full" style="width: 0%"></div>
             </div>
           </div>
-          <button onclick="reiniciarMes()" class="w-full mt-4 bg-gray-800 text-white py-3 rounded-xl text-xs font-bold" data-t="rst">🔄 Iniciar Nuevo Mes (Reiniciar Pagos)</button>
+          <button onclick="reiniciarMes()" class="w-full mt-2 bg-gray-800 text-white py-3 rounded-xl text-xs font-bold" data-t="rst">🔄 Iniciar Nuevo Mes (Reiniciar Pagos)</button>
+        </div>
+
+        <!-- COPIA DE SEGURIDAD DESCARGABLE -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3 border border-gray-100">
+          <h3 class="font-bold text-gray-800 text-sm">💾 Copia de Seguridad (Respaldo)</h3>
+          <p class="text-xs text-gray-500">Descarga tus clientes en un archivo o cárgalos si cambias de teléfono.</p>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="descargarRespaldo()" class="bg-emerald-50 text-emerald-800 border border-emerald-200 py-2.5 rounded-xl text-xs font-bold">⬇️ Guardar Copia</button>
+            <label class="bg-gray-100 text-gray-700 py-2.5 rounded-xl text-xs font-bold text-center cursor-pointer">
+              ⬆️ Cargar Copia
+              <input type="file" accept=".json" onchange="cargarRespaldo(event)" class="hidden">
+            </label>
+          </div>
         </div>
       </section>
     </main>
 
+    <!-- BARRA INFERIOR -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 z-20 max-w-md mx-auto shadow-lg">
       <button onclick="verTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center text-emerald-700 font-bold text-xs"><span class="text-lg">🏠</span><span data-t="n1">Dashboard</span></button>
       <button onclick="verTab('clientes')" id="nav-clientes" class="flex flex-col items-center text-gray-400 text-xs"><span class="text-lg">👥</span><span data-t="n2">Clientes</span></button>
@@ -162,6 +209,7 @@
     </nav>
   </div>
 
+  <!-- MODAL CLIENTE -->
   <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-2">
@@ -191,83 +239,185 @@
   </div>
 
   <script>
-    var SUPA_URL = 'https://rymrhjpmvptrizetcjsfo.supabase.co';
-    var SUPA_KEY = 'sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjCsW';
-    var db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-    var currentUser = null;
-
+    var OWNER_EMAIL = 'gena197590@gmail.com';
+    var PRO_CODE = 'JARDIN2026';
     var lang = localStorage.getItem('j_lang') || 'es';
-    var clientes = [];
     var filtro = 'Todos';
     var diasSemana = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
     var hoyNombre = diasSemana[new Date().getDay()];
+    var clientes = [];
 
     var txt = {
       es: { add:'+ Cliente', tot:'Total Clientes', due:'Por Cobrar', paid:'Cobrado Mes', todayTitle:'📅 Ruta de Hoy', noToday:'No tienes visitas programadas para hoy.', qAdd:'Nuevo Cliente', qList:'Ver Clientes', pend:'⚠️ Pendientes de Pago', tap:'Toca para editar', tip:'💡 Toca la tarjeta para editar datos', ledger:'📒 Libreta General', col1:'Cliente', col2:'Cargo', col3:'Pagado', col4:'Estado', acc:'📊 Contabilidad', inc:'Ingresos del Mes:', rem:'Pendiente en Calle:', cap:'Capacidad Plan Pro', rst:'🔄 Iniciar Nuevo Mes', n1:'Dashboard', n2:'Clientes', n3:'Libreta', n4:'Conta', f1:'Nombre', f2:'Notas del Jardín', f3:'Día', f4:'Cobro', f5:'Costo ($)', f6:'Pagado ($)', f7:'Teléfono', f8:'Dirección', b1:'Cancelar', b2:'Guardar', ok:'Al día', owes:'Debe $', payBtn:'$ Pagar', editBtn:'📝 Editar', delBtn:'Borrar', noTel:'Agrega un teléfono en Editar.', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'] },
       en: { add:'+ Client', tot:'Total Clients', due:'To Collect', paid:'Collected Mo.', todayTitle:'📅 Today\'s Route', noToday:'No visits scheduled for today.', qAdd:'Add Client', qList:'All Clients', pend:'⚠️ Pending Payments', tap:'Tap to edit', tip:'💡 Tap card to edit details', ledger:'📒 General Ledger', col1:'Client', col2:'Charge', col3:'Paid', col4:'Status', acc:'📊 Accounting', inc:'Monthly Income:', rem:'Pending Balance:', cap:'Pro Plan Capacity', rst:'🔄 Start New Month', n1:'Dashboard', n2:'Clients', n3:'Ledger', n4:'Account', f1:'Name', f2:'Garden Notes', f3:'Day', f4:'Billing', f5:'Rate ($)', f6:'Paid ($)', f7:'Phone Number', f8:'Address', b1:'Cancel', b2:'Save', ok:'Paid', owes:'Owes $', payBtn:'$ Pay', editBtn:'📝 Edit', delBtn:'Delete', noTel:'Add a phone number first.', days:['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'], dayLabels:['All','Mon','Tue','Wed','Thu','Fri','Sat'] }
     };
 
-    function showErr(m) {
-      var e = document.getElementById('auth-err');
-      e.innerText = m;
-      e.classList.remove('hidden');
+    function getUsers() { return JSON.parse(localStorage.getItem('j_users') || '{}'); }
+    function saveUsers(u) { localStorage.setItem('j_users', JSON.stringify(u)); }
+    function getSessionEmail() { return localStorage.getItem('j_session') || ''; }
+
+    function showAuthMsg(msg, isOk) {
+      var el = document.getElementById('auth-msg');
+      el.innerText = msg;
+      el.className = 'text-xs font-semibold text-center ' + (isOk ? 'text-emerald-700' : 'text-red-600');
+      el.classList.remove('hidden');
     }
 
-    async function registrarCuenta() {
-      var email = document.getElementById('auth-email').value.trim();
-      var password = document.getElementById('auth-pass').value;
-      if (!email || password.length < 6) return showErr('Ingresa correo válido y contraseña de 6+ caracteres.');
-      document.getElementById('btn-signup').innerText = 'Creando cuenta...';
-      var res = await db.auth.signUp({ email: email, password: password });
-      document.getElementById('btn-signup').innerText = 'Crear Cuenta (14 Días Gratis)';
-      if (res.error) return showErr(res.error.message);
-      await db.from('suscripciones').upsert([{ email: email }], { onConflict: 'email' });
+    function mostrarRecuperar() {
+      document.getElementById('login-box').classList.add('hidden');
+      document.getElementById('recover-box').classList.remove('hidden');
+    }
+
+    function ocultarRecuperar() {
+      document.getElementById('recover-box').classList.add('hidden');
+      document.getElementById('login-box').classList.remove('hidden');
+    }
+
+    function guardarNuevaClave() {
+      var email = document.getElementById('rec-email').value.trim().toLowerCase();
+      var pass = document.getElementById('rec-pass').value;
+      var msg = document.getElementById('rec-msg');
+      if (!email || pass.length < 6) {
+        msg.innerText = 'Ingresa un correo válido y contraseña de 6+ caracteres.';
+        msg.className = 'text-xs font-semibold text-center text-red-600';
+        msg.classList.remove('hidden');
+        return;
+      }
+      var users = getUsers();
+      if (!users[email]) {
+        users[email] = { pass: pass, created: Date.now(), pro: (email === OWNER_EMAIL) };
+      } else {
+        users[email].pass = pass;
+      }
+      saveUsers(users);
+      ocultarRecuperar();
+      document.getElementById('auth-email').value = email;
+      document.getElementById('auth-pass').value = pass;
+      showAuthMsg('✅ Contraseña actualizada. Ya puedes Iniciar Sesión.', true);
+    }
+
+    function registrarCuenta() {
+      var email = document.getElementById('auth-email').value.trim().toLowerCase();
+      var pass = document.getElementById('auth-pass').value;
+      if (!email || !email.includes('@') || pass.length < 6) {
+        return showAuthMsg('Ingresa un correo válido y contraseña de 6+ caracteres.', false);
+      }
+      var users = getUsers();
+      if (users[email]) {
+        return showAuthMsg('Este correo ya tiene cuenta. Presiona Iniciar Sesión.', false);
+      }
+      users[email] = { pass: pass, created: Date.now(), pro: (email === OWNER_EMAIL) };
+      saveUsers(users);
+      localStorage.setItem('j_session', email);
       verificarAcceso();
     }
 
-    async function iniciarSesion() {
-      var email = document.getElementById('auth-email').value.trim();
-      var password = document.getElementById('auth-pass').value;
-      document.getElementById('btn-login').innerText = 'Entrando...';
-      var res = await db.auth.signInWithPassword({ email: email, password: password });
-      document.getElementById('btn-login').innerText = 'Iniciar Sesión / Sign In';
-      if (res.error) return showErr('Correo o contraseña incorrectos.');
+    function iniciarSesion() {
+      var email = document.getElementById('auth-email').value.trim().toLowerCase();
+      var pass = document.getElementById('auth-pass').value;
+      if (!email || pass.length < 6) {
+        return showAuthMsg('Escribe tu correo y contraseña (6+ caracteres).', false);
+      }
+      var users = getUsers();
+      if (!users[email]) {
+        if (email === OWNER_EMAIL) {
+          users[email] = { pass: pass, created: Date.now(), pro: true };
+          saveUsers(users);
+          localStorage.setItem('j_session', email);
+          return verificarAcceso();
+        }
+        return showAuthMsg('Correo no encontrado. Presiona Crear Cuenta (14 Días Gratis).', false);
+      }
+      if (users[email].pass !== pass) {
+        return showAuthMsg('Contraseña incorrecta. Usa "¿Olvidaste tu contraseña?" para cambiarla.', false);
+      }
+      localStorage.setItem('j_session', email);
       verificarAcceso();
     }
 
-    async function cerrarSesion() {
-      await db.auth.signOut();
+    function cerrarSesion() {
+      localStorage.removeItem('j_session');
       location.reload();
     }
 
-    async function verificarAcceso() {
-      var ses = await db.auth.getSession();
-      if (!ses.data.session) return;
-      currentUser = ses.data.session.user;
+    function activarCodigo() {
+      var code = document.getElementById('codigo-pro').value.trim().toUpperCase();
+      if (code === PRO_CODE) {
+        var email = getSessionEmail();
+        var users = getUsers();
+        if (users[email]) { users[email].pro = true; saveUsers(users); }
+        document.getElementById('paywall-screen').classList.add('hidden');
+        verificarAcceso();
+      } else {
+        alert('Código inválido.');
+      }
+    }
+
+    function verificarAcceso() {
+      var email = getSessionEmail();
+      if (!email) return;
+      var users = getUsers();
+      var u = users[email];
+      if (!u) return;
+
       document.getElementById('auth-screen').classList.add('hidden');
 
-      var sub = await db.from('suscripciones').select('*').eq('email', currentUser.email).maybeSingle();
-      var hoy = new Date().toISOString().slice(0, 10);
+      var diasPasados = Math.floor((Date.now() - u.created) / (1000 * 60 * 60 * 24));
+      var diasRestantes = Math.max(0, 14 - diasPasados);
+      var esDueno = (email === OWNER_EMAIL) || u.pro;
 
-      if (!sub.data) {
-        var ins = await db.from('suscripciones').insert([{ email: currentUser.email }]).select().single();
-        sub.data = ins.data;
-      }
-
-      if (!sub.data || !sub.data.activo || sub.data.vence < hoy) {
+      if (!esDueno && diasPasados >= 14) {
         document.getElementById('paywall-screen').classList.remove('hidden');
         return;
       }
 
-      document.getElementById('sub-status').innerText = sub.data.plan + ' (Vence: ' + sub.data.vence + ')';
+      document.getElementById('sub-status').innerText = (email === OWNER_EMAIL) ? '👑 Dueño Vitalicio' : (u.pro ? '⭐ Plan Pro Activo' : '🎁 Prueba: ' + diasRestantes + ' días');
       document.getElementById('app-screen').classList.remove('hidden');
-      cargarClientes();
+
+      var saved = localStorage.getItem('j_cli_' + email);
+      if (saved) {
+        clientes = JSON.parse(saved);
+      } else {
+        clientes = [
+          { id: 1, nom: 'Cornel Jones', tel: '16615550199', dir: 'Sun Village, CA', nota: 'Poda completa', dia: 'Lunes', tip: 'Mes', cos: 270, pag: 0 },
+          { id: 2, nom: 'María Gómez', tel: '16615550144', dir: 'Palmdale, CA', nota: 'Abono orgánico', dia: 'Miércoles', tip: 'Mes', cos: 150, pag: 150 }
+        ];
+        saveClientes();
+      }
+      render();
     }
 
-    async function cargarClientes() {
-      var res = await db.from('clientes').select('*').order('id', { ascending: false });
-      clientes = res.data || [];
+    function saveClientes() {
+      var email = getSessionEmail();
+      if (email) localStorage.setItem('j_cli_' + email, JSON.stringify(clientes));
       render();
+    }
+
+    function descargarRespaldo() {
+      var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(clientes));
+      var a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", "respaldo-jardineros-" + new Date().toISOString().slice(0,10) + ".json");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function cargarRespaldo(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          var data = JSON.parse(evt.target.result);
+          if (Array.isArray(data)) {
+            clientes = data;
+            saveClientes();
+            alert('✅ Copia de seguridad restaurada correctamente.');
+          }
+        } catch(err) { alert('Archivo inválido.'); }
+      };
+      reader.readAsText(file);
     }
 
     function toggleLang() { lang = (lang === 'es') ? 'en' : 'es'; localStorage.setItem('j_lang', lang); render(); }
@@ -304,7 +454,7 @@
       var tot = clientes.length, cob = 0, due = 0;
       clientes.forEach(function(c) { cob += Number(c.pag); var d = Number(c.cos) - Number(c.pag); if (d > 0) due += d; });
 
-      document.getElementById('header-cap').innerText = tot + ' / 500 • Nube Activa';
+      document.getElementById('header-cap').innerText = tot + ' / 500 • Plan Pro Activo';
       document.getElementById('dash-tot').innerText = tot;
       document.getElementById('dash-due').innerText = '$' + due;
       document.getElementById('dash-paid').innerText = '$' + cob;
@@ -364,12 +514,11 @@
 
     function cerrar() { document.getElementById('modal').classList.replace('flex','hidden'); }
 
-    async function guardar() {
+    function guardar() {
       var id = document.getElementById('e-id').value, nom = document.getElementById('e-nom').value.trim();
       if (!nom) return;
       var obj = {
         id: id ? Number(id) : Date.now(),
-        user_id: currentUser.id,
         nom: nom,
         tel: document.getElementById('e-tel').value.trim(),
         dir: document.getElementById('e-dir').value.trim(),
@@ -379,28 +528,33 @@
         cos: Number(document.getElementById('e-cos').value) || 0,
         pag: Number(document.getElementById('e-pag').value) || 0
       };
-      await db.from('clientes').upsert(obj);
+      if (id) {
+        var i = clientes.findIndex(function(x) { return x.id == id; });
+        clientes[i] = obj;
+      } else {
+        clientes.push(obj);
+      }
       cerrar();
-      cargarClientes();
+      saveClientes();
     }
 
-    async function pagar(id) {
-      var c = clientes.find(function(x) { return x.id === id; });
-      await db.from('clientes').update({ pag: c.cos }).eq('id', id);
-      cargarClientes();
+    function pagar(id) {
+      var i = clientes.findIndex(function(x) { return x.id === id; });
+      clientes[i].pag = clientes[i].cos;
+      saveClientes();
     }
 
-    async function borrar(id) {
+    function borrar(id) {
       if (confirm('?')) {
-        await db.from('clientes').delete().eq('id', id);
-        cargarClientes();
+        clientes = clientes.filter(function(x) { return x.id !== id; });
+        saveClientes();
       }
     }
 
-    async function reiniciarMes() {
+    function reiniciarMes() {
       if (confirm('?')) {
-        await db.from('clientes').update({ pag: 0 }).eq('user_id', currentUser.id).eq('tip', 'Mes');
-        cargarClientes();
+        clientes.forEach(function(c) { if (c.tip === 'Mes') c.pag = 0; });
+        saveClientes();
       }
     }
 
