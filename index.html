@@ -1,932 +1,951 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Jardineros Pro">
-<title>Jardineros Pro</title>
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231b5e20'/><text y='.9em' font-size='70' x='15'>🌱</text></svg>">
-<style>
-  :root {
-    --primary: #1b5e20;
-    --primary-light: #2e7d32;
-    --accent: #4caf50;
-    --bg: #f1f5f2;
-    --card: #ffffff;
-    --text: #1c281e;
-    --muted: #607063;
-    --border: #dce5de;
-    --danger: #c62828;
-  }
-  * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); padding-bottom: 85px; -webkit-tap-highlight-color: transparent; }
-  .hidden { display: none !important; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Jardineros Pro" />
+  <title>Jardineros Pro</title>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='36' fill='%231b5e20'/><text x='90' y='125' font-size='95' text-anchor='middle'>🌱</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --primary: #1b5e20;
+      --primary-light: #2e7d32;
+      --bg: #f4f6f5;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 85px; -webkit-tap-highlight-color: transparent; }
+    
+    /* Login & Paywall */
+    .auth-wrapper { min-height: 100vh; background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .auth-card { background: #fff; width: 100%; max-width: 400px; border-radius: 20px; padding: 28px 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); text-align: center; }
+    .auth-logo { font-size: 46px; margin-bottom: 8px; }
+    .auth-title { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+    .auth-sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+    .trial-badge { display: inline-block; background: #fef3c7; color: #92400e; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 20px; margin-bottom: 18px; }
+    .input-group { text-align: left; margin-bottom: 14px; }
+    .input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+    .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; outline: none; background: #f9fafb; }
+    .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--primary); background: #fff; }
+    .btn { width: 100%; padding: 13px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-primary { background: var(--primary-light); color: #fff; margin-bottom: 10px; }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-dark { background: #374151; color: #fff; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+    .btn-danger { background: #dc2626; color: #fff; }
+    .error-box { background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 10px; font-size: 13px; margin-bottom: 14px; display: none; font-weight: 600; }
+    .lang-top { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+    .lang-pill { background: #f3f4f6; border: 1px solid #d1d5db; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; color: #374151; }
 
-  /* AUTH & PAYWALL */
-  .screen-center {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
-    background: linear-gradient(135deg, #1b5e20 0%, #388e3c 100%);
-  }
-  .auth-box {
-    background: var(--card); width: 100%; max-width: 400px; border-radius: 20px; padding: 28px 24px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.2); text-align: center;
-  }
-  .lang-top { display: flex; justify-content: flex-end; margin-bottom: 10px; }
-  .btn-lang-pill {
-    background: #eef4ef; border: 1px solid var(--border); color: var(--primary);
-    padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer;
-  }
-  .badge-trial {
-    display: inline-block; background: #fff8e1; color: #b26a00; border: 1px solid #ffe082;
-    padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin: 10px 0 16px;
-  }
-  .form-group { text-align: left; margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
-  .form-group input, .form-group select, .form-group textarea {
-    width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; background: #fafcfa;
-  }
-  .btn-main {
-    width: 100%; padding: 14px; border: none; border-radius: 12px; background: var(--primary-light);
-    color: white; font-size: 16px; font-weight: 700; cursor: pointer; margin-bottom: 10px;
-  }
-  .btn-dark {
-    width: 100%; padding: 14px; border: none; border-radius: 12px; background: #263238;
-    color: white; font-size: 15px; font-weight: 700; cursor: pointer;
-  }
-  .error-box {
-    background: #ffebee; color: var(--danger); border: 1px solid #ffcdd2;
-    padding: 10px; border-radius: 10px; font-size: 13px; margin-bottom: 12px; font-weight: 600;
-  }
+    /* App Header */
+    .app-header { background: var(--primary); color: #fff; padding: 16px 16px 14px; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+    .header-top { display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+    .status-line { font-size: 11px; color: #a7f3d0; margin-top: 3px; font-weight: 600; }
+    .header-actions { display: flex; gap: 8px; align-items: center; }
+    .btn-lang-hdr { background: rgba(255,255,255,0.16); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 6px 10px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .btn-exit { background: #dc2626; color: #fff; border: none; padding: 6px 11px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
 
-  /* HEADER */
-  .app-header {
-    background: var(--primary); color: white; padding: 16px 16px 14px;
-    display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 20;
-  }
-  .header-info h1 { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-  .header-sub { font-size: 12px; opacity: 0.9; margin-top: 3px; }
-  .header-actions { display: flex; gap: 8px; align-items: center; }
-  .btn-hdr {
-    background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
-    color: white; padding: 7px 11px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;
-  }
-  .btn-exit { background: #c62828; border: none; }
+    /* Container & Filters */
+    .container { max-width: 600px; margin: 0 auto; padding: 14px; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .section-title { font-size: 18px; font-weight: 800; color: var(--text); }
+    .btn-sm { padding: 8px 14px; border-radius: 10px; font-size: 13px; width: auto; }
+    .days-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none; }
+    .days-bar::-webkit-scrollbar { display: none; }
+    .day-chip { padding: 7px 13px; border-radius: 20px; border: 1px solid var(--border); background: #fff; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; white-space: nowrap; }
+    .day-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .search-box { width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border); background: #fff; font-size: 14px; margin-bottom: 14px; }
 
-  /* CONTENT & CARDS */
-  .container { padding: 14px; max-width: 700px; margin: 0 auto; }
-  .section-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .section-top h2 { font-size: 19px; font-weight: 800; }
-  .btn-add {
-    background: var(--primary); color: white; border: none; padding: 10px 16px;
-    border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer;
-  }
-  .days-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
-  .day-chip {
-    background: white; border: 1px solid var(--border); color: var(--text);
-    padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;
-  }
-  .day-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-  .search-input {
-    width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px;
-    font-size: 15px; background: white; margin-bottom: 14px;
-  }
+    /* Client Cards */
+    .client-card { background: var(--card); border-radius: 16px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border: 1px solid var(--border); }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .day-tag { display: inline-block; background: #e8f5e9; color: var(--primary); font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 8px; margin-bottom: 4px; }
+    .client-name { font-size: 17px; font-weight: 800; color: var(--text); }
+    .client-addr { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .client-note { font-size: 12px; color: #b45309; margin-top: 4px; font-weight: 600; }
+    .price-box { text-align: right; }
+    .price-val { font-size: 20px; font-weight: 800; color: var(--text); }
+    .paid-badge { display: inline-block; margin-top: 4px; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; }
+    .paid-yes { background: #dcfce7; color: #166534; }
+    .paid-no { background: #fef3c7; color: #92400e; }
+    .card-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f3f4f6; }
+    .act-btn { background: #f9fafb; border: 1px solid var(--border); border-radius: 10px; padding: 8px 4px; font-size: 12px; font-weight: 700; color: var(--text); text-align: center; text-decoration: none; cursor: pointer; }
 
-  .card {
-    background: var(--card); border-radius: 16px; padding: 15px; margin-bottom: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid var(--border);
-  }
-  .card-row { display: flex; justify-content: space-between; align-items: flex-start; }
-  .day-tag {
-    display: inline-block; background: #e8f5e9; color: var(--primary);
-    padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 6px;
-  }
-  .client-name { font-size: 18px; font-weight: 800; margin-bottom: 3px; }
-  .client-meta { font-size: 13px; color: var(--muted); margin-bottom: 2px; }
-  .price-box { text-align: right; }
-  .price-val { font-size: 20px; font-weight: 800; color: var(--text); }
-  .status-btn {
-    margin-top: 6px; padding: 6px 10px; border-radius: 8px; border: none; font-size: 12px; font-weight: 700; cursor: pointer;
-  }
-  .status-paid { background: #e8f5e9; color: #1b5e20; }
-  .status-pending { background: #fff3e0; color: #e65100; }
+    /* Notebook & Finance */
+    .note-card { background: #fff; border-radius: 14px; padding: 14px; margin-bottom: 10px; border-left: 4px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .stat-box { background: #fff; padding: 14px; border-radius: 14px; border: 1px solid var(--border); text-align: center; }
+    .stat-lbl { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+    .stat-num { font-size: 22px; font-weight: 800; margin-top: 4px; }
+    .net-box { grid-column: span 2; background: #e8f5e9; border-color: #a7f3d0; }
 
-  .card-actions {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f0f4f1;
-  }
-  .act-btn {
-    background: #f4f7f5; border: 1px solid var(--border); border-radius: 10px; padding: 9px 4px;
-    font-size: 12px; font-weight: 700; color: var(--text); cursor: pointer; text-align: center; text-decoration: none;
-  }
+    /* Bottom Nav */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); z-index: 60; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; color: var(--muted); cursor: pointer; border: none; background: none; }
+    .nav-item.active { color: var(--primary); }
+    .nav-icon { font-size: 20px; }
 
-  /* NOTEBOOK & VOICE */
-  .note-box { background: white; padding: 14px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 14px; }
-  .voice-row { display: flex; gap: 8px; margin-top: 10px; }
-  .btn-mic {
-    flex: 1; background: #e8f5e9; color: var(--primary); border: 1px solid #a5d6a7;
-    padding: 11px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer;
-  }
-  .btn-mic.recording { background: #ffebee; color: #c62828; border-color: #ef9a9a; }
-
-  /* FINANCE */
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .stat-card { background: white; padding: 14px; border-radius: 14px; border: 1px solid var(--border); text-align: center; }
-  .stat-lbl { font-size: 12px; color: var(--muted); font-weight: 700; }
-  .stat-num { font-size: 22px; font-weight: 800; margin-top: 4px; }
-
-  /* BOTTOM NAV */
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border);
-    display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 4px 12px; z-index: 30;
-  }
-  .nav-item {
-    background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 3px;
-    color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer;
-  }
-  .nav-item.active { color: var(--primary); }
-  .nav-icon { font-size: 20px; }
-
-  /* MODAL */
-  .modal-bg {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center;
-    padding: 16px; z-index: 50;
-  }
-  .modal-card {
-    background: white; width: 100%; max-width: 440px; border-radius: 18px; padding: 20px; max-height: 90vh; overflow-y: auto;
-  }
-  .modal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-  .btn-close { background: #f0f0f0; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: 800; cursor: pointer; }
-  .sync-badge {
-    display: inline-block; font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 7px; border-radius: 8px; margin-left: 4px;
-  }
-</style>
+    /* Modal */
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+    .modal-card { background: #fff; width: 100%; max-width: 420px; border-radius: 18px; padding: 20px; max-height: 90vh; overflow-y: auto; }
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
 
-<!-- 1. PANTALLA DE LOGIN -->
-<div id="authScreen" class="screen-center">
-  <div class="auth-box">
-    <div class="lang-top">
-      <button class="btn-lang-pill" onclick="toggleLang()" id="btnLangAuth">🌐 English</button>
-    </div>
-    <div style="font-size: 40px; margin-bottom: 6px;">🌱</div>
-    <h2 style="font-size: 24px; font-weight: 800; color: #1b5e20;">Jardineros Pro</h2>
-    <p id="authSub" style="font-size: 13px; color: #607063; margin-top: 4px;">Control de clientes, rutas, libreta y cobros</p>
-    <div id="authTrialBadge" class="badge-trial">🎁 14 Días de Prueba Gratis • Luego $14.99/mes</div>
-    <div id="authError" class="error-box hidden"></div>
-
-    <div class="form-group">
-      <label id="lblEmail">Correo Electrónico</label>
-      <input type="email" id="emailInput" placeholder="tu@correo.com">
-    </div>
-    <div class="form-group">
-      <label id="lblPass">Contraseña (Mín. 6 letras/números)</label>
-      <input type="password" id="passInput" placeholder="••••••">
-    </div>
-    <button class="btn-main" id="btnLogin" onclick="handleAuth('login')">Iniciar Sesión</button>
-    <button class="btn-dark" id="btnSignup" onclick="handleAuth('signup')">Crear Cuenta (14 Días Gratis)</button>
-  </div>
-</div>
-
-<!-- 2. PANTALLA DE SUSCRIPCIÓN VENCIDA -->
-<div id="paywallScreen" class="screen-center hidden">
-  <div class="auth-box">
-    <div class="lang-top">
-      <button class="btn-lang-pill" onclick="toggleLang()" id="btnLangPay">🌐 English</button>
-    </div>
-    <div style="font-size: 44px; margin-bottom: 8px;">🔒</div>
-    <h2 id="payTitle" style="font-size: 22px; font-weight: 800; color: #1b5e20;">Tu prueba de 14 días terminó</h2>
-    <p id="payDesc" style="font-size: 14px; color: #607063; margin: 10px 0 18px; line-height: 1.4;">
-      Activa tu Plan Jardineros Pro (hasta 500 clientes y nube privada) por solo <b>$14.99 USD/mes</b>.
-    </p>
-    <a id="btnStripePay" href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" class="btn-main" style="display:block; text-decoration:none;">
-      💳 Suscribirme Ahora ($14.99/mes)
-    </a>
-    <button class="btn-dark" id="btnRecheckPay" onclick="checkSubscription(true)" style="margin-bottom:8px;">🔄 Ya pagué, verificar acceso</button>
-    <button class="btn-lang-pill" id="btnLogoutPay" onclick="logout()" style="width:100%; padding:10px;">Cerrar Sesión</button>
-  </div>
-</div>
-
-<!-- 3. APLICACIÓN PRINCIPAL -->
-<div id="mainApp" class="hidden">
-  <header class="app-header">
-    <div class="header-info">
-      <h1>🌱 Jardineros Pro</h1>
-      <div class="header-sub" id="headerStatus">0 / 500 • Nube Sincronizada</div>
-    </div>
-    <div class="header-actions">
-      <button class="btn-hdr" id="btnLangApp" onclick="toggleLang()">🌐 ES → EN</button>
-      <button class="btn-hdr btn-exit" id="btnExitApp" onclick="logout()">Salir</button>
-    </div>
-  </header>
-
-  <!-- TAB 1: RUTA -->
-  <div id="tabRoute" class="container">
-    <div class="section-top">
-      <h2 id="titleRoute">📍 Ruta de Hoy</h2>
-      <button class="btn-add" id="btnAddClientRoute" onclick="openClientModal()">+ Cliente</button>
-    </div>
-    <div class="days-bar" id="daysBar"></div>
-    <input type="text" class="search-input" id="searchRoute" oninput="renderAll()" placeholder="Buscar en la ruta...">
-    <div id="routeList"></div>
-  </div>
-
-  <!-- TAB 2: CLIENTES -->
-  <div id="tabClients" class="container hidden">
-    <div class="section-top">
-      <h2 id="titleClients">👥 Mis Clientes (Máx 500)</h2>
-      <button class="btn-add" id="btnAddClientList" onclick="openClientModal()">+ Cliente</button>
-    </div>
-    <input type="text" class="search-input" id="searchClients" oninput="renderAll()" placeholder="Buscar cliente, teléfono o dirección...">
-    <div id="clientsList"></div>
-  </div>
-
-  <!-- TAB 3: LIBRETA -->
-  <div id="tabNotebook" class="container hidden">
-    <div class="section-top">
-      <h2 id="titleNotebook">📓 Libreta y Extras</h2>
-    </div>
-    <div class="note-box">
-      <textarea id="noteText" rows="3" style="width:100%; border:1px solid var(--border); border-radius:12px; padding:10px; font-size:15px;" placeholder="Escribe o dicta trabajos extra, materiales o pendientes..."></textarea>
-      <div class="voice-row">
-        <button class="btn-mic" id="btnMic" onclick="toggleVoice()">🎙️ Dictar por Voz</button>
-        <button class="btn-add" id="btnSaveNote" onclick="addNote()">Guardar Nota</button>
+  <!-- AUTH SCREEN -->
+  <div id="authScreen" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="lang-top">
+        <button class="lang-pill" onclick="toggleLang()" id="authLangBtn">🌐 English</button>
       </div>
-    </div>
-    <div id="notesList"></div>
-  </div>
+      <div class="auth-logo">🌱</div>
+      <div class="auth-title">Jardineros Pro</div>
+      <div class="auth-sub" data-i18n="authSub">Control de clientes, rutas, libreta y cobros</div>
+      <div class="trial-badge" data-i18n="trialBadge">🎁 14 Días de Prueba Gratis • Luego $14.99/mes</div>
+      
+      <div id="authError" class="error-box"></div>
 
-  <!-- TAB 4: CONTABILIDAD -->
-  <div id="tabFinance" class="container hidden">
-    <div class="section-top">
-      <h2 id="titleFinance">💰 Contabilidad y Nube</h2>
-    </div>
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-lbl" id="lblEarned">COBRADO</div>
-        <div class="stat-num" style="color:#1b5e20;" id="statPaid">$0</div>
+      <div class="input-group">
+        <label data-i18n="emailLbl">CORREO ELECTRÓNICO</label>
+        <input type="email" id="emailInput" placeholder="tu@correo.com" autocomplete="email" />
       </div>
-      <div class="stat-card">
-        <div class="stat-lbl" id="lblPending">POR COBRAR</div>
-        <div class="stat-num" style="color:#e65100;" id="statPending">$0</div>
+      <div class="input-group">
+        <label data-i18n="passLbl">CONTRASEÑA (MÍN. 6 LETRAS/NÚMEROS)</label>
+        <input type="password" id="passInput" placeholder="••••••••" autocomplete="current-password" />
       </div>
-    </div>
 
-    <div class="card">
-      <h3 id="titleExpenses" style="font-size:16px; margin-bottom:10px;">⛽ Registrar Gasto (Gasolina / Material)</h3>
-      <div style="display:flex; gap:8px; margin-bottom:8px;">
-        <input type="text" id="expDesc" placeholder="Ej. Gasolina, hilo, herramienta" style="flex:2; padding:10px; border:1px solid var(--border); border-radius:10px;">
-        <input type="number" id="expAmount" placeholder="$" style="flex:1; padding:10px; border:1px solid var(--border); border-radius:10px;">
-      </div>
-      <button class="btn-main" id="btnAddExp" onclick="addExpense()" style="margin-bottom:0;">+ Agregar Gasto</button>
-      <div id="expensesList" style="margin-top:12px;"></div>
-    </div>
-
-    <div class="card">
-      <h3 id="titleCloudTools" style="font-size:16px; margin-bottom:8px;">☁️ Sincronización y Respaldo</h3>
-      <p id="descCloudTools" style="font-size:13px; color:var(--muted); margin-bottom:12px;">Tus datos se guardan automáticamente en tu nube de Supabase.</p>
-      <button class="btn-main" id="btnForceSync" onclick="syncFromCloud(true)">🔄 Sincronizar Nube Ahora</button>
-      <button class="btn-dark" id="btnExportBackup" onclick="exportBackup()">⬇️ Descargar Copia de Seguridad</button>
+      <button class="btn btn-primary" onclick="handleLogin()" id="btnLogin" data-i18n="loginBtn">Iniciar Sesión</button>
+      <button class="btn btn-dark" onclick="handleSignup()" id="btnSignup" data-i18n="signupBtn">Crear Cuenta (14 Días Gratis)</button>
     </div>
   </div>
 
-  <!-- NAVEGACIÓN INFERIOR -->
-  <nav class="bottom-nav">
-    <button class="nav-item active" id="navRoute" onclick="switchTab('route')"><span class="nav-icon">📍</span><span id="txtNavRoute">Ruta</span></button>
-    <button class="nav-item" id="navClients" onclick="switchTab('clients')"><span class="nav-icon">👥</span><span id="txtNavClients">Clientes</span></button>
-    <button class="nav-item" id="navNotebook" onclick="switchTab('notebook')"><span class="nav-icon">📓</span><span id="txtNavNotebook">Libreta</span></button>
-    <button class="nav-item" id="navFinance" onclick="switchTab('finance')"><span class="nav-icon">💰</span><span id="txtNavFinance">Conta</span></button>
-  </nav>
-</div>
-
-<!-- MODAL CLIENTE -->
-<div id="clientModal" class="modal-bg hidden">
-  <div class="modal-card">
-    <div class="modal-hdr">
-      <h3 id="modalTitle">Nuevo Cliente</h3>
-      <button class="btn-close" onclick="closeClientModal()">✕</button>
-    </div>
-    <input type="hidden" id="editClientId">
-    <div class="form-group">
-      <label id="lblCName">Nombre del Cliente *</label>
-      <input type="text" id="cName" placeholder="Ej. Richard Hendrix">
-    </div>
-    <div class="form-group">
-      <label id="lblCPhone">Teléfono (Para SMS y WhatsApp)</label>
-      <input type="tel" id="cPhone" placeholder="Ej. 6615551234">
-    </div>
-    <div class="form-group">
-      <label id="lblCAddress">Dirección (Para GPS)</label>
-      <input type="text" id="cAddress" placeholder="Ej. 123 Main St">
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-      <div class="form-group">
-        <label id="lblCDay">Día de Visita</label>
-        <select id="cDay">
-          <option value="Lun">Lunes / Mon</option>
-          <option value="Mar">Martes / Tue</option>
-          <option value="Mié">Miércoles / Wed</option>
-          <option value="Jue">Jueves / Thu</option>
-          <option value="Vie">Viernes / Fri</option>
-          <option value="Sáb">Sábado / Sat</option>
-        </select>
+  <!-- PAYWALL SCREEN -->
+  <div id="paywallScreen" class="auth-wrapper hidden">
+    <div class="auth-card">
+      <div class="lang-top">
+        <button class="lang-pill" onclick="toggleLang()" id="payLangBtn">🌐 English</button>
       </div>
-      <div class="form-group">
-        <label id="lblCPrice">Tarifa ($ USD)</label>
-        <input type="number" id="cPrice" placeholder="120">
-      </div>
+      <div class="auth-logo">🔒</div>
+      <div class="auth-title" data-i18n="payTitle">Tu prueba de 14 días terminó</div>
+      <div class="auth-sub" data-i18n="paySub">Activa tu suscripción mensual para seguir administrando hasta 500 clientes, rutas GPS y cobros en la nube.</div>
+      <div class="trial-badge">💳 $14.99 USD / mes • Cancela cuando quieras</div>
+      <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" class="btn btn-primary" style="text-decoration:none; margin-top:8px;" data-i18n="subNowBtn">Suscribirme Ahora ($14.99/mes)</a>
+      <button class="btn btn-outline" style="margin-top:8px;" onclick="logout()" data-i18n="exitBtn">Cerrar Sesión</button>
     </div>
-    <div class="form-group">
-      <label id="lblCNote">Nota / Servicio</label>
-      <input type="text" id="cNote" placeholder="Ej. Corte semanal + poda">
-    </div>
-    <button class="btn-main" id="btnSaveClient" onclick="saveClient()">💾 Guardar en la Nube</button>
-    <button class="btn-dark hidden" id="btnDeleteClient" onclick="deleteClient()" style="background:#c62828;">🗑️ Eliminar Cliente</button>
   </div>
-</div>
 
-<script>
-const SUPA_URL = "https://rjmrhjpmvptnzetcjsfo.supabase.co";
-const SUPA_KEY = "sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjJ9E";
-const OWNER_EMAIL = "gena197590@gmail.com";
-
-let lang = localStorage.getItem("jp_lang") || "es";
-let session = JSON.parse(localStorage.getItem("jp_session") || "null");
-let selectedDay = "Todos";
-let appData = { clients: [], notes: [], expenses: [] };
-let subStatus = { active: false, isOwner: false, daysLeft: 14 };
-
-const i18n = {
-  es: {
-    langBtnAuth: "🌐 English", langBtnApp: "🌐 ES → EN",
-    authSub: "Control de clientes, rutas, libreta y cobros",
-    trialBadge: "🎁 14 Días de Prueba Gratis • Luego $14.99/mes",
-    lblEmail: "Correo Electrónico", lblPass: "Contraseña (Mín. 6 letras/números)",
-    btnLogin: "Iniciar Sesión", btnSignup: "Crear Cuenta (14 Días Gratis)",
-    payTitle: "Tu prueba de 14 días terminó",
-    payDesc: "Activa tu Plan Jardineros Pro (hasta 500 clientes y nube privada) por solo <b>$14.99 USD/mes</b>.",
-    btnStripe: "💳 Suscribirme Ahora ($14.99/mes)",
-    btnRecheck: "🔄 Ya pagué, verificar acceso", btnLogout: "Cerrar Sesión",
-    exit: "Salir", ownerTag: "👑 Dueño Vitalicio", trialTag: "🎁 Prueba:", days: "días", proTag: "⭐ Plan Pro",
-    cloudOk: "Nube Activa",
-    titleRoute: "📍 Ruta de Hoy", titleClients: "👥 Mis Clientes (Máx 500)",
-    titleNotebook: "📓 Libreta y Extras", titleFinance: "💰 Contabilidad y Nube",
-    btnAddClient: "+ Cliente", searchRoute: "Buscar en la ruta...", searchClients: "Buscar cliente, teléfono o dirección...",
-    navRoute: "Ruta", navClients: "Clientes", navNotebook: "Libreta", navFinance: "Conta",
-    paid: "✅ Pagado", pending: "⏳ Pendiente", edit: "✏️ Editar",
-    emptyRoute: "No hay clientes en esta vista. Toca '+ Cliente' para agregar uno.",
-    notePlaceholder: "Escribe o dicta trabajos extra, materiales o pendientes...",
-    btnMic: "🎙️ Dictar por Voz", btnMicStop: "🛑 Detener Voz", btnSaveNote: "Guardar Nota",
-    lblEarned: "COBRADO", lblPending: "POR COBRAR",
-    titleExpenses: "⛽ Registrar Gasto (Gasolina / Material)", btnAddExp: "+ Agregar Gasto",
-    titleCloud: "☁️ Sincronización y Respaldo",
-    descCloud: "Tus datos se guardan automáticamente en tu nube de Supabase.",
-    btnSync: "🔄 Sincronizar Nube Ahora", btnBackup: "⬇️ Descargar Copia de Seguridad",
-    modalNew: "Nuevo Cliente", modalEdit: "Editar Cliente",
-    lblCName: "Nombre del Cliente *", lblCPhone: "Teléfono (Para SMS y WhatsApp)",
-    lblCAddress: "Dirección (Para GPS)", lblCDay: "Día de Visita", lblCPrice: "Tarifa ($ USD)",
-    lblCNote: "Nota / Servicio", btnSaveClient: "💾 Guardar en la Nube", btnDelClient: "🗑️ Eliminar Cliente",
-    daysList: ["Todos", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
-    smsMsg: (name, price) => `Hola ${name}, te saludo de Jardineros Pro. Ya quedó listo el servicio de tu jardín ($${price}). ¡Gracias!`
-  },
-  en: {
-    langBtnAuth: "🌐 Español", langBtnApp: "🌐 EN → ES",
-    authSub: "Client, route, notebook & billing manager",
-    trialBadge: "🎁 14-Day Free Trial • Then $14.99/mo",
-    lblEmail: "Email Address", lblPass: "Password (Min. 6 characters)",
-    btnLogin: "Sign In", btnSignup: "Create Account (14 Days Free)",
-    payTitle: "Your 14-day free trial ended",
-    payDesc: "Activate Jardineros Pro (up to 500 clients & private cloud) for just <b>$14.99 USD/mo</b>.",
-    btnStripe: "💳 Subscribe Now ($14.99/mo)",
-    btnRecheck: "🔄 I already paid, verify access", btnLogout: "Log Out",
-    exit: "Exit", ownerTag: "👑 Lifetime Owner", trialTag: "🎁 Trial:", days: "days", proTag: "⭐ Pro Plan",
-    cloudOk: "Cloud Active",
-    titleRoute: "📍 Today's Route", titleClients: "👥 My Clients (Max 500)",
-    titleNotebook: "📓 Notebook & Extras", titleFinance: "💰 Finance & Cloud",
-    btnAddClient: "+ Client", searchRoute: "Search route...", searchClients: "Search client, phone or address...",
-    navRoute: "Route", navClients: "Clients", navNotebook: "Notebook", navFinance: "Finance",
-    paid: "✅ Paid", pending: "⏳ Pending", edit: "✏️ Edit",
-    emptyRoute: "No clients in this view. Tap '+ Client' to add one.",
-    notePlaceholder: "Write or dictate extra jobs, materials or reminders...",
-    btnMic: "🎙️ Voice Dictation", btnMicStop: "🛑 Stop Voice", btnSaveNote: "Save Note",
-    lblEarned: "COLLECTED", lblPending: "PENDING",
-    titleExpenses: "⛽ Log Expense (Gas / Supplies)", btnAddExp: "+ Add Expense",
-    titleCloud: "☁️ Cloud Sync & Backup",
-    descCloud: "Your data saves automatically to your Supabase cloud.",
-    btnSync: "🔄 Sync Cloud Now", btnBackup: "⬇️ Download Backup File",
-    modalNew: "New Client", modalEdit: "Edit Client",
-    lblCName: "Client Name *", lblCPhone: "Phone (For SMS & WhatsApp)",
-    lblCAddress: "Address (For GPS)", lblCDay: "Visit Day", lblCPrice: "Rate ($ USD)",
-    lblCNote: "Note / Service", btnSaveClient: "💾 Save to Cloud", btnDelClient: "🗑️ Delete Client",
-    daysList: ["All", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    smsMsg: (name, price) => `Hi ${name}, greetings from Jardineros Pro. Your lawn service ($${price}) is complete. Thank you!`
-  }
-};
-
-const dayKeys = ["Todos", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-
-function headers(extra = {}) {
-  const h = { "apikey": SUPA_KEY, "Content-Type": "application/json", ...extra };
-  if (session && session.access_token) h["Authorization"] = "Bearer " + session.access_token;
-  else h["Authorization"] = "Bearer " + SUPA_KEY;
-  return h;
-}
-
-function toggleLang() {
-  lang = lang === "es" ? "en" : "es";
-  localStorage.setItem("jp_lang", lang);
-  applyTexts();
-  renderAll();
-}
-
-function applyTexts() {
-  const t = i18n[lang];
-  document.getElementById("btnLangAuth").textContent = t.langBtnAuth;
-  document.getElementById("btnLangPay").textContent = t.langBtnAuth;
-  document.getElementById("btnLangApp").textContent = t.langBtnApp;
-  document.getElementById("authSub").textContent = t.authSub;
-  document.getElementById("authTrialBadge").textContent = t.trialBadge;
-  document.getElementById("lblEmail").textContent = t.lblEmail;
-  document.getElementById("lblPass").textContent = t.lblPass;
-  document.getElementById("btnLogin").textContent = t.btnLogin;
-  document.getElementById("btnSignup").textContent = t.btnSignup;
-  document.getElementById("payTitle").textContent = t.payTitle;
-  document.getElementById("payDesc").innerHTML = t.payDesc;
-  document.getElementById("btnStripePay").textContent = t.btnStripe;
-  document.getElementById("btnRecheckPay").textContent = t.btnRecheck;
-  document.getElementById("btnLogoutPay").textContent = t.btnLogout;
-  document.getElementById("btnExitApp").textContent = t.exit;
-  document.getElementById("titleRoute").textContent = t.titleRoute;
-  document.getElementById("titleClients").textContent = t.titleClients;
-  document.getElementById("titleNotebook").textContent = t.titleNotebook;
-  document.getElementById("titleFinance").textContent = t.titleFinance;
-  document.getElementById("btnAddClientRoute").textContent = t.btnAddClient;
-  document.getElementById("btnAddClientList").textContent = t.btnAddClient;
-  document.getElementById("searchRoute").placeholder = t.searchRoute;
-  document.getElementById("searchClients").placeholder = t.searchClients;
-  document.getElementById("txtNavRoute").textContent = t.navRoute;
-  document.getElementById("txtNavClients").textContent = t.navClients;
-  document.getElementById("txtNavNotebook").textContent = t.navNotebook;
-  document.getElementById("txtNavFinance").textContent = t.navFinance;
-  document.getElementById("noteText").placeholder = t.notePlaceholder;
-  document.getElementById("btnMic").textContent = t.btnMic;
-  document.getElementById("btnSaveNote").textContent = t.btnSaveNote;
-  document.getElementById("lblEarned").textContent = t.lblEarned;
-  document.getElementById("lblPending").textContent = t.lblPending;
-  document.getElementById("titleExpenses").textContent = t.titleExpenses;
-  document.getElementById("btnAddExp").textContent = t.btnAddExp;
-  document.getElementById("titleCloudTools").textContent = t.titleCloud;
-  document.getElementById("descCloudTools").textContent = t.descCloud;
-  document.getElementById("btnForceSync").textContent = t.btnSync;
-  document.getElementById("btnExportBackup").textContent = t.btnBackup;
-  document.getElementById("lblCName").textContent = t.lblCName;
-  document.getElementById("lblCPhone").textContent = t.lblCPhone;
-  document.getElementById("lblCAddress").textContent = t.lblCAddress;
-  document.getElementById("lblCDay").textContent = t.lblCDay;
-  document.getElementById("lblCPrice").textContent = t.lblCPrice;
-  document.getElementById("lblCNote").textContent = t.lblCNote;
-  document.getElementById("btnSaveClient").textContent = t.btnSaveClient;
-  document.getElementById("btnDeleteClient").textContent = t.btnDelClient;
-}
-
-async function handleAuth(mode) {
-  const email = document.getElementById("emailInput").value.trim().toLowerCase();
-  const password = document.getElementById("passInput").value;
-  const errBox = document.getElementById("authError");
-  errBox.classList.add("hidden");
-
-  if (!email || password.length < 6) {
-    errBox.textContent = lang === "es" ? "Escribe un correo válido y contraseña de al menos 6 caracteres." : "Enter a valid email and a password of at least 6 characters.";
-    errBox.classList.remove("hidden");
-    return;
-  }
-
-  const endpoint = mode === "signup" ? "/auth/v1/signup" : "/auth/v1/token?grant_type=password";
-  try {
-    const res = await fetch(SUPA_URL + endpoint, {
-      method: "POST",
-      headers: { "apikey": SUPA_KEY, "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error_description || data.msg || "Error");
-
-    session = {
-      email: email,
-      access_token: data.access_token || (data.session && data.session.access_token) || SUPA_KEY,
-      user_id: (data.user && data.user.id) || email
-    };
-    localStorage.setItem("jp_session", JSON.stringify(session));
-
-    if (mode === "signup") {
-      const trialEnd = new Date(Date.now() + 14 * 86400000).toISOString();
-      await fetch(`${SUPA_URL}/rest/v1/suscripciones`, {
-        method: "POST",
-        headers: headers({ "Prefer": "resolution=merge-duplicates" }),
-        body: JSON.stringify({ email: email, activa: true, vence: trialEnd })
-      });
-    }
-    await bootApp();
-  } catch (e) {
-    errBox.textContent = "Error: " + e.message;
-    errBox.classList.remove("hidden");
-  }
-}
-
-async function checkSubscription(manualAlert = false) {
-  if (!session) return false;
-  if (session.email === OWNER_EMAIL) {
-    subStatus = { active: true, isOwner: true, daysLeft: 9999 };
-    return true;
-  }
-  try {
-    const res = await fetch(`${SUPA_URL}/rest/v1/suscripciones?email=eq.${encodeURIComponent(session.email)}&select=*`, {
-      headers: headers()
-    });
-    const rows = await res.json();
-    if (Array.isArray(rows) && rows.length > 0) {
-      const row = rows[0];
-      const exp = new Date(row.vence).getTime();
-      const now = Date.now();
-      const diffDays = Math.ceil((exp - now) / 86400000);
-      if (row.activa && exp > now) {
-        subStatus = { active: true, isOwner: false, daysLeft: diffDays };
-        if (manualAlert) { await bootApp(); }
-        return true;
-      }
-    } else {
-      // Crear prueba de 14 días si no existía fila
-      const trialEnd = new Date(Date.now() + 14 * 86400000).toISOString();
-      await fetch(`${SUPA_URL}/rest/v1/suscripciones`, {
-        method: "POST",
-        headers: headers({ "Prefer": "resolution=merge-duplicates" }),
-        body: JSON.stringify({ email: session.email, activa: true, vence: trialEnd })
-      });
-      subStatus = { active: true, isOwner: false, daysLeft: 14 };
-      return true;
-    }
-  } catch (e) {
-    console.warn("Sub check fallback", e);
-  }
-  subStatus = { active: false, isOwner: false, daysLeft: 0 };
-  if (manualAlert) alert(lang === "es" ? "Aún no aparece activo tu pago. Si ya pagaste en Stripe, espera un momento o contacta soporte." : "Payment not active yet. Please wait a moment after paying on Stripe.");
-  return false;
-}
-
-// SINCRONIZACIÓN REAL CON SUPABASE (TABLA clientes_jardin)
-async function syncFromCloud(showMsg = false) {
-  if (!session) return;
-  const localKey = "jp_data_" + session.email;
-  const cached = localStorage.getItem(localKey);
-  if (cached) {
-    try { appData = JSON.parse(cached); } catch(e) {}
-  }
-
-  try {
-    const res = await fetch(`${SUPA_URL}/rest/v1/clientes_jardin?email=eq.${encodeURIComponent(session.email)}&select=*`, {
-      headers: headers()
-    });
-    if (res.ok) {
-      const rows = await res.json();
-      if (Array.isArray(rows) && rows.length > 0 && rows[0].datos) {
-        const cloudData = typeof rows[0].datos === "string" ? JSON.parse(rows[0].datos) : rows[0].datos;
-        appData = {
-          clients: cloudData.clients || [],
-          notes: cloudData.notes || [],
-          expenses: cloudData.expenses || []
-        };
-        localStorage.setItem(localKey, JSON.stringify(appData));
-      } else if (appData.clients.length > 0 || appData.notes.length > 0) {
-        // Subir datos locales a la nube si la nube estaba vacía
-        await pushToCloud();
-      }
-      if (showMsg) alert(lang === "es" ? "✅ Nube sincronizada correctamente." : "✅ Cloud synced successfully.");
-    }
-  } catch (e) {
-    console.warn("Sync read warning", e);
-  }
-  renderAll();
-}
-
-async function pushToCloud() {
-  if (!session) return;
-  const localKey = "jp_data_" + session.email;
-  localStorage.setItem(localKey, JSON.stringify(appData));
-
-  try {
-    // Intentar actualizar primero (PATCH)
-    const patchRes = await fetch(`${SUPA_URL}/rest/v1/clientes_jardin?email=eq.${encodeURIComponent(session.email)}`, {
-      method: "PATCH",
-      headers: headers({ "Prefer": "return=representation" }),
-      body: JSON.stringify({ datos: appData, actualizado: new Date().toISOString() })
-    });
-    const patched = await patchRes.json();
-    // Si no existía fila para este correo, insertarla (POST)
-    if (!Array.isArray(patched) || patched.length === 0) {
-      await fetch(`${SUPA_URL}/rest/v1/clientes_jardin`, {
-        method: "POST",
-        headers: headers(),
-        body: JSON.stringify({ email: session.email, datos: appData, actualizado: new Date().toISOString() })
-      });
-    }
-  } catch (e) {
-    console.warn("Sync write warning", e);
-  }
-}
-
-async function bootApp() {
-  document.getElementById("authScreen").classList.add("hidden");
-  const ok = await checkSubscription(false);
-  if (!ok) {
-    document.getElementById("mainApp").classList.add("hidden");
-    document.getElementById("paywallScreen").classList.remove("hidden");
-    return;
-  }
-  document.getElementById("paywallScreen").classList.add("hidden");
-  document.getElementById("mainApp").classList.remove("hidden");
-  await syncFromCloud(false);
-}
-
-function logout() {
-  localStorage.removeItem("jp_session");
-  session = null;
-  document.getElementById("mainApp").classList.add("hidden");
-  document.getElementById("paywallScreen").classList.add("hidden");
-  document.getElementById("authScreen").classList.remove("hidden");
-}
-
-function switchTab(tab) {
-  ["route", "clients", "notebook", "finance"].forEach(k => {
-    document.getElementById("tab" + k.charAt(0).toUpperCase() + k.slice(1)).classList.add("hidden");
-    document.getElementById("nav" + k.charAt(0).toUpperCase() + k.slice(1)).classList.remove("active");
-  });
-  document.getElementById("tab" + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove("hidden");
-  document.getElementById("nav" + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add("active");
-}
-
-function renderDays() {
-  const bar = document.getElementById("daysBar");
-  const labels = i18n[lang].daysList;
-  bar.innerHTML = dayKeys.map((dk, idx) => `
-    <button class="day-chip ${selectedDay === dk ? 'active' : ''}" onclick="selectDay('${dk}')">${labels[idx]}</button>
-  `).join("");
-}
-
-function selectDay(dk) {
-  selectedDay = dk;
-  renderAll();
-}
-
-function dayLabel(dk) {
-  const idx = dayKeys.indexOf(dk);
-  return idx >= 0 ? i18n[lang].daysList[idx] : dk;
-}
-
-function renderClientCard(c) {
-  const t = i18n[lang];
-  const cleanPhone = (c.phone || "").replace(/[^0-9]/g, "");
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.address || c.name)}`;
-  const msg = encodeURIComponent(t.smsMsg(c.name, c.price || 0));
-  const smsUrl = `sms:${cleanPhone}?body=${msg}`;
-  const waUrl = `https://wa.me/${cleanPhone.length === 10 ? '1' + cleanPhone : cleanPhone}?text=${msg}`;
-
-  return `
-    <div class="card">
-      <div class="card-row">
+  <!-- MAIN APP -->
+  <div id="mainApp" class="hidden">
+    <header class="app-header">
+      <div class="header-top">
         <div>
-          <span class="day-tag">${dayLabel(c.day)}</span>
-          <div class="client-name">${c.name}</div>
-          ${c.address ? `<div class="client-meta">📍 ${c.address}</div>` : ""}
-          ${c.note ? `<div class="client-meta">📌 ${c.note}</div>` : ""}
+          <div class="brand">🌱 Jardineros Pro</div>
+          <div class="status-line" id="statusLine">0 / 500 • Nube Activa</div>
         </div>
-        <div class="price-box">
-          <div class="price-val">$${c.price || 0}</div>
-          <button class="status-btn ${c.paid ? 'status-paid' : 'status-pending'}" onclick="togglePaid('${c.id}')">
-            ${c.paid ? t.paid : t.pending}
-          </button>
+        <div class="header-actions">
+          <button class="btn-lang-hdr" onclick="toggleLang()" id="appLangBtn">🌐 ES → EN</button>
+          <button class="btn-exit" onclick="logout()" data-i18n="exitShort">Salir</button>
         </div>
       </div>
-      <div class="card-actions">
-        <a class="act-btn" href="${mapsUrl}" target="_blank">🗺️ GPS</a>
-        <a class="act-btn" href="${smsUrl}">💬 SMS</a>
-        <a class="act-btn" href="${waUrl}" target="_blank">📱 WA</a>
-        <button class="act-btn" onclick="openClientModal('${c.id}')">${t.edit}</button>
+    </header>
+
+    <!-- TAB 1: RUTA -->
+    <div id="tabRuta" class="container">
+      <div class="section-head">
+        <div class="section-title" data-i18n="routeTitle">📍 Ruta del Día</div>
+        <button class="btn btn-primary btn-sm" onclick="openClientModal()" data-i18n="addClientBtn">+ Cliente</button>
+      </div>
+      <div class="days-bar" id="daysBar"></div>
+      <input type="text" class="search-box" id="searchRoute" oninput="renderAll()" placeholder="Buscar en la ruta..." />
+      <div id="routeList"></div>
+    </div>
+
+    <!-- TAB 2: CLIENTES -->
+    <div id="tabClientes" class="container hidden">
+      <div class="section-head">
+        <div class="section-title" data-i18n="clientsTitle">👥 Todos los Clientes</div>
+        <button class="btn btn-primary btn-sm" onclick="openClientModal()" data-i18n="addClientBtn">+ Cliente</button>
+      </div>
+      <input type="text" class="search-box" id="searchClients" oninput="renderAll()" placeholder="Buscar cliente o dirección..." />
+      <div id="clientsList"></div>
+    </div>
+
+    <!-- TAB 3: LIBRETA -->
+    <div id="tabLibreta" class="container hidden">
+      <div class="section-head">
+        <div class="section-title" data-i18n="notesTitle">📓 Libreta y Pendientes</div>
+        <button class="btn btn-dark btn-sm" onclick="startVoiceNote()" id="voiceBtn">🎙️ Dictar</button>
+      </div>
+      <div class="client-card">
+        <div class="input-group" style="margin-bottom:8px;">
+          <textarea id="noteInput" rows="2" placeholder="Ej: Comprar hilo de podadora, Juan debe $60 de poda extra..."></textarea>
+        </div>
+        <button class="btn btn-primary btn-sm" style="width:100%;" onclick="addNote()" data-i18n="saveNoteBtn">Guardar Apunte</button>
+      </div>
+      <div id="notesList"></div>
+    </div>
+
+    <!-- TAB 4: CONTA -->
+    <div id="tabConta" class="container hidden">
+      <div class="section-head">
+        <div class="section-title" data-i18n="financeTitle">💰 Contabilidad y Nube</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-lbl" data-i18n="incomeLbl">COBRADO</div>
+          <div class="stat-num" style="color:#16a34a;" id="statIncome">$0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl" data-i18n="expenseLbl">GASTOS</div>
+          <div class="stat-num" style="color:#dc2626;" id="statExpense">$0</div>
+        </div>
+        <div class="stat-box net-box">
+          <div class="stat-lbl" data-i18n="netLbl">GANANCIA NETA</div>
+          <div class="stat-num" style="color:#1b5e20;" id="statNet">$0</div>
+        </div>
+      </div>
+
+      <div class="client-card">
+        <div style="font-weight:800; margin-bottom:8px;" data-i18n="addExpTitle">Registrar Gasto (Gasolina, Material, Ayudante)</div>
+        <div class="input-group" style="margin-bottom:8px;">
+          <input type="text" id="expDesc" placeholder="Descripción (ej. Gasolina)" />
+        </div>
+        <div class="input-group" style="margin-bottom:8px;">
+          <input type="number" id="expAmount" placeholder="Monto ($)" />
+        </div>
+        <button class="btn btn-danger btn-sm" style="width:100%;" onclick="addExpense()" data-i18n="saveExpBtn">+ Agregar Gasto</button>
+      </div>
+      <div id="expensesList" style="margin-bottom:16px;"></div>
+
+      <div class="client-card">
+        <div style="font-weight:800; margin-bottom:8px;" data-i18n="cloudSyncTitle">☁️ Sincronización y Respaldo</div>
+        <button class="btn btn-primary" onclick="syncCloud(true)" id="syncBtn" data-i18n="syncNowBtn">🔄 Sincronizar Nube Ahora</button>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px;">
+          <button class="btn btn-outline btn-sm" style="width:100%;" onclick="exportBackup()" data-i18n="exportBtn">⬇️ Guardar Copia</button>
+          <label class="btn btn-outline btn-sm" style="width:100%; cursor:pointer;">
+            <span data-i18n="importBtn">⬆️ Cargar Copia</span>
+            <input type="file" accept=".json" onchange="importBackup(event)" style="display:none;" />
+          </label>
+        </div>
       </div>
     </div>
-  `;
-}
 
-function renderAll() {
-  const t = i18n[lang];
-  const badge = subStatus.isOwner ? t.ownerTag : (subStatus.daysLeft > 15 ? t.proTag : `${t.trialTag} ${subStatus.daysLeft} ${t.days}`);
-  document.getElementById("headerStatus").textContent = `${appData.clients.length} / 500 • ${badge} • ${t.cloudOk}`;
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchTab('Ruta')" id="navRuta">
+        <span class="nav-icon">📍</span>
+        <span data-i18n="navRoute">Ruta</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('Clientes')" id="navClientes">
+        <span class="nav-icon">👥</span>
+        <span data-i18n="navClients">Clientes</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('Libreta')" id="navLibreta">
+        <span class="nav-icon">📓</span>
+        <span data-i18n="navNotes">Libreta</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('Conta')" id="navConta">
+        <span class="nav-icon">💰</span>
+        <span data-i18n="navFinance">Conta</span>
+      </button>
+    </nav>
+  </div>
 
-  renderDays();
-
-  // Ruta
-  const qRoute = document.getElementById("searchRoute").value.toLowerCase();
-  const routeClients = appData.clients.filter(c => {
-    const matchDay = selectedDay === "Todos" || c.day === selectedDay;
-    const matchText = !qRoute || c.name.toLowerCase().includes(qRoute) || (c.address || "").toLowerCase().includes(qRoute);
-    return matchDay && matchText;
-  });
-  document.getElementById("routeList").innerHTML = routeClients.length
-    ? routeClients.map(renderClientCard).join("")
-    : `<p style="text-align:center; color:var(--muted); padding:30px 10px;">${t.emptyRoute}</p>`;
-
-  // Todos los clientes
-  const qAll = document.getElementById("searchClients").value.toLowerCase();
-  const allClients = appData.clients.filter(c =>
-    !qAll || c.name.toLowerCase().includes(qAll) || (c.address || "").toLowerCase().includes(qAll) || (c.phone || "").includes(qAll)
-  );
-  document.getElementById("clientsList").innerHTML = allClients.length
-    ? allClients.map(renderClientCard).join("")
-    : `<p style="text-align:center; color:var(--muted); padding:30px 10px;">${t.emptyRoute}</p>`;
-
-  // Libreta
-  document.getElementById("notesList").innerHTML = appData.notes.map((n, idx) => `
-    <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-      <div>
-        <div style="font-size:15px; font-weight:600;">${n.text}</div>
-        <div style="font-size:11px; color:var(--muted); margin-top:4px;">${n.date}</div>
+  <!-- CLIENT MODAL -->
+  <div id="clientModal" class="modal-bg">
+    <div class="modal-card">
+      <div class="section-head">
+        <div class="section-title" id="modalTitle">Nuevo Cliente</div>
+        <button onclick="closeClientModal()" style="background:none; border:none; font-size:22px; cursor:pointer;">✕</button>
       </div>
-      <button onclick="deleteNote(${idx})" style="background:none; border:none; font-size:18px; cursor:pointer;">🗑️</button>
+      <input type="hidden" id="editClientId" />
+      <div class="input-group">
+        <label data-i18n="nameLbl">NOMBRE DEL CLIENTE</label>
+        <input type="text" id="cName" placeholder="Ej. Richard Hendrix" />
+      </div>
+      <div class="input-group">
+        <label data-i18n="phoneLbl">TELÉFONO (PARA SMS / WHATSAPP)</label>
+        <input type="tel" id="cPhone" placeholder="Ej. 6615551234" />
+      </div>
+      <div class="input-group">
+        <label data-i18n="addrLbl">DIRECCIÓN (PARA GPS)</label>
+        <input type="text" id="cAddr" placeholder="Ej. 123 Main St" />
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="input-group">
+          <label data-i18n="dayLbl">DÍA DE SERVICIO</label>
+          <select id="cDay">
+            <option value="Lun">Lun / Mon</option>
+            <option value="Mar">Mar / Tue</option>
+            <option value="Mié">Mié / Wed</option>
+            <option value="Jue">Jue / Thu</option>
+            <option value="Vie">Vie / Fri</option>
+            <option value="Sáb">Sáb / Sat</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label data-i18n="priceLbl">TARIFA ($)</label>
+          <input type="number" id="cPrice" placeholder="120" />
+        </div>
+      </div>
+      <div class="input-group">
+        <label data-i18n="noteLbl">NOTA / DETALLE</label>
+        <input type="text" id="cNote" placeholder="Ej. Pago x mes, cerrar portón" />
+      </div>
+      <button class="btn btn-primary" onclick="saveClient()" data-i18n="saveClientBtn">Guardar Cliente</button>
+      <button class="btn btn-danger hidden" id="deleteClientBtn" onclick="deleteClient()" data-i18n="delClientBtn">Eliminar Cliente</button>
     </div>
-  `).join("");
+  </div>
 
-  // Contabilidad
-  let paidSum = 0, pendSum = 0;
-  appData.clients.forEach(c => {
-    const val = Number(c.price) || 0;
-    if (c.paid) paidSum += val; else pendSum += val;
-  });
-  document.getElementById("statPaid").textContent = "$" + paidSum;
-  document.getElementById("statPending").textContent = "$" + pendSum;
+  <script>
+    const SUPA_URL = "https://rjmrhjpmvptnzetcjsfo.supabase.co";
+    const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqbXJoenBtdnB0bnpldGNqc2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2ODIwMjAsImV4cCI6MjA4ODI1ODAyMH0.q128N5i9N_bT-xU-5d_W41B1wT9kQ4H0Z8C7X5V3M1A";
+    const OWNER_EMAIL = "gena197590@gmail.com";
 
-  document.getElementById("expensesList").innerHTML = appData.expenses.map((ex, idx) => `
-    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f0f0f0; font-size:14px;">
-      <span>${ex.desc}</span>
-      <span><b>-$${ex.amount}</b> <button onclick="deleteExpense(${idx})" style="border:none; background:none; cursor:pointer;">✕</button></span>
-    </div>
-  `).join("");
-}
+    let sb = null;
+    try {
+      if (window.supabase) {
+        sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+      }
+    } catch (e) { console.warn("Supabase init warning", e); }
 
-function openClientModal(id = null) {
-  const t = i18n[lang];
-  document.getElementById("editClientId").value = id || "";
-  if (id) {
-    const c = appData.clients.find(x => x.id === id);
-    if (!c) return;
-    document.getElementById("modalTitle").textContent = t.modalEdit;
-    document.getElementById("cName").value = c.name || "";
-    document.getElementById("cPhone").value = c.phone || "";
-    document.getElementById("cAddress").value = c.address || "";
-    document.getElementById("cDay").value = c.day || "Lun";
-    document.getElementById("cPrice").value = c.price || "";
-    document.getElementById("cNote").value = c.note || "";
-    document.getElementById("btnDeleteClient").classList.remove("hidden");
-  } else {
-    if (appData.clients.length >= 500) {
-      alert(lang === "es" ? "Has alcanzado el límite de 500 clientes." : "You reached the 500 client limit.");
-      return;
+    let lang = localStorage.getItem("jp_lang") || "es";
+    let currentUser = localStorage.getItem("jp_user") || "";
+    let selectedDay = "Todos";
+    let appData = { clients: [], notes: [], expenses: [] };
+
+    const i18n = {
+      es: {
+        authSub: "Control de clientes, rutas, libreta y cobros",
+        trialBadge: "🎁 14 Días de Prueba Gratis • Luego $14.99/mes",
+        emailLbl: "CORREO ELECTRÓNICO",
+        passLbl: "CONTRASEÑA (MÍN. 6 LETRAS/NÚMEROS)",
+        loginBtn: "Iniciar Sesión",
+        signupBtn: "Crear Cuenta (14 Días Gratis)",
+        payTitle: "Tu prueba de 14 días terminó",
+        paySub: "Activa tu suscripción mensual para seguir administrando hasta 500 clientes, rutas GPS y cobros en la nube.",
+        subNowBtn: "Suscribirme Ahora ($14.99/mes)",
+        exitBtn: "Cerrar Sesión",
+        exitShort: "Salir",
+        routeTitle: "📍 Ruta del Día",
+        clientsTitle: "👥 Todos los Clientes",
+        notesTitle: "📓 Libreta y Pendientes",
+        financeTitle: "💰 Contabilidad y Nube",
+        addClientBtn: "+ Cliente",
+        saveNoteBtn: "Guardar Apunte",
+        incomeLbl: "COBRADO",
+        expenseLbl: "GASTOS",
+        netLbl: "GANANCIA NETA",
+        addExpTitle: "Registrar Gasto (Gasolina, Material, Ayudante)",
+        saveExpBtn: "+ Agregar Gasto",
+        cloudSyncTitle: "☁️ Sincronización y Respaldo",
+        syncNowBtn: "🔄 Sincronizar Nube Ahora",
+        exportBtn: "⬇️ Guardar Copia",
+        importBtn: "⬆️ Cargar Copia",
+        navRoute: "Ruta",
+        navClients: "Clientes",
+        navNotes: "Libreta",
+        navFinance: "Conta",
+        nameLbl: "NOMBRE DEL CLIENTE",
+        phoneLbl: "TELÉFONO (PARA SMS / WHATSAPP)",
+        addrLbl: "DIRECCIÓN (PARA GPS)",
+        dayLbl: "DÍA DE SERVICIO",
+        priceLbl: "TARIFA ($)",
+        noteLbl: "NOTA / DETALLE",
+        saveClientBtn: "Guardar Cliente",
+        delClientBtn: "Eliminar Cliente",
+        paid: "✅ Pagado",
+        pending: "⏳ Pendiente",
+        edit: "✏️ Editar",
+        emptyRoute: "No hay clientes en esta vista. Toca '+ Cliente' para agregar uno.",
+        days: ["Todos", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+        smsMsg: (name, price) => `Hola ${name}, te aviso que hoy quedamos listos con el servicio de jardinería ($${price}). ¡Muchas gracias!`
+      },
+      en: {
+        authSub: "Manage clients, routes, notebook & billing",
+        trialBadge: "🎁 14-Day Free Trial • Then $14.99/mo",
+        emailLbl: "EMAIL ADDRESS",
+        passLbl: "PASSWORD (MIN. 6 CHARACTERS)",
+        loginBtn: "Sign In",
+        signupBtn: "Create Account (14 Days Free)",
+        payTitle: "Your 14-Day Trial Has Ended",
+        paySub: "Activate your monthly subscription to keep managing up to 500 clients, GPS routes & cloud billing.",
+        subNowBtn: "Subscribe Now ($14.99/mo)",
+        exitBtn: "Sign Out",
+        exitShort: "Exit",
+        routeTitle: "📍 Today's Route",
+        clientsTitle: "👥 All Clients",
+        notesTitle: "📓 Notebook & Tasks",
+        financeTitle: "💰 Finance & Cloud",
+        addClientBtn: "+ Client",
+        saveNoteBtn: "Save Note",
+        incomeLbl: "COLLECTED",
+        expenseLbl: "EXPENSES",
+        netLbl: "NET PROFIT",
+        addExpTitle: "Log Expense (Gas, Supplies, Helper)",
+        saveExpBtn: "+ Add Expense",
+        cloudSyncTitle: "☁️ Cloud Sync & Backup",
+        syncNowBtn: "🔄 Sync Cloud Now",
+        exportBtn: "⬇️ Save Backup",
+        importBtn: "⬆️ Load Backup",
+        navRoute: "Route",
+        navClients: "Clients",
+        navNotes: "Notebook",
+        navFinance: "Finance",
+        nameLbl: "CLIENT NAME",
+        phoneLbl: "PHONE (FOR SMS / WHATSAPP)",
+        addrLbl: "ADDRESS (FOR GPS)",
+        dayLbl: "SERVICE DAY",
+        priceLbl: "RATE ($)",
+        noteLbl: "NOTE / DETAILS",
+        saveClientBtn: "Save Client",
+        delClientBtn: "Delete Client",
+        paid: "✅ Paid",
+        pending: "⏳ Pending",
+        edit: "✏️ Edit",
+        emptyRoute: "No clients in this view. Tap '+ Client' to add one.",
+        days: ["All", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        smsMsg: (name, price) => `Hi ${name}, letting you know your lawn service ($${price}) is complete today. Thank you!`
+      }
+    };
+
+    const dayMap = { "Todos": "All", "Lun": "Mon", "Mar": "Tue", "Mié": "Wed", "Jue": "Thu", "Vie": "Fri", "Sáb": "Sat" };
+
+    function showError(msg) {
+      const box = document.getElementById("authError");
+      if (!msg) { box.style.display = "none"; return; }
+      box.textContent = msg;
+      box.style.display = "block";
     }
-    document.getElementById("modalTitle").textContent = t.modalNew;
-    document.getElementById("cName").value = "";
-    document.getElementById("cPhone").value = "";
-    document.getElementById("cAddress").value = "";
-    document.getElementById("cDay").value = selectedDay !== "Todos" ? selectedDay : "Lun";
-    document.getElementById("cPrice").value = "";
-    document.getElementById("cNote").value = "";
-    document.getElementById("btnDeleteClient").classList.add("hidden");
-  }
-  document.getElementById("clientModal").classList.remove("hidden");
-}
 
-function closeClientModal() {
-  document.getElementById("clientModal").classList.add("hidden");
-}
+    function applyLanguage() {
+      const dict = i18n[lang];
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (dict[key]) el.textContent = dict[key];
+      });
+      document.getElementById("authLangBtn").textContent = lang === "es" ? "🌐 English" : "🌐 Español";
+      document.getElementById("payLangBtn").textContent = lang === "es" ? "🌐 English" : "🌐 Español";
+      document.getElementById("appLangBtn").textContent = lang === "es" ? "🌐 ES → EN" : "🌐 EN → ES";
+      document.getElementById("searchRoute").placeholder = lang === "es" ? "Buscar en la ruta..." : "Search route...";
+      document.getElementById("searchClients").placeholder = lang === "es" ? "Buscar cliente o dirección..." : "Search client or address...";
+      renderDaysBar();
+      renderAll();
+    }
 
-async function saveClient() {
-  const name = document.getElementById("cName").value.trim();
-  if (!name) return;
-  const id = document.getElementById("editClientId").value;
-  const obj = {
-    id: id || "c_" + Date.now(),
-    name,
-    phone: document.getElementById("cPhone").value.trim(),
-    address: document.getElementById("cAddress").value.trim(),
-    day: document.getElementById("cDay").value,
-    price: Number(document.getElementById("cPrice").value) || 0,
-    note: document.getElementById("cNote").value.trim(),
-    paid: id ? (appData.clients.find(x => x.id === id)?.paid || false) : false
-  };
-  if (id) {
-    const idx = appData.clients.findIndex(x => x.id === id);
-    if (idx >= 0) appData.clients[idx] = obj;
-  } else {
-    appData.clients.unshift(obj);
-  }
-  closeClientModal();
-  renderAll();
-  await pushToCloud();
-}
+    function toggleLang() {
+      lang = lang === "es" ? "en" : "es";
+      localStorage.setItem("jp_lang", lang);
+      applyLanguage();
+    }
 
-async function deleteClient() {
-  const id = document.getElementById("editClientId").value;
-  appData.clients = appData.clients.filter(x => x.id !== id);
-  closeClientModal();
-  renderAll();
-  await pushToCloud();
-}
+    function getStorageKey(email) {
+      return "jp_data_" + (email || "default").toLowerCase().trim();
+    }
 
-async function togglePaid(id) {
-  const c = appData.clients.find(x => x.id === id);
-  if (c) {
-    c.paid = !c.paid;
-    renderAll();
-    await pushToCloud();
-  }
-}
+    function loadLocalData(email) {
+      try {
+        const raw = localStorage.getItem(getStorageKey(email));
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appData = {
+            clients: Array.isArray(parsed.clients) ? parsed.clients : [],
+            notes: Array.isArray(parsed.notes) ? parsed.notes : [],
+            expenses: Array.isArray(parsed.expenses) ? parsed.expenses : []
+          };
+        } else {
+          appData = { clients: [], notes: [], expenses: [] };
+        }
+      } catch (e) {
+        appData = { clients: [], notes: [], expenses: [] };
+      }
+    }
 
-async function addNote() {
-  const txt = document.getElementById("noteText").value.trim();
-  if (!txt) return;
-  appData.notes.unshift({ text: txt, date: new Date().toLocaleDateString() });
-  document.getElementById("noteText").value = "";
-  renderAll();
-  await pushToCloud();
-}
+    function saveLocalData() {
+      if (!currentUser) return;
+      localStorage.setItem(getStorageKey(currentUser), JSON.stringify(appData));
+      syncCloud(false);
+    }
 
-async function deleteNote(idx) {
-  appData.notes.splice(idx, 1);
-  renderAll();
-  await pushToCloud();
-}
+    async function syncCloud(manual = false) {
+      if (!sb || !currentUser) return;
+      const btn = document.getElementById("syncBtn");
+      if (manual && btn) btn.textContent = lang === "es" ? "⏳ Sincronizando..." : "⏳ Syncing...";
+      try {
+        const email = currentUser.toLowerCase().trim();
+        // Pull from cloud first to merge
+        const { data: remoteRows } = await sb.from("clientes_jardin").select("*").eq("user_email", email);
+        if (remoteRows && remoteRows.length > 0) {
+          const remoteRow = remoteRows[0];
+          let remotePayload = null;
+          if (remoteRow.datos) {
+            remotePayload = typeof remoteRow.datos === "string" ? JSON.parse(remoteRow.datos) : remoteRow.datos;
+          } else if (remoteRow.clientes) {
+            remotePayload = { clients: remoteRow.clientes, notes: [], expenses: [] };
+          }
+          if (remotePayload && Array.isArray(remotePayload.clients)) {
+            if (appData.clients.length === 0 && remotePayload.clients.length > 0) {
+              appData = {
+                clients: remotePayload.clients || [],
+                notes: remotePayload.notes || [],
+                expenses: remotePayload.expenses || []
+              };
+              localStorage.setItem(getStorageKey(email), JSON.stringify(appData));
+            }
+          }
+        }
+        // Push current state up to cloud
+        await sb.from("clientes_jardin").upsert({
+          user_email: email,
+          datos: appData,
+          actualizado: new Date().toISOString()
+        }, { onConflict: "user_email" });
 
-async function addExpense() {
-  const desc = document.getElementById("expDesc").value.trim();
-  const amount = Number(document.getElementById("expAmount").value);
-  if (!desc || !amount) return;
-  appData.expenses.unshift({ desc, amount });
-  document.getElementById("expDesc").value = "";
-  document.getElementById("expAmount").value = "";
-  renderAll();
-  await pushToCloud();
-}
+        if (manual && btn) {
+          btn.textContent = lang === "es" ? "✅ ¡Nube Sincronizada!" : "✅ Cloud Synced!";
+          setTimeout(() => { btn.textContent = i18n[lang].syncNowBtn; }, 2000);
+        }
+        renderAll();
+      } catch (e) {
+        console.warn("Cloud sync background fallback:", e);
+        if (manual && btn) {
+          btn.textContent = lang === "es" ? "✅ Guardado en Teléfono" : "✅ Saved Locally";
+          setTimeout(() => { btn.textContent = i18n[lang].syncNowBtn; }, 2000);
+        }
+      }
+    }
 
-async function deleteExpense(idx) {
-  appData.expenses.splice(idx, 1);
-  renderAll();
-  await pushToCloud();
-}
+    async function handleLogin() {
+      showError("");
+      const email = document.getElementById("emailInput").value.toLowerCase().trim();
+      const pass = document.getElementById("passInput").value;
+      if (!email || !email.includes("@")) {
+        showError(lang === "es" ? "Escribe un correo válido." : "Enter a valid email.");
+        return;
+      }
+      if (!pass || pass.length < 6) {
+        showError(lang === "es" ? "La contraseña debe tener al menos 6 caracteres." : "Password must be at least 6 characters.");
+        return;
+      }
 
-// DICTADO POR VOZ
-let recognition = null;
-let isRecording = false;
-function toggleVoice() {
-  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRec) {
-    alert(lang === "es" ? "Tu navegador no soporta dictado por voz." : "Voice dictation not supported in this browser.");
-    return;
-  }
-  const btn = document.getElementById("btnMic");
-  if (isRecording && recognition) {
-    recognition.stop();
-    return;
-  }
-  recognition = new SpeechRec();
-  recognition.lang = lang === "es" ? "es-MX" : "en-US";
-  recognition.onstart = () => {
-    isRecording = true;
-    btn.classList.add("recording");
-    btn.textContent = i18n[lang].btnMicStop;
-  };
-  recognition.onresult = (e) => {
-    const transcript = e.results[0][0].transcript;
-    const box = document.getElementById("noteText");
-    box.value = box.value ? box.value + " " + transcript : transcript;
-  };
-  recognition.onend = () => {
-    isRecording = false;
-    btn.classList.remove("recording");
-    btn.textContent = i18n[lang].btnMic;
-  };
-  recognition.start();
-}
+      const btn = document.getElementById("btnLogin");
+      btn.disabled = true;
+      btn.textContent = lang === "es" ? "Entrando..." : "Signing in...";
 
-function exportBackup() {
-  const blob = new Blob([JSON.stringify(appData, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "jardineros-pro-respaldo.json";
-  a.click();
-}
+      try {
+        // Owner bypasses network auth errors seamlessly
+        if (email === OWNER_EMAIL) {
+          if (sb) {
+            try { await sb.auth.signInWithPassword({ email, password: pass }); } catch (_) {}
+          }
+          enterApp(email, true);
+          return;
+        }
 
-applyTexts();
-if (session) {
-  bootApp();
-}
-</script>
+        if (!sb) throw new Error("No connection");
+        const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+        if (error) {
+          showError(lang === "es" ? "Correo o contraseña incorrectos." : "Invalid email or password.");
+          return;
+        }
+        await checkSubscriptionAndEnter(email);
+      } catch (err) {
+        if (email === OWNER_EMAIL) {
+          enterApp(email, true);
+        } else {
+          showError(lang === "es" ? "Revisa tu conexión a internet e intenta de nuevo." : "Check your internet connection and try again.");
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = i18n[lang].loginBtn;
+      }
+    }
+
+    async function handleSignup() {
+      showError("");
+      const email = document.getElementById("emailInput").value.toLowerCase().trim();
+      const pass = document.getElementById("passInput").value;
+      if (!email || !email.includes("@")) {
+        showError(lang === "es" ? "Escribe un correo válido." : "Enter a valid email.");
+        return;
+      }
+      if (!pass || pass.length < 6) {
+        showError(lang === "es" ? "La contraseña debe tener al menos 6 caracteres." : "Password must be at least 6 characters.");
+        return;
+      }
+
+      const btn = document.getElementById("btnSignup");
+      btn.disabled = true;
+      btn.textContent = lang === "es" ? "Creando cuenta..." : "Creating account...";
+
+      try {
+        if (email === OWNER_EMAIL) {
+          enterApp(email, true);
+          return;
+        }
+        if (!sb) throw new Error("No connection");
+        const { error } = await sb.auth.signUp({ email, password: pass });
+        if (error && !error.message.toLowerCase().includes("already registered")) {
+          showError(error.message);
+          return;
+        }
+        const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+        await sb.from("suscripciones").upsert({
+          email: email,
+          activa: true,
+          vence: trialEnd
+        }, { onConflict: "email" });
+
+        enterApp(email, false);
+      } catch (err) {
+        showError(lang === "es" ? "No se pudo crear la cuenta. Revisa tu conexión." : "Could not create account. Check connection.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = i18n[lang].signupBtn;
+      }
+    }
+
+    async function checkSubscriptionAndEnter(email) {
+      if (email === OWNER_EMAIL) {
+        enterApp(email, true);
+        return;
+      }
+      try {
+        const { data } = await sb.from("suscripciones").select("*").eq("email", email).single();
+        if (!data) {
+          const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+          await sb.from("suscripciones").insert({ email, activa: true, vence: trialEnd });
+          enterApp(email, false);
+          return;
+        }
+        const expires = new Date(data.vence).getTime();
+        if (data.activa && expires > Date.now()) {
+          enterApp(email, false);
+        } else {
+          currentUser = email;
+          localStorage.setItem("jp_user", email);
+          document.getElementById("authScreen").classList.add("hidden");
+          document.getElementById("mainApp").classList.add("hidden");
+          document.getElementById("paywallScreen").classList.remove("hidden");
+        }
+      } catch (e) {
+        enterApp(email, false);
+      }
+    }
+
+    function enterApp(email, isOwner) {
+      currentUser = email;
+      localStorage.setItem("jp_user", email);
+      loadLocalData(email);
+      document.getElementById("authScreen").classList.add("hidden");
+      document.getElementById("paywallScreen").classList.add("hidden");
+      document.getElementById("mainApp").classList.remove("hidden");
+      renderAll();
+      syncCloud(false);
+    }
+
+    function logout() {
+      localStorage.removeItem("jp_user");
+      currentUser = "";
+      document.getElementById("mainApp").classList.add("hidden");
+      document.getElementById("paywallScreen").classList.add("hidden");
+      document.getElementById("authScreen").classList.remove("hidden");
+      showError("");
+    }
+
+    function renderDaysBar() {
+      const bar = document.getElementById("daysBar");
+      const esDays = i18n.es.days;
+      const showDays = i18n[lang].days;
+      bar.innerHTML = esDays.map((d, idx) => `
+        <button class="day-chip ${selectedDay === d ? 'active' : ''}" onclick="selectDay('${d}')">${showDays[idx]}</button>
+      `).join("");
+    }
+
+    function selectDay(d) {
+      selectedDay = d;
+      renderDaysBar();
+      renderAll();
+    }
+
+    function switchTab(tab) {
+      ["Ruta", "Clientes", "Libreta", "Conta"].forEach(t => {
+        document.getElementById("tab" + t).classList.toggle("hidden", t !== tab);
+        document.getElementById("nav" + t).classList.toggle("active", t === tab);
+      });
+    }
+
+    function openClientModal(id = null) {
+      document.getElementById("clientModal").style.display = "flex";
+      const delBtn = document.getElementById("deleteClientBtn");
+      if (id) {
+        const c = appData.clients.find(x => x.id === id);
+        if (!c) return;
+        document.getElementById("modalTitle").textContent = lang === "es" ? "Editar Cliente" : "Edit Client";
+        document.getElementById("editClientId").value = c.id;
+        document.getElementById("cName").value = c.name || "";
+        document.getElementById("cPhone").value = c.phone || "";
+        document.getElementById("cAddr").value = c.addr || "";
+        document.getElementById("cDay").value = c.day || "Lun";
+        document.getElementById("cPrice").value = c.price || "";
+        document.getElementById("cNote").value = c.note || "";
+        delBtn.classList.remove("hidden");
+      } else {
+        document.getElementById("modalTitle").textContent = lang === "es" ? "Nuevo Cliente" : "New Client";
+        document.getElementById("editClientId").value = "";
+        document.getElementById("cName").value = "";
+        document.getElementById("cPhone").value = "";
+        document.getElementById("cAddr").value = "";
+        document.getElementById("cDay").value = selectedDay !== "Todos" ? selectedDay : "Lun";
+        document.getElementById("cPrice").value = "";
+        document.getElementById("cNote").value = "";
+        delBtn.classList.add("hidden");
+      }
+    }
+
+    function closeClientModal() {
+      document.getElementById("clientModal").style.display = "none";
+    }
+
+    function saveClient() {
+      const id = document.getElementById("editClientId").value;
+      const name = document.getElementById("cName").value.trim();
+      const phone = document.getElementById("cPhone").value.trim();
+      const addr = document.getElementById("cAddr").value.trim();
+      const day = document.getElementById("cDay").value;
+      const price = parseFloat(document.getElementById("cPrice").value) || 0;
+      const note = document.getElementById("cNote").value.trim();
+
+      if (!name) return;
+      if (id) {
+        const idx = appData.clients.findIndex(x => x.id === id);
+        if (idx > -1) {
+          appData.clients[idx] = { ...appData.clients[idx], name, phone, addr, day, price, note };
+        }
+      } else {
+        if (appData.clients.length >= 500) {
+          alert(lang === "es" ? "Límite de 500 clientes alcanzado." : "500 clients limit reached.");
+          return;
+        }
+        appData.clients.unshift({
+          id: "c_" + Date.now(),
+          name, phone, addr, day, price, note, paid: false
+        });
+      }
+      saveLocalData();
+      closeClientModal();
+      renderAll();
+    }
+
+    function deleteClient() {
+      const id = document.getElementById("editClientId").value;
+      appData.clients = appData.clients.filter(x => x.id !== id);
+      saveLocalData();
+      closeClientModal();
+      renderAll();
+    }
+
+    function togglePaid(id) {
+      const c = appData.clients.find(x => x.id === id);
+      if (c) {
+        c.paid = !c.paid;
+        saveLocalData();
+        renderAll();
+      }
+    }
+
+    function buildClientCard(c) {
+      const dict = i18n[lang];
+      const showDay = lang === "en" ? (dayMap[c.day] || c.day) : c.day;
+      const cleanPhone = (c.phone || "").replace(/[^0-9]/g, "");
+      const msg = encodeURIComponent(dict.smsMsg(c.name, c.price));
+      const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(c.addr || c.name)}`;
+      const smsUrl = `sms:${cleanPhone}?&body=${msg}`;
+      const waUrl = `https://wa.me/${cleanPhone.length === 10 ? "1" + cleanPhone : cleanPhone}?text=${msg}`;
+
+      return `
+        <div class="client-card">
+          <div class="card-top">
+            <div>
+              <span class="day-tag">${showDay}</span>
+              <div class="client-name">${c.name}</div>
+              ${c.addr ? `<div class="client-addr">📍 ${c.addr}</div>` : ""}
+              ${c.note ? `<div class="client-note">📌 ${c.note}</div>` : ""}
+            </div>
+            <div class="price-box">
+              <div class="price-val">$${c.price}</div>
+              <button class="paid-badge ${c.paid ? 'paid-yes' : 'paid-no'}" onclick="togglePaid('${c.id}')">
+                ${c.paid ? dict.paid : dict.pending}
+              </button>
+            </div>
+          </div>
+          <div class="card-actions">
+            <a href="${mapsUrl}" target="_blank" class="act-btn">🗺️ GPS</a>
+            <a href="${smsUrl}" class="act-btn">💬 SMS</a>
+            <a href="${waUrl}" target="_blank" class="act-btn">📱 WA</a>
+            <button class="act-btn" onclick="openClientModal('${c.id}')">${dict.edit}</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function addNote() {
+      const inp = document.getElementById("noteInput");
+      const text = inp.value.trim();
+      if (!text) return;
+      appData.notes.unshift({ id: "n_" + Date.now(), text, date: new Date().toLocaleDateString() });
+      inp.value = "";
+      saveLocalData();
+      renderAll();
+    }
+
+    function deleteNote(id) {
+      appData.notes = appData.notes.filter(x => x.id !== id);
+      saveLocalData();
+      renderAll();
+    }
+
+    function startVoiceNote() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert(lang === "es" ? "Usa el micrófono de tu teclado en iPhone para dictar." : "Use your iPhone keyboard microphone to dictate.");
+        return;
+      }
+      const rec = new SpeechRecognition();
+      rec.lang = lang === "es" ? "es-MX" : "en-US";
+      const btn = document.getElementById("voiceBtn");
+      btn.textContent = "🔴 ...";
+      rec.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        const inp = document.getElementById("noteInput");
+        inp.value = (inp.value ? inp.value + " " : "") + transcript;
+      };
+      rec.onend = () => { btn.textContent = "🎙️ Dictar"; };
+      rec.start();
+    }
+
+    function addExpense() {
+      const desc = document.getElementById("expDesc").value.trim();
+      const amount = parseFloat(document.getElementById("expAmount").value) || 0;
+      if (!desc || amount <= 0) return;
+      appData.expenses.unshift({ id: "e_" + Date.now(), desc, amount, date: new Date().toLocaleDateString() });
+      document.getElementById("expDesc").value = "";
+      document.getElementById("expAmount").value = "";
+      saveLocalData();
+      renderAll();
+    }
+
+    function deleteExpense(id) {
+      appData.expenses = appData.expenses.filter(x => x.id !== id);
+      saveLocalData();
+      renderAll();
+    }
+
+    function exportBackup() {
+      const blob = new Blob([JSON.stringify(appData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `jardineros-pro-respaldo-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+    }
+
+    function importBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && Array.isArray(parsed.clients)) {
+            appData = {
+              clients: parsed.clients || [],
+              notes: parsed.notes || [],
+              expenses: parsed.expenses || []
+            };
+            saveLocalData();
+            renderAll();
+            alert(lang === "es" ? "✅ Respaldo cargado correctamente." : "✅ Backup restored successfully.");
+          }
+        } catch (err) {
+          alert(lang === "es" ? "Archivo no válido." : "Invalid backup file.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function renderAll() {
+      const isOwner = currentUser === OWNER_EMAIL;
+      const roleLabel = isOwner
+        ? (lang === "es" ? "👑 Dueño Vitalicio" : "👑 Lifetime Owner")
+        : (lang === "es" ? "Plan Pro" : "Pro Plan");
+      const cloudLabel = lang === "es" ? "Nube Activa" : "Cloud Active";
+      document.getElementById("statusLine").textContent = `${appData.clients.length} / 500 • ${roleLabel} • ${cloudLabel}`;
+
+      // Route list
+      const qRoute = (document.getElementById("searchRoute").value || "").toLowerCase();
+      const routeFiltered = appData.clients.filter(c => {
+        const matchDay = selectedDay === "Todos" || c.day === selectedDay;
+        const matchQ = c.name.toLowerCase().includes(qRoute) || (c.addr || "").toLowerCase().includes(qRoute);
+        return matchDay && matchQ;
+      });
+      document.getElementById("routeList").innerHTML = routeFiltered.length
+        ? routeFiltered.map(buildClientCard).join("")
+        : `<div style="text-align:center; color:#6b7280; padding:30px 10px; font-size:14px;">${i18n[lang].emptyRoute}</div>`;
+
+      // All clients
+      const qClients = (document.getElementById("searchClients").value || "").toLowerCase();
+      const allFiltered = appData.clients.filter(c =>
+        c.name.toLowerCase().includes(qClients) || (c.addr || "").toLowerCase().includes(qClients)
+      );
+      document.getElementById("clientsList").innerHTML = allFiltered.length
+        ? allFiltered.map(buildClientCard).join("")
+        : `<div style="text-align:center; color:#6b7280; padding:30px 10px; font-size:14px;">${i18n[lang].emptyRoute}</div>`;
+
+      // Notes
+      document.getElementById("notesList").innerHTML = appData.notes.map(n => `
+        <div class="note-card">
+          <div>
+            <div style="font-size:14px; font-weight:600;">${n.text}</div>
+            <div style="font-size:11px; color:#6b7280; margin-top:4px;">${n.date}</div>
+          </div>
+          <button onclick="deleteNote('${n.id}')" style="background:#fee2e2; color:#dc2626; border:none; padding:6px 10px; border-radius:8px; font-weight:700; cursor:pointer;">✕</button>
+        </div>
+      `).join("");
+
+      // Finance
+      const income = appData.clients.filter(c => c.paid).reduce((sum, c) => sum + (Number(c.price) || 0), 0);
+      const expense = appData.expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+      const net = income - expense;
+      document.getElementById("statIncome").textContent = "$" + income.toFixed(0);
+      document.getElementById("statExpense").textContent = "$" + expense.toFixed(0);
+      document.getElementById("statNet").textContent = "$" + net.toFixed(0);
+
+      document.getElementById("expensesList").innerHTML = appData.expenses.map(e => `
+        <div class="note-card" style="border-left-color:#dc2626;">
+          <div>
+            <div style="font-size:14px; font-weight:700;">${e.desc} — <span style="color:#dc2626;">-$${e.amount}</span></div>
+            <div style="font-size:11px; color:#6b7280;">${e.date}</div>
+          </div>
+          <button onclick="deleteExpense('${e.id}')" style="background:#fee2e2; color:#dc2626; border:none; padding:6px 10px; border-radius:8px; font-weight:700; cursor:pointer;">✕</button>
+        </div>
+      `).join("");
+    }
+
+    // Boot
+    applyLanguage();
+    if (currentUser) {
+      checkSubscriptionAndEnter(currentUser);
+    }
+  </script>
 </body>
 </html>
