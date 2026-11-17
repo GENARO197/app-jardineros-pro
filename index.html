@@ -9,43 +9,40 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Jardineros Pro" />
+  <meta name="theme-color" content="#15803d" />
   <style>
     :root {
-      --primary: #1b5e20;
-      --primary-light: #2e7d32;
-      --primary-bg: #e8f5e9;
-      --accent: #f57c00;
-      --danger: #c62828;
-      --bg: #f4f6f4;
+      --primary: #15803d;
+      --primary-dark: #166534;
+      --primary-light: #dcfce7;
+      --accent: #f59e0b;
+      --danger: #dc2626;
+      --bg: #f3f4f6;
       --card: #ffffff;
-      --text: #1c281c;
-      --muted: #5a6b5a;
-      --border: #dce4dc;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: var(--bg); color: var(--text); padding-bottom: 85px; -webkit-tap-highlight-color: transparent; }
-    
-    /* Header */
     .header {
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: #fff;
-      padding: 16px 16px 14px;
+      padding: 14px 16px;
       position: sticky;
       top: 0;
       z-index: 100;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-    .header-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .brand { display: flex; align-items: center; gap: 10px; }
-    .brand-icon { width: 34px; height: 34px; border-radius: 8px; background: #fff; padding: 2px; object-fit: cover; }
-    .brand h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; }
+    .app-title { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
     .lang-btn {
       background: rgba(255,255,255,0.2);
       border: 1px solid rgba(255,255,255,0.4);
       color: #fff;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 12px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
       font-weight: 700;
       cursor: pointer;
     }
@@ -53,152 +50,90 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 10px;
-      font-size: 11px;
+      margin-top: 8px;
+      font-size: 0.75rem;
       background: rgba(0,0,0,0.18);
       padding: 5px 10px;
       border-radius: 8px;
     }
-    .badge-cloud { color: #a5d6a7; font-weight: 600; }
-    .badge-plan { color: #ffe082; font-weight: 700; }
+    .badge-owner { background: #fbbf24; color: #78350f; padding: 2px 7px; border-radius: 10px; font-weight: 800; }
+    .badge-trial { background: #bbf7d0; color: #14532d; padding: 2px 7px; border-radius: 10px; font-weight: 800; }
+    .cloud-status { font-weight: 600; }
 
-    /* Container */
     .container { max-width: 600px; margin: 0 auto; padding: 14px; }
-
-    /* Auth & Lock Screens */
-    .auth-box {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 24px 20px;
-      margin: 24px auto;
-      max-width: 420px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-      border: 1px solid var(--border);
-    }
-    .auth-logo { width: 68px; height: 68px; border-radius: 16px; display: block; margin: 0 auto 12px; }
-    .auth-title { text-align: center; font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
-    .auth-sub { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.4; }
-
-    /* Form Elements */
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
-    input, select, textarea {
-      width: 100%;
-      padding: 11px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-size: 15px;
-      background: #fff;
-      color: var(--text);
-    }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-light); }
-
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 11px 14px;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      transition: opacity 0.15s;
-    }
-    .btn:active { opacity: 0.8; }
-    .btn-block { width: 100%; }
-    .btn-primary { background: var(--primary-light); color: #fff; }
-    .btn-accent { background: var(--accent); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary-light); }
-    .btn-sm { padding: 7px 10px; font-size: 12px; border-radius: 8px; }
-
-    /* Cards & Lists */
     .card {
       background: var(--card);
       border-radius: 14px;
       padding: 14px;
       margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
       border: 1px solid var(--border);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     }
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
-    .client-name { font-size: 17px; font-weight: 800; color: var(--text); }
-    .client-price { font-size: 16px; font-weight: 800; color: var(--primary-light); }
-    .client-meta { font-size: 13px; color: var(--muted); margin-bottom: 6px; line-height: 1.4; }
-    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-    .tag {
-      font-size: 11px;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
       font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: var(--primary-bg);
-      color: var(--primary);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      text-decoration: none;
     }
-    .tag-pending { background: #fff3e0; color: #e65100; }
-    .tag-paid { background: #e8f5e9; color: #1b5e20; }
-    .tag-lastpaid { background: #e3f2fd; color: #0d47a1; }
+    .btn:active { opacity: 0.8; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-secondary { background: #e5e7eb; color: #1f2937; }
+    .btn-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .btn-danger { background: #fee2e2; color: #991b1b; }
+    .btn-sm { padding: 7px 10px; font-size: 0.8rem; border-radius: 8px; }
+    .btn-block { width: 100%; }
 
-    .actions-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-top: 8px;
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      background: #fff;
     }
-    .actions-row {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .actions-row .btn { flex: 1; }
+    label { display: block; font-size: 0.82rem; font-weight: 700; color: #374151; margin-bottom: 4px; }
 
-    /* Filter Pills */
-    .pills {
+    .day-filters {
       display: flex;
       gap: 6px;
       overflow-x: auto;
       padding-bottom: 8px;
       margin-bottom: 10px;
-      scrollbar-width: none;
     }
-    .pills::-webkit-scrollbar { display: none; }
-    .pill {
+    .day-chip {
       padding: 7px 12px;
       border-radius: 20px;
+      border: 1px solid #d1d5db;
       background: #fff;
-      border: 1px solid var(--border);
-      font-size: 12px;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: var(--muted);
       white-space: nowrap;
       cursor: pointer;
     }
-    .pill.active { background: var(--primary-light); color: #fff; border-color: var(--primary-light); }
+    .day-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-    /* Finance Summary */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .stat-box {
-      background: #fff;
-      padding: 12px 8px;
-      border-radius: 12px;
-      text-align: center;
-      border: 1px solid var(--border);
-    }
-    .stat-label { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
-    .stat-val { font-size: 16px; font-weight: 800; }
-    .val-inc { color: #2e7d32; }
-    .val-exp { color: #c62828; }
-    .val-net { color: #1565c0; }
+    .client-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .client-name { font-size: 1.05rem; font-weight: 800; }
+    .client-price { font-size: 1.05rem; font-weight: 800; color: var(--primary); }
+    .client-meta { font-size: 0.82rem; color: var(--muted); margin: 4px 0; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; margin-right: 4px; margin-top: 4px; }
+    .tag-paid { background: #dcfce7; color: #166534; }
+    .tag-pending { background: #fef3c7; color: #92400e; }
+    .tag-freq { background: #e0e7ff; color: #3730a3; }
+    .tag-date { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
 
-    /* Bottom Nav */
+    .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
+    .action-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 6px; }
+
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -206,966 +141,913 @@
       right: 0;
       background: #fff;
       border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 4px 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 6px 0 10px;
       z-index: 100;
       box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
     }
     .nav-item {
-      background: none;
-      border: none;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
-      font-size: 11px;
-      font-weight: 700;
+      justify-content: center;
+      background: none;
+      border: none;
       color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
       cursor: pointer;
-      flex: 1;
+      gap: 2px;
     }
-    .nav-item.active { color: var(--primary-light); }
-    .nav-icon { font-size: 20px; }
+    .nav-item.active { color: var(--primary); }
+    .nav-icon { font-size: 1.3rem; }
 
-    /* Toast */
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .stat-box { background: #fff; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+    .stat-label { font-size: 0.72rem; color: var(--muted); font-weight: 700; }
+    .stat-val { font-size: 1.05rem; font-weight: 800; margin-top: 2px; }
+
     .toast {
       position: fixed;
-      top: 76px;
+      top: 75px;
       left: 50%;
       transform: translateX(-50%);
-      background: #1b5e20;
+      background: #111827;
       color: #fff;
       padding: 10px 16px;
-      border-radius: 24px;
-      font-size: 13px;
+      border-radius: 25px;
+      font-size: 0.85rem;
       font-weight: 700;
       z-index: 999;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
       display: none;
       white-space: nowrap;
     }
     .hidden { display: none !important; }
-    .section-title { font-size: 16px; font-weight: 800; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .auth-box { max-width: 400px; margin: 40px auto; padding: 20px; }
+    .paywall-box { text-align: center; padding: 24px 16px; }
   </style>
 </head>
 <body>
 
   <div id="toast" class="toast"></div>
 
-  <!-- AUTH SCREEN -->
-  <div id="authScreen" class="container hidden">
-    <div class="auth-box">
-      <img src="/apple-touch-icon.png" alt="Jardineros Pro" class="auth-logo" onerror="this.style.display='none'" />
-      <div class="auth-title" data-t="appTitle">Jardineros Pro</div>
-      <div class="auth-sub" data-t="authSub">Organiza tu ruta, clientes, cobros mensuales y contabilidad desde tu celular. 14 días gratis.</div>
-      
-      <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-        <button class="lang-btn" style="background:#e8f5e9; color:#1b5e20; border-color:#a5d6a7;" onclick="toggleLang()" id="authLangBtn">ES → EN</button>
+  <!-- PANTALLA DE LOGIN / REGISTRO -->
+  <div id="authScreen" class="auth-box hidden">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:3rem; margin-bottom:8px;">🌱</div>
+      <h1 id="authTitle" style="font-size:1.5rem; font-weight:800; color:var(--primary);">Jardineros Pro</h1>
+      <p id="authSubtitle" style="color:var(--muted); font-size:0.9rem; margin:6px 0 18px;">Organiza tu ruta, cobros y gastos en la nube</p>
+      <div style="text-align:left;">
+        <label id="lblAuthEmail">Correo Electrónico</label>
+        <input type="email" id="loginEmail" placeholder="ejemplo@gmail.com" />
+        <label id="lblAuthPass">Contraseña</label>
+        <input type="password" id="loginPass" placeholder="••••••••" />
       </div>
-
-      <div class="form-group">
-        <label data-t="emailLabel">Correo electrónico</label>
-        <input type="email" id="authEmail" placeholder="ejemplo@gmail.com" />
-      </div>
-      <div class="form-group">
-        <label data-t="passLabel">Contraseña</label>
-        <input type="password" id="authPass" placeholder="••••••••" />
-      </div>
-      <button class="btn btn-primary btn-block" onclick="handleLogin()" data-t="btnLogin">Entrar / Crear Cuenta</button>
+      <button id="btnLogin" class="btn btn-primary btn-block" onclick="handleAuth()">Entrar / Crear Cuenta</button>
+      <p id="authTrialNote" style="font-size:0.78rem; color:var(--muted); margin-top:12px;">✨ 14 días de prueba gratis para nuevos usuarios</p>
+      <button class="lang-btn" style="background:#e5e7eb; color:#111827; margin-top:14px;" onclick="toggleLang()">🌐 Español / English</button>
     </div>
   </div>
 
-  <!-- PAYWALL LOCK SCREEN -->
-  <div id="lockScreen" class="container hidden">
-    <div class="auth-box" style="text-align:center;">
-      <div style="font-size:48px; margin-bottom:10px;">🔒</div>
-      <div class="auth-title" data-t="lockTitle">Prueba Gratuita Finalizada</div>
-      <div class="auth-sub" data-t="lockSub">Tus 14 días gratis han terminado. Activa tu suscripción mensual ($14.99/mes) usando el mismo correo con el que te registraste para desbloquear al instante.</div>
-      <div id="lockUserEmail" style="font-weight:800; color:var(--primary); margin-bottom:16px; font-size:14px;"></div>
-      <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" class="btn btn-accent btn-block" style="margin-bottom:10px;" data-t="btnSubscribe">💳 Activar Suscripción ($14.99/mes)</a>
-      <button class="btn btn-outline btn-block" onclick="checkSubscription(true)" data-t="btnVerifyPay">🔄 Ya pagué, verificar acceso</button>
-      <button class="btn btn-sm" style="margin-top:14px; background:none; color:var(--muted);" onclick="logout()" data-t="btnLogout">Cerrar sesión</button>
+  <!-- PANTALLA DE SUSCRIPCIÓN VENCIDA -->
+  <div id="paywallScreen" class="auth-box hidden">
+    <div class="card paywall-box">
+      <div style="font-size:3rem; margin-bottom:8px;">🔒</div>
+      <h2 id="pwTitle" style="font-size:1.35rem; font-weight:800; margin-bottom:8px;">Tu prueba gratuita terminó</h2>
+      <p id="pwDesc" style="color:var(--muted); font-size:0.9rem; margin-bottom:16px;">Activa tu suscripción mensual para seguir administrando tus clientes y respaldos en la nube.</p>
+      <div style="background:var(--primary-light); color:var(--primary-dark); padding:12px; border-radius:12px; font-weight:800; font-size:1.2rem; margin-bottom:16px;">
+        $14.99 USD / <span id="pwMonth">mes</span>
+      </div>
+      <a id="pwPayBtn" href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" class="btn btn-primary btn-block" style="margin-bottom:10px;">💳 Suscribirme Ahora</a>
+      <p id="pwEmailHint" style="font-size:0.78rem; color:var(--muted); margin-bottom:14px;">Usa tu mismo correo al pagar en Stripe para activación automática.</p>
+      <button id="pwRefreshBtn" class="btn btn-secondary btn-block" style="margin-bottom:8px;" onclick="checkSubscription()">🔄 Ya pagué, verificar acceso</button>
+      <button id="pwLogoutBtn" class="btn btn-danger btn-sm" onclick="logout()">Cerrar Sesión</button>
     </div>
   </div>
 
-  <!-- MAIN APP -->
-  <div id="appScreen" class="hidden">
+  <!-- APLICACIÓN PRINCIPAL -->
+  <div id="mainApp" class="hidden">
     <div class="header">
       <div class="header-top">
-        <div class="brand">
-          <img src="/apple-touch-icon.png" alt="Logo" class="brand-icon" onerror="this.style.display='none'" />
-          <h1 data-t="appTitle">Jardineros Pro</h1>
-        </div>
-        <button class="lang-btn" onclick="toggleLang()" id="mainLangBtn">ES → EN</button>
+        <div class="app-title">🌱 <span id="hdrTitle">Jardineros Pro</span></div>
+        <button id="btnLang" class="lang-btn" onclick="toggleLang()">ES → EN</button>
       </div>
       <div class="status-bar">
-        <span id="cloudStatus" class="badge-cloud">☁️ Guardado en la Nube</span>
-        <span id="planStatus" class="badge-plan">⭐ Activo</span>
+        <span id="userBadge" class="badge-trial">Prueba Activa</span>
+        <span id="cloudStatus" class="cloud-status">☁️ Conectado</span>
       </div>
     </div>
 
     <div class="container">
-      <!-- TAB 1: RUTA -->
-      <div id="tab-ruta">
-        <div class="pills" id="dayPills"></div>
-        
+      <!-- PESTAÑA 1: RUTA -->
+      <div id="tabRoute">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
-          <span style="font-size:13px; font-weight:700; color:var(--muted);" id="routeCount">0 clientes</span>
-          <button class="btn btn-outline btn-sm" onclick="resetNewMonth()" data-t="btnNewMonth">🔄 Nuevo Mes (Reiniciar Cobros)</button>
+          <h2 id="routeHeading" style="font-size:1.1rem; font-weight:800;">📍 Mi Ruta</h2>
+          <button id="btnNewMonth" class="btn btn-warning btn-sm" onclick="resetMonthlyPayments()">🔄 Nuevo Mes (Reiniciar Cobros)</button>
         </div>
-
+        <div id="dayFilters" class="day-filters"></div>
         <div id="routeList"></div>
       </div>
 
-      <!-- TAB 2: CLIENTES -->
-      <div id="tab-clientes" class="hidden">
+      <!-- PESTAÑA 2: CLIENTES -->
+      <div id="tabClients" class="hidden">
         <div class="card">
-          <div class="section-title">
-            <span id="formTitle" data-t="addClientTitle">➕ Nuevo Cliente</span>
-            <button id="cancelEditBtn" class="btn btn-sm btn-outline hidden" onclick="cancelEdit()" data-t="btnCancel">Cancelar</button>
-          </div>
+          <h3 id="clientFormTitle" style="font-size:1rem; font-weight:800; margin-bottom:10px;">➕ Agregar / Editar Cliente</h3>
           <input type="hidden" id="editClientId" />
-          <div class="form-group">
-            <label data-t="lblName">Nombre del cliente *</label>
-            <input type="text" id="cName" placeholder="Ej. Juan Pérez" />
-          </div>
-          <div class="form-group">
-            <label data-t="lblPhone">Teléfono</label>
-            <input type="tel" id="cPhone" placeholder="Ej. 661-555-0199" />
-          </div>
-          <div class="form-group">
-            <label data-t="lblAddress">Dirección (para GPS)</label>
-            <input type="text" id="cAddress" placeholder="Ej. 123 Main St, Palmdale, CA" />
-          </div>
+          <label id="lblClientName">Nombre del Cliente</label>
+          <input type="text" id="cName" placeholder="Ej. Juan Pérez" />
+          <label id="lblClientPhone">Teléfono (SMS / WhatsApp)</label>
+          <input type="tel" id="cPhone" placeholder="Ej. 6615551234" />
+          <label id="lblClientAddr">Dirección (para GPS)</label>
+          <input type="text" id="cAddress" placeholder="Ej. 123 Main St, Palmdale, CA" />
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <div class="form-group">
-              <label data-t="lblDay">Día de ruta</label>
-              <select id="cDay">
-                <option value="Lunes" data-t="dayMon">Lunes</option>
-                <option value="Martes" data-t="dayTue">Martes</option>
-                <option value="Miércoles" data-t="dayWed">Miércoles</option>
-                <option value="Jueves" data-t="dayThu">Jueves</option>
-                <option value="Viernes" data-t="dayFri">Viernes</option>
-                <option value="Sábado" data-t="daySat">Sábado</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label data-t="lblFreq">Frecuencia</label>
-              <select id="cFreq">
-                <option value="Semanal" data-t="freqWeekly">Semanal</option>
-                <option value="Quincenal" data-t="freqBiweekly">Quincenal</option>
-                <option value="Mensual" data-t="freqMonthly">Mensual</option>
-              </select>
-            </div>
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <div class="form-group">
-              <label data-t="lblPrice">Precio ($)</label>
+            <div>
+              <label id="lblClientPrice">Precio ($)</label>
               <input type="number" id="cPrice" placeholder="120" />
             </div>
-            <div class="form-group">
-              <label data-t="lblPayStatus">Estado del mes</label>
-              <select id="cPaid">
-                <option value="false" data-t="statusPending">Pendiente</option>
-                <option value="true" data-t="statusPaid">Pagado</option>
-              </select>
+            <div>
+              <label id="lblClientDay">Día de Servicio</label>
+              <select id="cDay"></select>
             </div>
           </div>
-          <div class="form-group">
-            <label data-t="lblNotes">Notas del jardín</label>
-            <input type="text" id="cNotes" placeholder="Ej. Perro en patio, cerrar portón" />
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div>
+              <label id="lblClientFreq">Frecuencia</label>
+              <select id="cFreq"></select>
+            </div>
+            <div>
+              <label id="lblClientStatus">Estado de Pago</label>
+              <select id="cStatus"></select>
+            </div>
           </div>
-          <button class="btn btn-primary btn-block" onclick="saveClient()" data-t="btnSaveClient">💾 Guardar Cliente</button>
+          <div style="display:flex; gap:8px;">
+            <button id="btnSaveClient" class="btn btn-primary btn-block" onclick="saveClient()">💾 Guardar Cliente</button>
+            <button id="btnCancelEdit" class="btn btn-secondary hidden" onclick="cancelEditClient()">Cancelar</button>
+          </div>
         </div>
 
-        <div class="form-group">
-          <input type="text" id="searchClient" oninput="renderAll()" placeholder="🔍 Buscar cliente por nombre o dirección..." data-ph="searchPh" />
-        </div>
+        <input type="text" id="searchClient" placeholder="🔍 Buscar cliente por nombre o dirección..." oninput="renderClients()" />
         <div id="allClientsList"></div>
       </div>
 
-      <!-- TAB 3: LIBRETA -->
-      <div id="tab-libreta" class="hidden">
+      <!-- PESTAÑA 3: LIBRETA -->
+      <div id="tabNotes" class="hidden">
         <div class="card">
-          <div class="section-title" data-t="notesTitle">📓 Libreta Rápida y Materiales</div>
-          <div class="form-group">
-            <textarea id="noteInput" rows="3" placeholder="Escribe o dicta materiales, reparaciones o pendientes..." data-ph="notePh"></textarea>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-outline" style="flex:1;" onclick="startVoiceNote()" id="voiceBtn" data-t="btnVoice">🎙️ Dictar por Voz</button>
-            <button class="btn btn-primary" style="flex:1;" onclick="addNote()" data-t="btnAddNote">➕ Guardar Nota</button>
+          <h3 id="notesTitle" style="font-size:1rem; font-weight:800; margin-bottom:8px;">📓 Libreta y Lista de Compras</h3>
+          <textarea id="noteInput" rows="3" placeholder="Escribe o dicta materiales, pendientes o notas..."></textarea>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <button id="btnVoiceNote" class="btn btn-secondary" onclick="startVoiceNote()">🎙️ Dictar Voz</button>
+            <button id="btnAddNote" class="btn btn-primary" onclick="addNote()">➕ Guardar Nota</button>
           </div>
         </div>
         <div id="notesList"></div>
       </div>
 
-      <!-- TAB 4: CONTABILIDAD -->
-      <div id="tab-conta" class="hidden">
-        <div class="stats-grid">
+      <!-- PESTAÑA 4: CONTABILIDAD -->
+      <div id="tabFinance" class="hidden">
+        <div class="summary-grid">
           <div class="stat-box">
-            <div class="stat-label" data-t="lblIncome">Ingresos</div>
-            <div class="stat-val val-inc" id="statIncome">$0</div>
+            <div id="lblIncome" class="stat-label">INGRESOS</div>
+            <div id="totalIncome" class="stat-val" style="color:var(--primary);">$0</div>
           </div>
           <div class="stat-box">
-            <div class="stat-label" data-t="lblExpense">Gastos</div>
-            <div class="stat-val val-exp" id="statExpense">$0</div>
+            <div id="lblExpense" class="stat-label">GASTOS</div>
+            <div id="totalExpense" class="stat-val" style="color:var(--danger);">$0</div>
           </div>
           <div class="stat-box">
-            <div class="stat-label" data-t="lblProfit">Ganancia</div>
-            <div class="stat-val val-net" id="statNet">$0</div>
+            <div id="lblProfit" class="stat-label">GANANCIA</div>
+            <div id="totalProfit" class="stat-val" style="color:#111827;">$0</div>
           </div>
         </div>
 
         <div class="card">
-          <div class="section-title" data-t="addTxTitle">💰 Registrar Movimiento Manual</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
-            <select id="txType">
-              <option value="ingreso" data-t="optIncome">➕ Ingreso extra</option>
-              <option value="gasto" data-t="optExpense">➖ Gasto (Gasolina/Equipo)</option>
-            </select>
-            <input type="number" id="txAmount" placeholder="Monto ($)" data-ph="txAmountPh" />
+          <h3 id="finFormTitle" style="font-size:1rem; font-weight:800; margin-bottom:8px;">💵 Registrar Movimiento</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div>
+              <label id="lblFinType">Tipo</label>
+              <select id="finType">
+                <option value="income">Ingreso (+)</option>
+                <option value="expense">Gasto (-)</option>
+              </select>
+            </div>
+            <div>
+              <label id="lblFinAmount">Monto ($)</label>
+              <input type="number" id="finAmount" placeholder="50" />
+            </div>
           </div>
-          <div class="form-group">
-            <input type="text" id="txDesc" placeholder="Descripción (Ej. Gasolina troca, hilo podadora)" data-ph="txDescPh" />
-          </div>
-          <button class="btn btn-primary btn-block" onclick="addTransaction()" data-t="btnSaveTx">Guardar Movimiento</button>
+          <label id="lblFinDesc">Concepto / Descripción</label>
+          <input type="text" id="finDesc" placeholder="Ej. Gasolina, Hilo, Pago extra..." />
+          <button id="btnAddFin" class="btn btn-primary btn-block" onclick="addFinanceRecord()">💾 Guardar Movimiento</button>
         </div>
 
-        <div class="section-title">
-          <span data-t="historyTitle">📋 Historial de Cobros y Gastos</span>
-          <button class="btn btn-sm btn-outline" onclick="clearTransactions()" data-t="btnClearHistory">Limpiar</button>
-        </div>
-        <div id="txList"></div>
-
-        <div class="card" style="margin-top:16px;">
-          <div class="section-title" data-t="accountTitle">⚙️ Cuenta y Respaldo</div>
-          <div id="userEmailDisplay" style="font-size:13px; color:var(--muted); margin-bottom:10px;"></div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn btn-outline btn-sm" style="flex:1;" onclick="syncToCloud(true)" data-t="btnSyncNow">☁️ Sincronizar Nube</button>
-            <button class="btn btn-danger btn-sm" style="flex:1;" onclick="logout()" data-t="btnLogout">Cerrar Sesión</button>
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <h3 id="finHistoryTitle" style="font-size:0.95rem; font-weight:800;">📋 Historial de Pagos y Gastos</h3>
+            <button id="btnSyncNow" class="btn btn-secondary btn-sm" onclick="syncCloud(true)">🔄 Sincronizar</button>
           </div>
+          <div id="financeList"></div>
         </div>
+
+        <button id="btnLogout" class="btn btn-danger btn-block" style="margin-top:10px;" onclick="logout()">🚪 Cerrar Sesión</button>
       </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
+    <!-- NAVEGACIÓN INFERIOR -->
     <div class="bottom-nav">
-      <button class="nav-item active" onclick="switchTab('ruta', this)">
+      <button class="nav-item active" id="navRoute" onclick="switchTab('route')">
         <span class="nav-icon">📍</span>
-        <span data-t="navRoute">Ruta</span>
+        <span id="navTxtRoute">Ruta</span>
       </button>
-      <button class="nav-item" onclick="switchTab('clientes', this)">
+      <button class="nav-item" id="navClients" onclick="switchTab('clients')">
         <span class="nav-icon">👥</span>
-        <span data-t="navClients">Clientes</span>
+        <span id="navTxtClients">Clientes</span>
       </button>
-      <button class="nav-item" onclick="switchTab('libreta', this)">
+      <button class="nav-item" id="navNotes" onclick="switchTab('notes')">
         <span class="nav-icon">📓</span>
-        <span data-t="navNotes">Libreta</span>
+        <span id="navTxtNotes">Libreta</span>
       </button>
-      <button class="nav-item" onclick="switchTab('conta', this)">
+      <button class="nav-item" id="navFinance" onclick="switchTab('finance')">
         <span class="nav-icon">💰</span>
-        <span data-t="navFinance">Conta</span>
+        <span id="navTxtFinance">Conta</span>
       </button>
     </div>
   </div>
 
-  <script>
-    // --- SUPABASE CONFIG ---
-    const SUPABASE_URL = 'https://rjmrhjpmvptnzetcjsfo.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjCsW';
-    const OWNER_EMAIL = 'gena197590@gmail.com';
+<script>
+  const SUPABASE_URL = "https://rjmrhjpmvptnzetcjsfo.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjCsW";
+  const OWNER_EMAIL = "gena197590@gmail.com";
 
-    // --- TRANSLATIONS ---
-    const I18N = {
-      es: {
-        appTitle: 'Jardineros Pro',
-        authSub: 'Organiza tu ruta, clientes, cobros mensuales y contabilidad desde tu celular. 14 días gratis.',
-        emailLabel: 'Correo electrónico',
-        passLabel: 'Contraseña',
-        btnLogin: 'Entrar / Crear Cuenta',
-        lockTitle: 'Prueba Gratuita Finalizada',
-        lockSub: 'Tus 14 días gratis han terminado. Activa tu suscripción mensual ($14.99/mes) usando el mismo correo con el que te registraste para desbloquear al instante.',
-        btnSubscribe: '💳 Activar Suscripción ($14.99/mes)',
-        btnVerifyPay: '🔄 Ya pagué, verificar acceso',
-        btnLogout: 'Cerrar sesión',
-        navRoute: 'Ruta',
-        navClients: 'Clientes',
-        navNotes: 'Libreta',
-        navFinance: 'Conta',
-        btnNewMonth: '🔄 Nuevo Mes (Reiniciar Cobros)',
-        addClientTitle: '➕ Nuevo Cliente',
-        editClientTitle: '✏️ Editar Cliente',
-        btnCancel: 'Cancelar',
-        lblName: 'Nombre del cliente *',
-        lblPhone: 'Teléfono',
-        lblAddress: 'Dirección (para GPS)',
-        lblDay: 'Día de ruta',
-        lblFreq: 'Frecuencia',
-        lblPrice: 'Precio ($)',
-        lblPayStatus: 'Estado del mes',
-        lblNotes: 'Notas del jardín',
-        btnSaveClient: '💾 Guardar Cliente',
-        searchPh: '🔍 Buscar cliente por nombre o dirección...',
-        notesTitle: '📓 Libreta Rápida y Materiales',
-        notePh: 'Escribe o dicta materiales, reparaciones o pendientes...',
-        btnVoice: '🎙️ Dictar por Voz',
-        btnAddNote: '➕ Guardar Nota',
-        lblIncome: 'Ingresos',
-        lblExpense: 'Gastos',
-        lblProfit: 'Ganancia',
-        addTxTitle: '💰 Registrar Movimiento Manual',
-        optIncome: '➕ Ingreso extra',
-        optExpense: '➖ Gasto (Gasolina/Equipo)',
-        txAmountPh: 'Monto ($)',
-        txDescPh: 'Descripción (Ej. Gasolina troca, hilo podadora)',
-        btnSaveTx: 'Guardar Movimiento',
-        historyTitle: '📋 Historial de Cobros y Gastos',
-        btnClearHistory: 'Limpiar',
-        accountTitle: '⚙️ Cuenta y Respaldo',
-        btnSyncNow: '☁️ Sincronizar Nube',
-        dayAll: 'Todos',
-        dayMon: 'Lunes',
-        dayTue: 'Martes',
-        dayWed: 'Miércoles',
-        dayThu: 'Jueves',
-        dayFri: 'Viernes',
-        daySat: 'Sábado',
-        freqWeekly: 'Semanal',
-        freqBiweekly: 'Quincenal',
-        freqMonthly: 'Mensual',
-        statusPending: 'Pendiente',
-        statusPaid: 'Pagado',
-        btnCollect: '💵 Cobrar',
-        btnUndoPaid: '↩️ Pendiente',
-        btnEdit: '✏️ Editar',
-        btnDelete: '🗑️ Borrar',
-        lastPaidLbl: 'Último pago:',
-        cloudSaved: '☁️ Guardado en la Nube',
-        cloudSyncing: '⏳ Sincronizando...',
-        ownerBadge: '👑 Dueño Vitalicio',
-        trialBadge: '⭐ Prueba Activa',
-        subBadge: '✅ Suscripción Activa',
-        toastPaidAdded: '✅ Pago registrado y sumado a Contabilidad',
-        toastNewMonth: '🔄 Todos los clientes pasaron a Pendiente para el nuevo mes',
-        confirmNewMonth: '¿Iniciar nuevo mes? Todos tus clientes volverán a "Pendiente" para cobrar este mes. Tu dinero ya cobrado en Contabilidad NO se borrará.',
-        confirmDelete: '¿Eliminar este registro?',
-        confirmClearTx: '¿Borrar todo el historial de contabilidad?',
-        smsMsg: (name, price) => `Hola ${name}, te saluda tu jardinero. Ya quedó listo el servicio de tu jardín ($${price}). ¡Muchas gracias!`
-      },
-      en: {
-        appTitle: 'Gardeners Pro',
-        authSub: 'Organize your route, clients, monthly billing & bookkeeping from your phone. 14-day free trial.',
-        emailLabel: 'Email address',
-        passLabel: 'Password',
-        btnLogin: 'Sign In / Create Account',
-        lockTitle: 'Free Trial Ended',
-        lockSub: 'Your 14-day free trial has ended. Activate your monthly subscription ($14.99/mo) using the same email you registered with to unlock immediately.',
-        btnSubscribe: '💳 Activate Subscription ($14.99/mo)',
-        btnVerifyPay: '🔄 I already paid, verify access',
-        btnLogout: 'Sign Out',
-        navRoute: 'Route',
-        navClients: 'Clients',
-        navNotes: 'Notes',
-        navFinance: 'Finance',
-        btnNewMonth: '🔄 New Month (Reset Billing)',
-        addClientTitle: '➕ Add Client',
-        editClientTitle: '✏️ Edit Client',
-        btnCancel: 'Cancel',
-        lblName: 'Client Name *',
-        lblPhone: 'Phone Number',
-        lblAddress: 'Address (for GPS)',
-        lblDay: 'Route Day',
-        lblFreq: 'Frequency',
-        lblPrice: 'Price ($)',
-        lblPayStatus: 'Monthly Status',
-        lblNotes: 'Yard Notes',
-        btnSaveClient: '💾 Save Client',
-        searchPh: '🔍 Search client by name or address...',
-        notesTitle: '📓 Quick Notepad & Supplies',
-        notePh: 'Type or dictate supplies, repairs, or to-dos...',
-        btnVoice: '🎙️ Voice Dictate',
-        btnAddNote: '➕ Save Note',
-        lblIncome: 'Income',
-        lblExpense: 'Expenses',
-        lblProfit: 'Net Profit',
-        addTxTitle: '💰 Add Manual Entry',
-        optIncome: '➕ Extra Income',
-        optExpense: '➖ Expense (Gas/Equipment)',
-        txAmountPh: 'Amount ($)',
-        txDescPh: 'Description (e.g. Truck gas, trimmer line)',
-        btnSaveTx: 'Save Entry',
-        historyTitle: '📋 Payment & Expense History',
-        btnClearHistory: 'Clear',
-        accountTitle: '⚙️ Account & Cloud Backup',
-        btnSyncNow: '☁️ Sync Cloud Now',
-        dayAll: 'All',
-        dayMon: 'Monday',
-        dayTue: 'Tuesday',
-        dayWed: 'Wednesday',
-        dayThu: 'Thursday',
-        dayFri: 'Friday',
-        daySat: 'Saturday',
-        freqWeekly: 'Weekly',
-        freqBiweekly: 'Biweekly',
-        freqMonthly: 'Monthly',
-        statusPending: 'Pending',
-        statusPaid: 'Paid',
-        btnCollect: '💵 Collect',
-        btnUndoPaid: '↩️ Pending',
-        btnEdit: '✏️ Edit',
-        btnDelete: '🗑️ Delete',
-        lastPaidLbl: 'Last paid:',
-        cloudSaved: '☁️ Saved to Cloud',
-        cloudSyncing: '⏳ Syncing...',
-        ownerBadge: '👑 Lifetime Owner',
-        trialBadge: '⭐ Active Trial',
-        subBadge: '✅ Active Plan',
-        toastPaidAdded: '✅ Payment recorded & added to Finance',
-        toastNewMonth: '🔄 All clients reset to Pending for the new month',
-        confirmNewMonth: 'Start a new month? All clients will reset to "Pending" for this month. Your recorded income in Finance will NOT be deleted.',
-        confirmDelete: 'Delete this item?',
-        confirmClearTx: 'Clear all finance history?',
-        smsMsg: (name, price) => `Hi ${name}, this is your gardener. Your yard service is all done ($${price}). Thank you!`
-      }
-    };
+  let lang = localStorage.getItem("jp_lang") || "es";
+  let currentUser = localStorage.getItem("jp_user") || "";
+  let selectedDay = "all";
+  let appData = { clients: [], notes: [], finances: [] };
 
-    // --- APP STATE ---
-    let lang = localStorage.getItem('jp_lang') || 'es';
-    let currentUser = localStorage.getItem('jp_user') || '';
-    let selectedDay = 'Todos';
-    let appData = {
-      clients: [],
-      notes: [],
-      transactions: []
-    };
-
-    const DAY_KEYS = ['Todos', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    const DAY_MAP_EN = {
-      'Todos': 'All', 'Lunes': 'Monday', 'Martes': 'Tuesday',
-      'Miércoles': 'Wednesday', 'Jueves': 'Thursday', 'Viernes': 'Friday', 'Sábado': 'Saturday'
-    };
-    const FREQ_MAP_EN = { 'Semanal': 'Weekly', 'Quincenal': 'Biweekly', 'Mensual': 'Monthly' };
-
-    function t(key) {
-      return (I18N[lang] && I18N[lang][key]) || I18N['es'][key] || key;
+  const i18n = {
+    es: {
+      appTitle: "Jardineros Pro",
+      authSubtitle: "Organiza tu ruta, cobros y gastos en la nube",
+      lblAuthEmail: "Correo Electrónico",
+      lblAuthPass: "Contraseña",
+      btnLogin: "Entrar / Crear Cuenta",
+      authTrialNote: "✨ 14 días de prueba gratis para nuevos usuarios",
+      pwTitle: "Tu prueba gratuita terminó",
+      pwDesc: "Activa tu suscripción mensual para seguir administrando tus clientes y respaldos en la nube.",
+      pwMonth: "mes",
+      pwPayBtn: "💳 Suscribirme Ahora",
+      pwEmailHint: "Usa tu mismo correo al pagar en Stripe para activación automática.",
+      pwRefreshBtn: "🔄 Ya pagué, verificar acceso",
+      pwLogoutBtn: "Cerrar Sesión",
+      langBtn: "ES → EN",
+      ownerBadge: "👑 Dueño Vitalicio",
+      trialBadge: "✨ Prueba Activa",
+      cloudSaved: "☁️ Guardado en la Nube",
+      cloudSyncing: "⏳ Sincronizando...",
+      routeHeading: "📍 Mi Ruta",
+      btnNewMonth: "🔄 Nuevo Mes (Reiniciar Cobros)",
+      confirmNewMonth: "¿Quieres marcar a todos los clientes como PENDIENTES para iniciar el nuevo mes? (Tus ingresos registrados en Contabilidad NO se borrarán).",
+      toastNewMonth: "🔄 Todos los clientes pasaron a Pendiente para el nuevo mes",
+      allDays: "Todos",
+      days: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+      freqs: { weekly: "Semanal", biweekly: "Quincenal", monthly: "Mensual" },
+      paid: "Pagado",
+      pending: "Pendiente",
+      collectBtn: "💵 Cobrar",
+      paidDoneBtn: "✅ Pagado",
+      lastPaid: "Último pago",
+      toastCollected: "✅ Pago registrado y sumado a Contabilidad",
+      clientFormTitle: "➕ Agregar / Editar Cliente",
+      lblClientName: "Nombre del Cliente",
+      lblClientPhone: "Teléfono (SMS / WhatsApp)",
+      lblClientAddr: "Dirección (para GPS)",
+      lblClientPrice: "Precio ($)",
+      lblClientDay: "Día de Servicio",
+      lblClientFreq: "Frecuencia",
+      lblClientStatus: "Estado de Pago",
+      btnSaveClient: "💾 Guardar Cliente",
+      btnCancelEdit: "Cancelar",
+      searchPlaceholder: "🔍 Buscar cliente por nombre o dirección...",
+      editBtn: "✏️ Editar",
+      delBtn: "🗑️",
+      confirmDel: "¿Eliminar este registro?",
+      notesTitle: "📓 Libreta y Lista de Compras",
+      notePlaceholder: "Escribe o dicta materiales, pendientes o notas...",
+      btnVoiceNote: "🎙️ Dictar Voz",
+      btnAddNote: "➕ Guardar Nota",
+      lblIncome: "INGRESOS",
+      lblExpense: "GASTOS",
+      lblProfit: "GANANCIA",
+      finFormTitle: "💵 Registrar Movimiento",
+      lblFinType: "Tipo",
+      optIncome: "Ingreso (+)",
+      optExpense: "Gasto (-)",
+      lblFinAmount: "Monto ($)",
+      lblFinDesc: "Concepto / Descripción",
+      btnAddFin: "💾 Guardar Movimiento",
+      finHistoryTitle: "📋 Historial de Pagos y Gastos",
+      btnSyncNow: "🔄 Sincronizar",
+      btnLogout: "🚪 Cerrar Sesión",
+      navRoute: "Ruta",
+      navClients: "Clientes",
+      navNotes: "Libreta",
+      navFinance: "Conta",
+      emptyRoute: "No hay clientes programados para este filtro.",
+      smsMsg: (name, price) => `Hola ${name}, le informamos que su servicio de jardinería ($${price}) está listo. ¡Muchas gracias por su preferencia!`,
+      voiceListening: "🎙️ Escuchando... habla ahora",
+      voiceUnsupported: "Tu navegador no soporta dictado por voz."
+    },
+    en: {
+      appTitle: "Gardeners Pro",
+      authSubtitle: "Organize your route, billing & expenses in the cloud",
+      lblAuthEmail: "Email Address",
+      lblAuthPass: "Password",
+      btnLogin: "Sign In / Create Account",
+      authTrialNote: "✨ 14-day free trial for new users",
+      pwTitle: "Your free trial has ended",
+      pwDesc: "Activate your monthly subscription to keep managing your clients and cloud backups.",
+      pwMonth: "month",
+      pwPayBtn: "💳 Subscribe Now",
+      pwEmailHint: "Use the same email on Stripe for automatic activation.",
+      pwRefreshBtn: "🔄 I already paid, check access",
+      pwLogoutBtn: "Sign Out",
+      langBtn: "EN → ES",
+      ownerBadge: "👑 Lifetime Owner",
+      trialBadge: "✨ Active Trial",
+      cloudSaved: "☁️ Saved to Cloud",
+      cloudSyncing: "⏳ Syncing...",
+      routeHeading: "📍 My Route",
+      btnNewMonth: "🔄 New Month (Reset Billing)",
+      confirmNewMonth: "Reset all clients to PENDING for the new month? (Your recorded income in Finance will NOT be deleted).",
+      toastNewMonth: "🔄 All clients reset to Pending for the new month",
+      allDays: "All",
+      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      freqs: { weekly: "Weekly", biweekly: "Biweekly", monthly: "Monthly" },
+      paid: "Paid",
+      pending: "Pending",
+      collectBtn: "💵 Collect",
+      paidDoneBtn: "✅ Paid",
+      lastPaid: "Last paid",
+      toastCollected: "✅ Payment recorded & added to Finance",
+      clientFormTitle: "➕ Add / Edit Client",
+      lblClientName: "Client Name",
+      lblClientPhone: "Phone (SMS / WhatsApp)",
+      lblClientAddr: "Address (for GPS)",
+      lblClientPrice: "Price ($)",
+      lblClientDay: "Service Day",
+      lblClientFreq: "Frequency",
+      lblClientStatus: "Payment Status",
+      btnSaveClient: "💾 Save Client",
+      btnCancelEdit: "Cancel",
+      searchPlaceholder: "🔍 Search client by name or address...",
+      editBtn: "✏️ Edit",
+      delBtn: "🗑️",
+      confirmDel: "Delete this item?",
+      notesTitle: "📓 Notepad & Shopping List",
+      notePlaceholder: "Type or dictate supplies, reminders or notes...",
+      btnVoiceNote: "🎙️ Voice Dictate",
+      btnAddNote: "➕ Save Note",
+      lblIncome: "INCOME",
+      lblExpense: "EXPENSES",
+      lblProfit: "PROFIT",
+      finFormTitle: "💵 Add Transaction",
+      lblFinType: "Type",
+      optIncome: "Income (+)",
+      optExpense: "Expense (-)",
+      lblFinAmount: "Amount ($)",
+      lblFinDesc: "Description",
+      btnAddFin: "💾 Save Transaction",
+      finHistoryTitle: "📋 Payment & Expense History",
+      btnSyncNow: "🔄 Sync Now",
+      btnLogout: "🚪 Sign Out",
+      navRoute: "Route",
+      navClients: "Clients",
+      navNotes: "Notes",
+      navFinance: "Finance",
+      emptyRoute: "No clients scheduled for this filter.",
+      smsMsg: (name, price) => `Hi ${name}, your lawn care service ($${price}) is complete. Thank you for your business!`,
+      voiceListening: "🎙️ Listening... speak now",
+      voiceUnsupported: "Voice dictation is not supported on this browser."
     }
+  };
 
-    function showToast(msg) {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.style.display = 'block';
-      setTimeout(() => { el.style.display = 'none'; }, 2800);
-    }
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => { t.style.display = "none"; }, 2800);
+  }
 
-    function formatShortDate(dateObj = new Date()) {
-      const locale = lang === 'en' ? 'en-US' : 'es-MX';
-      return dateObj.toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' });
-    }
+  function formatDisplayDate(dateObj = new Date()) {
+    const locale = lang === "es" ? "es-MX" : "en-US";
+    return dateObj.toLocaleDateString(locale, { day: "2-digit", month: "short", year: "numeric" });
+  }
 
-    function applyTranslations() {
-      document.querySelectorAll('[data-t]').forEach(el => {
-        const key = el.getAttribute('data-t');
-        el.textContent = t(key);
-      });
-      document.querySelectorAll('[data-ph]').forEach(el => {
-        const key = el.getAttribute('data-ph');
-        el.placeholder = t(key);
-      });
-      const btnText = lang === 'es' ? 'ES → EN' : 'EN → ES';
-      document.getElementById('authLangBtn').textContent = btnText;
-      document.getElementById('mainLangBtn').textContent = btnText;
-      renderDayPills();
-      renderAll();
-    }
+  function applyTranslations() {
+    const t = i18n[lang];
+    document.getElementById("authTitle").textContent = t.appTitle;
+    document.getElementById("authSubtitle").textContent = t.authSubtitle;
+    document.getElementById("lblAuthEmail").textContent = t.lblAuthEmail;
+    document.getElementById("lblAuthPass").textContent = t.lblAuthPass;
+    document.getElementById("btnLogin").textContent = t.btnLogin;
+    document.getElementById("authTrialNote").textContent = t.authTrialNote;
 
-    function toggleLang() {
-      lang = lang === 'es' ? 'en' : 'es';
-      localStorage.setItem('jp_lang', lang);
-      applyTranslations();
-    }
+    document.getElementById("pwTitle").textContent = t.pwTitle;
+    document.getElementById("pwDesc").textContent = t.pwDesc;
+    document.getElementById("pwMonth").textContent = t.pwMonth;
+    document.getElementById("pwPayBtn").textContent = t.pwPayBtn;
+    document.getElementById("pwEmailHint").textContent = t.pwEmailHint;
+    document.getElementById("pwRefreshBtn").textContent = t.pwRefreshBtn;
+    document.getElementById("pwLogoutBtn").textContent = t.pwLogoutBtn;
 
-    // --- SUPABASE HELPERS ---
-    async function sbFetch(path, options = {}) {
-      const headers = {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
+    document.getElementById("hdrTitle").textContent = t.appTitle;
+    document.getElementById("btnLang").textContent = t.langBtn;
+    document.getElementById("userBadge").textContent = currentUser === OWNER_EMAIL ? t.ownerBadge : t.trialBadge;
+    document.getElementById("userBadge").className = currentUser === OWNER_EMAIL ? "badge-owner" : "badge-trial";
+
+    document.getElementById("routeHeading").textContent = t.routeHeading;
+    document.getElementById("btnNewMonth").textContent = t.btnNewMonth;
+
+    document.getElementById("clientFormTitle").textContent = t.clientFormTitle;
+    document.getElementById("lblClientName").textContent = t.lblClientName;
+    document.getElementById("lblClientPhone").textContent = t.lblClientPhone;
+    document.getElementById("lblClientAddr").textContent = t.lblClientAddr;
+    document.getElementById("lblClientPrice").textContent = t.lblClientPrice;
+    document.getElementById("lblClientDay").textContent = t.lblClientDay;
+    document.getElementById("lblClientFreq").textContent = t.lblClientFreq;
+    document.getElementById("lblClientStatus").textContent = t.lblClientStatus;
+    document.getElementById("btnSaveClient").textContent = t.btnSaveClient;
+    document.getElementById("btnCancelEdit").textContent = t.btnCancelEdit;
+    document.getElementById("searchClient").placeholder = t.searchPlaceholder;
+
+    const cDaySel = document.getElementById("cDay");
+    const prevDay = cDaySel.value || "0";
+    cDaySel.innerHTML = t.days.map((d, idx) => `<option value="${idx}">${d}</option>`).join("");
+    cDaySel.value = prevDay;
+
+    const cFreqSel = document.getElementById("cFreq");
+    const prevFreq = cFreqSel.value || "weekly";
+    cFreqSel.innerHTML = `
+      <option value="weekly">${t.freqs.weekly}</option>
+      <option value="biweekly">${t.freqs.biweekly}</option>
+      <option value="monthly">${t.freqs.monthly}</option>
+    `;
+    cFreqSel.value = prevFreq;
+
+    const cStatusSel = document.getElementById("cStatus");
+    const prevStatus = cStatusSel.value || "pending";
+    cStatusSel.innerHTML = `
+      <option value="pending">${t.pending}</option>
+      <option value="paid">${t.paid}</option>
+    `;
+    cStatusSel.value = prevStatus;
+
+    document.getElementById("notesTitle").textContent = t.notesTitle;
+    document.getElementById("noteInput").placeholder = t.notePlaceholder;
+    document.getElementById("btnVoiceNote").textContent = t.btnVoiceNote;
+    document.getElementById("btnAddNote").textContent = t.btnAddNote;
+
+    document.getElementById("lblIncome").textContent = t.lblIncome;
+    document.getElementById("lblExpense").textContent = t.lblExpense;
+    document.getElementById("lblProfit").textContent = t.lblProfit;
+    document.getElementById("finFormTitle").textContent = t.finFormTitle;
+    document.getElementById("lblFinType").textContent = t.lblFinType;
+    document.getElementById("finType").options[0].text = t.optIncome;
+    document.getElementById("finType").options[1].text = t.optExpense;
+    document.getElementById("lblFinAmount").textContent = t.lblFinAmount;
+    document.getElementById("lblFinDesc").textContent = t.lblFinDesc;
+    document.getElementById("btnAddFin").textContent = t.btnAddFin;
+    document.getElementById("finHistoryTitle").textContent = t.finHistoryTitle;
+    document.getElementById("btnSyncNow").textContent = t.btnSyncNow;
+    document.getElementById("btnLogout").textContent = t.btnLogout;
+
+    document.getElementById("navTxtRoute").textContent = t.navRoute;
+    document.getElementById("navTxtClients").textContent = t.navClients;
+    document.getElementById("navTxtNotes").textContent = t.navNotes;
+    document.getElementById("navTxtFinance").textContent = t.navFinance;
+
+    renderAll();
+  }
+
+  function toggleLang() {
+    lang = lang === "es" ? "en" : "es";
+    localStorage.setItem("jp_lang", lang);
+    applyTranslations();
+  }
+
+  async function sbFetch(path, options = {}) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      ...options,
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json",
         ...(options.headers || {})
-      };
-      return fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...options, headers });
-    }
-
-    async function handleLogin() {
-      const email = document.getElementById('authEmail').value.trim().toLowerCase();
-      if (!email || !email.includes('@')) {
-        alert(lang === 'es' ? 'Por favor escribe un correo válido.' : 'Please enter a valid email.');
-        return;
       }
-      currentUser = email;
-      localStorage.setItem('jp_user', currentUser);
-      await initApp();
-    }
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const txt = await res.text();
+    return txt ? JSON.parse(txt) : null;
+  }
 
-    function logout() {
-      localStorage.removeItem('jp_user');
-      currentUser = '';
-      document.getElementById('appScreen').classList.add('hidden');
-      document.getElementById('lockScreen').classList.add('hidden');
-      document.getElementById('authScreen').classList.remove('hidden');
-    }
+  async function handleAuth() {
+    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    if (!email || !email.includes("@")) return alert("Ingresa un correo válido / Enter a valid email");
+    currentUser = email;
+    localStorage.setItem("jp_user", currentUser);
+    await initSession();
+  }
 
-    async function checkSubscription(manualCheck = false) {
-      if (!currentUser) return false;
-      if (currentUser === OWNER_EMAIL) {
-        document.getElementById('planStatus').textContent = t('ownerBadge');
-        return true;
-      }
-      try {
-        const res = await sbFetch(`suscripciones?email=eq.${encodeURIComponent(currentUser)}&select=*`);
-        const rows = await res.json();
-        const todayStr = new Date().toISOString().split('T')[0];
+  function logout() {
+    localStorage.removeItem("jp_user");
+    currentUser = "";
+    document.getElementById("mainApp").classList.add("hidden");
+    document.getElementById("paywallScreen").classList.add("hidden");
+    document.getElementById("authScreen").classList.remove("hidden");
+  }
 
-        if (rows && rows.length > 0) {
-          const sub = rows[0];
-          if (sub.activa && sub.vence >= todayStr) {
-            document.getElementById('planStatus').textContent = t('subBadge');
-            return true;
-          } else {
-            return false;
-          }
-        } else {
-          // New user: grant 14 days free trial automatically
-          const trialEnd = new Date();
-          trialEnd.setDate(trialEnd.getDate() + 14);
-          const vence = trialEnd.toISOString().split('T')[0];
-          await sbFetch('suscripciones', {
-            method: 'POST',
-            headers: { 'Prefer': 'resolution=merge-duplicates' },
-            body: JSON.stringify({ email: currentUser, activa: true, vence })
-          });
-          document.getElementById('planStatus').textContent = t('trialBadge');
-          return true;
-        }
-      } catch (e) {
-        // Offline fallback
-        return true;
-      }
-    }
-
-    async function loadFromCloud() {
-      if (!currentUser) return;
-      const localKey = `jp_data_${currentUser}`;
-      const savedLocal = localStorage.getItem(localKey);
-      if (savedLocal) {
-        try { appData = JSON.parse(savedLocal); } catch (e) {}
-      }
-
-      try {
-        const res = await sbFetch(`datos_jardinero?email=eq.${encodeURIComponent(currentUser)}&select=contenido`);
-        const rows = await res.json();
-        if (rows && rows.length > 0 && rows[0].contenido) {
-          const cloudData = rows[0].contenido;
-          appData = {
-            clients: Array.isArray(cloudData.clients) ? cloudData.clients : [],
-            notes: Array.isArray(cloudData.notes) ? cloudData.notes : [],
-            transactions: Array.isArray(cloudData.transactions) ? cloudData.transactions : []
-          };
-          localStorage.setItem(localKey, JSON.stringify(appData));
-        } else if (appData.clients.length > 0 || appData.notes.length > 0 || appData.transactions.length > 0) {
-          await syncToCloud(false);
-        }
-        document.getElementById('cloudStatus').textContent = t('cloudSaved');
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    async function syncToCloud(notify = false) {
-      if (!currentUser) return;
-      localStorage.setItem(`jp_data_${currentUser}`, JSON.stringify(appData));
-      document.getElementById('cloudStatus').textContent = t('cloudSyncing');
-      try {
-        await sbFetch('datos_jardinero?on_conflict=email', {
-          method: 'POST',
-          headers: { 'Prefer': 'resolution=merge-duplicates' },
-          body: JSON.stringify({ email: currentUser, contenido: appData })
+  async function checkSubscription() {
+    if (currentUser === OWNER_EMAIL) return true;
+    try {
+      const rows = await sbFetch(`suscripciones?email=eq.${encodeURIComponent(currentUser)}&select=*`);
+      const today = new Date().toISOString().split("T")[0];
+      if (!rows || rows.length === 0) {
+        const trialEnd = new Date();
+        trialEnd.setDate(trialEnd.getDate() + 14);
+        const vence = trialEnd.toISOString().split("T")[0];
+        await sbFetch("suscripciones", {
+          method: "POST",
+          body: JSON.stringify({ email: currentUser, activa: true, vence })
         });
-        document.getElementById('cloudStatus').textContent = t('cloudSaved');
-        if (notify) showToast(t('cloudSaved'));
-      } catch (e) {
-        console.error(e);
+        return true;
       }
+      const sub = rows[0];
+      return sub.activa && sub.vence >= today;
+    } catch (e) {
+      return true;
     }
+  }
 
-    // --- TABS & NAVIGATION ---
-    function switchTab(tabId, btnEl) {
-      ['ruta', 'clientes', 'libreta', 'conta'].forEach(id => {
-        document.getElementById(`tab-${id}`).classList.add('hidden');
+  async function initSession() {
+    if (!currentUser) {
+      document.getElementById("authScreen").classList.remove("hidden");
+      applyTranslations();
+      return;
+    }
+    const allowed = await checkSubscription();
+    document.getElementById("authScreen").classList.add("hidden");
+    if (!allowed) {
+      document.getElementById("paywallScreen").classList.remove("hidden");
+      document.getElementById("mainApp").classList.add("hidden");
+      applyTranslations();
+      return;
+    }
+    document.getElementById("paywallScreen").classList.add("hidden");
+    document.getElementById("mainApp").classList.remove("hidden");
+
+    const localKey = `jp_data_${currentUser}`;
+    const savedLocal = localStorage.getItem(localKey);
+    if (savedLocal) {
+      try { appData = JSON.parse(savedLocal); } catch(e) {}
+    }
+    applyTranslations();
+    await loadFromCloud();
+  }
+
+  async function loadFromCloud() {
+    const t = i18n[lang];
+    document.getElementById("cloudStatus").textContent = t.cloudSyncing;
+    try {
+      const rows = await sbFetch(`datos_jardinero?email=eq.${encodeURIComponent(currentUser)}&select=*`);
+      if (rows && rows.length > 0 && rows[0].contenido) {
+        appData = {
+          clients: rows[0].contenido.clients || [],
+          notes: rows[0].contenido.notes || [],
+          finances: rows[0].contenido.finances || []
+        };
+        localStorage.setItem(`jp_data_${currentUser}`, JSON.stringify(appData));
+        renderAll();
+      } else if (appData.clients.length > 0 || appData.notes.length > 0 || appData.finances.length > 0) {
+        await saveToCloud();
+      }
+      document.getElementById("cloudStatus").textContent = t.cloudSaved;
+    } catch (e) {
+      document.getElementById("cloudStatus").textContent = "⚠️ Local";
+    }
+  }
+
+  async function saveToCloud() {
+    const t = i18n[lang];
+    localStorage.setItem(`jp_data_${currentUser}`, JSON.stringify(appData));
+    document.getElementById("cloudStatus").textContent = t.cloudSyncing;
+    try {
+      await sbFetch("datos_jardinero?on_conflict=email", {
+        method: "POST",
+        headers: { "Prefer": "resolution=merge-duplicates" },
+        body: JSON.stringify({ email: currentUser, contenido: appData })
       });
-      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      if (btnEl) btnEl.classList.add('active');
-      renderAll();
+      document.getElementById("cloudStatus").textContent = t.cloudSaved;
+    } catch (e) {
+      document.getElementById("cloudStatus").textContent = "⚠️ Error Cloud";
     }
+  }
 
-    // --- CLIENTS & MONTHLY BILLING LOGIC ---
-    function renderDayPills() {
-      const container = document.getElementById('dayPills');
-      container.innerHTML = DAY_KEYS.map(day => {
-        const label = lang === 'en' ? DAY_MAP_EN[day] : day;
-        const active = selectedDay === day ? 'active' : '';
-        return `<button class="pill ${active}" onclick="selectDay('${day}')">${label}</button>`;
-      }).join('');
+  async function syncCloud(manual = false) {
+    await saveToCloud();
+    if (manual) showToast(i18n[lang].cloudSaved);
+  }
+
+  function switchTab(tab) {
+    ["route", "clients", "notes", "finance"].forEach(name => {
+      document.getElementById("tab" + name.charAt(0).toUpperCase() + name.slice(1)).classList.toggle("hidden", name !== tab);
+      document.getElementById("nav" + name.charAt(0).toUpperCase() + name.slice(1)).classList.toggle("active", name === tab);
+    });
+  }
+
+  function renderAll() {
+    renderDayFilters();
+    renderRoute();
+    renderClients();
+    renderNotes();
+    renderFinances();
+  }
+
+  function renderDayFilters() {
+    const t = i18n[lang];
+    const el = document.getElementById("dayFilters");
+    let html = `<button class="day-chip ${selectedDay === 'all' ? 'active' : ''}" onclick="setDayFilter('all')">${t.allDays}</button>`;
+    t.days.forEach((d, idx) => {
+      html += `<button class="day-chip ${selectedDay === String(idx) ? 'active' : ''}" onclick="setDayFilter('${idx}')">${d}</button>`;
+    });
+    el.innerHTML = html;
+  }
+
+  function setDayFilter(d) {
+    selectedDay = d;
+    renderDayFilters();
+    renderRoute();
+  }
+
+  function renderRoute() {
+    const t = i18n[lang];
+    const list = document.getElementById("routeList");
+    const filtered = appData.clients.filter(c => selectedDay === "all" || String(c.day) === selectedDay);
+    if (filtered.length === 0) {
+      list.innerHTML = `<div class="card" style="text-align:center; color:var(--muted);">${t.emptyRoute}</div>`;
+      return;
     }
-
-    function selectDay(day) {
-      selectedDay = day;
-      renderDayPills();
-      renderRoute();
-    }
-
-    function saveClient() {
-      const name = document.getElementById('cName').value.trim();
-      if (!name) {
-        alert(lang === 'es' ? 'Escribe el nombre del cliente.' : 'Please enter client name.');
-        return;
-      }
-      const id = document.getElementById('editClientId').value;
-      const phone = document.getElementById('cPhone').value.trim();
-      const address = document.getElementById('cAddress').value.trim();
-      const day = document.getElementById('cDay').value;
-      const freq = document.getElementById('cFreq').value;
-      const price = parseFloat(document.getElementById('cPrice').value) || 0;
-      const paid = document.getElementById('cPaid').value === 'true';
-      const notes = document.getElementById('cNotes').value.trim();
-
-      if (id) {
-        const idx = appData.clients.findIndex(c => c.id === id);
-        if (idx !== -1) {
-          appData.clients[idx] = { ...appData.clients[idx], name, phone, address, day, freq, price, paid, notes };
-        }
-      } else {
-        appData.clients.push({
-          id: Date.now().toString(),
-          name, phone, address, day, freq, price, paid, notes,
-          lastPaidDate: paid ? formatShortDate() : ''
-        });
-      }
-
-      cancelEdit();
-      renderAll();
-      syncToCloud(true);
-    }
-
-    function editClient(id) {
-      const c = appData.clients.find(item => item.id === id);
-      if (!c) return;
-      switchTab('clientes', document.querySelectorAll('.nav-item')[1]);
-      document.getElementById('editClientId').value = c.id;
-      document.getElementById('cName').value = c.name || '';
-      document.getElementById('cPhone').value = c.phone || '';
-      document.getElementById('cAddress').value = c.address || '';
-      document.getElementById('cDay').value = c.day || 'Lunes';
-      document.getElementById('cFreq').value = c.freq || 'Semanal';
-      document.getElementById('cPrice').value = c.price || '';
-      document.getElementById('cPaid').value = c.paid ? 'true' : 'false';
-      document.getElementById('cNotes').value = c.notes || '';
-      document.getElementById('formTitle').textContent = t('editClientTitle');
-      document.getElementById('cancelEditBtn').classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function cancelEdit() {
-      document.getElementById('editClientId').value = '';
-      document.getElementById('cName').value = '';
-      document.getElementById('cPhone').value = '';
-      document.getElementById('cAddress').value = '';
-      document.getElementById('cPrice').value = '';
-      document.getElementById('cPaid').value = 'false';
-      document.getElementById('cNotes').value = '';
-      document.getElementById('formTitle').textContent = t('addClientTitle');
-      document.getElementById('cancelEditBtn').classList.add('hidden');
-    }
-
-    function deleteClient(id) {
-      if (!confirm(t('confirmDelete'))) return;
-      appData.clients = appData.clients.filter(c => c.id !== id);
-      renderAll();
-      syncToCloud(true);
-    }
-
-    // Collect payment: marks Paid, records date on client, AND adds income transaction to Finance!
-    function toggleCollectClient(id) {
-      const idx = appData.clients.findIndex(c => c.id === id);
-      if (idx === -1) return;
-      const client = appData.clients[idx];
-
-      if (!client.paid) {
-        const todayLabel = formatShortDate();
-        client.paid = true;
-        client.lastPaidDate = todayLabel;
-
-        // Automatically record income in Finance history
-        if (client.price > 0) {
-          appData.transactions.unshift({
-            id: Date.now().toString(),
-            type: 'ingreso',
-            amount: Number(client.price),
-            desc: `${client.name} (${todayLabel})`,
-            date: todayLabel
-          });
-        }
-        showToast(t('toastPaidAdded'));
-      } else {
-        // Revert to pending without deleting past accounting history
-        client.paid = false;
-      }
-
-      renderAll();
-      syncToCloud(false);
-    }
-
-    // Reset all clients to Pending for a new month while keeping all Finance history intact
-    function resetNewMonth() {
-      if (!confirm(t('confirmNewMonth'))) return;
-      appData.clients = appData.clients.map(c => ({ ...c, paid: false }));
-      renderAll();
-      syncToCloud(false);
-      showToast(t('toastNewMonth'));
-    }
-
-    function buildClientCard(c) {
-      const dayLabel = lang === 'en' ? (DAY_MAP_EN[c.day] || c.day) : c.day;
-      const freqLabel = lang === 'en' ? (FREQ_MAP_EN[c.freq] || c.freq) : c.freq;
-      const statusBadge = c.paid
-        ? `<span class="tag tag-paid">✅ ${t('statusPaid')}</span>`
-        : `<span class="tag tag-pending">⏳ ${t('statusPending')}</span>`;
-      const lastPaidBadge = c.lastPaidDate
-        ? `<span class="tag tag-lastpaid">📅 ${t('lastPaidLbl')} ${c.lastPaidDate}</span>`
-        : '';
-
-      const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '');
-      const msgText = encodeURIComponent(t('smsMsg')(c.name, c.price || 0));
-      const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(c.address || c.name)}`;
-      const smsUrl = `sms:${cleanPhone}?&body=${msgText}`;
-      const waUrl = `https://wa.me/${cleanPhone.length === 10 ? '1' + cleanPhone : cleanPhone}?text=${msgText}`;
-
-      const collectBtn = c.paid
-        ? `<button class="btn btn-outline btn-sm" onclick="toggleCollectClient('${c.id}')">${t('btnUndoPaid')}</button>`
-        : `<button class="btn btn-primary btn-sm" onclick="toggleCollectClient('${c.id}')">${t('btnCollect')}</button>`;
-
+    list.innerHTML = filtered.map(c => {
+      const dayName = t.days[Number(c.day)] || "";
+      const freqName = t.freqs[c.freq] || c.freq;
+      const isPaid = c.status === "paid";
+      const smsText = encodeURIComponent(t.smsMsg(c.name, c.price));
+      const cleanPhone = (c.phone || "").replace(/\D/g, "");
+      const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(c.address || "")}`;
       return `
         <div class="card">
-          <div class="card-header">
-            <div class="client-name">${c.name}</div>
-            <div class="client-price">$${c.price || 0}</div>
+          <div class="client-header">
+            <div>
+              <div class="client-name">${c.name}</div>
+              <div class="client-meta">📍 ${c.address || "-"}</div>
+              <div>
+                <span class="tag tag-freq">${dayName} · ${freqName}</span>
+                <span class="tag ${isPaid ? 'tag-paid' : 'tag-pending'}">${isPaid ? t.paid : t.pending}</span>
+                ${c.lastPaid ? `<span class="tag tag-date">📅 ${t.lastPaid}: ${c.lastPaid}</span>` : ""}
+              </div>
+            </div>
+            <div class="client-price">$${c.price}</div>
           </div>
-          <div class="client-meta">
-            ${c.address ? `📍 ${c.address}<br/>` : ''}
-            ${c.phone ? `📞 ${c.phone}<br/>` : ''}
-            ${c.notes ? `📝 ${c.notes}` : ''}
+          <div class="action-grid">
+            <a href="${mapsUrl}" target="_blank" class="btn btn-secondary btn-sm">🗺️ GPS</a>
+            <a href="sms:${cleanPhone}?body=${smsText}" class="btn btn-secondary btn-sm">💬 SMS</a>
+            <a href="https://wa.me/${cleanPhone}?text=${smsText}" target="_blank" class="btn btn-secondary btn-sm">📱 WhatsApp</a>
           </div>
-          <div class="tags">
-            <span class="tag">🗓️ ${dayLabel}</span>
-            <span class="tag">🔁 ${freqLabel}</span>
-            ${statusBadge}
-            ${lastPaidBadge}
-          </div>
-          <div class="actions-grid">
-            <a href="${mapsUrl}" target="_blank" class="btn btn-outline btn-sm">🗺️ GPS</a>
-            <a href="${smsUrl}" class="btn btn-outline btn-sm">💬 SMS</a>
-            <a href="${waUrl}" target="_blank" class="btn btn-outline btn-sm">📱 WhatsApp</a>
-          </div>
-          <div class="actions-row">
-            ${collectBtn}
-            <button class="btn btn-outline btn-sm" onclick="editClient('${c.id}')">${t('btnEdit')}</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">${t('btnDelete')}</button>
+          <div class="action-grid-2">
+            <button class="btn ${isPaid ? 'btn-secondary' : 'btn-primary'} btn-sm" onclick="collectClientPayment('${c.id}')">
+              ${isPaid ? t.paidDoneBtn : t.collectBtn}
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="editClient('${c.id}')">${t.editBtn}</button>
           </div>
         </div>
       `;
-    }
+    }).join("");
+  }
 
-    function renderRoute() {
-      const list = selectedDay === 'Todos'
-        ? appData.clients
-        : appData.clients.filter(c => c.day === selectedDay);
+  async function collectClientPayment(id) {
+    const c = appData.clients.find(x => x.id === id);
+    if (!c) return;
+    const dateStr = formatDisplayDate(new Date());
+    c.status = "paid";
+    c.lastPaid = dateStr;
 
-      const countLabel = lang === 'en' ? `${list.length} clients` : `${list.length} clientes`;
-      document.getElementById('routeCount').textContent = countLabel;
-
-      const container = document.getElementById('routeList');
-      if (list.length === 0) {
-        container.innerHTML = `<div class="card" style="text-align:center; color:var(--muted);">${lang === 'es' ? 'No hay clientes en este día.' : 'No clients for this day.'}</div>`;
-        return;
-      }
-      container.innerHTML = list.map(buildClientCard).join('');
-    }
-
-    function renderClients() {
-      const q = (document.getElementById('searchClient').value || '').toLowerCase();
-      const filtered = appData.clients.filter(c =>
-        (c.name || '').toLowerCase().includes(q) ||
-        (c.address || '').toLowerCase().includes(q)
-      );
-      const container = document.getElementById('allClientsList');
-      container.innerHTML = filtered.map(buildClientCard).join('');
-    }
-
-    // --- NOTES & VOICE ---
-    function addNote() {
-      const text = document.getElementById('noteInput').value.trim();
-      if (!text) return;
-      appData.notes.unshift({
+    const amount = parseFloat(c.price) || 0;
+    if (amount > 0) {
+      appData.finances.unshift({
         id: Date.now().toString(),
-        text,
-        date: formatShortDate()
+        type: "income",
+        amount: amount,
+        desc: `${c.name}`,
+        date: dateStr
       });
-      document.getElementById('noteInput').value = '';
-      renderNotes();
-      syncToCloud(true);
     }
+    renderAll();
+    showToast(i18n[lang].toastCollected);
+    await saveToCloud();
+  }
 
-    function deleteNote(id) {
-      appData.notes = appData.notes.filter(n => n.id !== id);
-      renderNotes();
-      syncToCloud(true);
+  async function resetMonthlyPayments() {
+    const t = i18n[lang];
+    if (!confirm(t.confirmNewMonth)) return;
+    appData.clients.forEach(c => { c.status = "pending"; });
+    renderAll();
+    showToast(t.toastNewMonth);
+    await saveToCloud();
+  }
+
+  async function saveClient() {
+    const id = document.getElementById("editClientId").value;
+    const name = document.getElementById("cName").value.trim();
+    if (!name) return;
+    const clientObj = {
+      id: id || Date.now().toString(),
+      name,
+      phone: document.getElementById("cPhone").value.trim(),
+      address: document.getElementById("cAddress").value.trim(),
+      price: document.getElementById("cPrice").value || "0",
+      day: document.getElementById("cDay").value,
+      freq: document.getElementById("cFreq").value,
+      status: document.getElementById("cStatus").value,
+      lastPaid: id ? (appData.clients.find(x => x.id === id)?.lastPaid || "") : ""
+    };
+    if (id) {
+      const idx = appData.clients.findIndex(x => x.id === id);
+      if (idx !== -1) appData.clients[idx] = clientObj;
+    } else {
+      appData.clients.push(clientObj);
     }
+    cancelEditClient();
+    renderAll();
+    await saveToCloud();
+  }
 
-    function renderNotes() {
-      const container = document.getElementById('notesList');
-      container.innerHTML = appData.notes.map(n => `
-        <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+  function editClient(id) {
+    const c = appData.clients.find(x => x.id === id);
+    if (!c) return;
+    document.getElementById("editClientId").value = c.id;
+    document.getElementById("cName").value = c.name;
+    document.getElementById("cPhone").value = c.phone || "";
+    document.getElementById("cAddress").value = c.address || "";
+    document.getElementById("cPrice").value = c.price || "";
+    document.getElementById("cDay").value = c.day || "0";
+    document.getElementById("cFreq").value = c.freq || "weekly";
+    document.getElementById("cStatus").value = c.status || "pending";
+    document.getElementById("btnCancelEdit").classList.remove("hidden");
+    switchTab("clients");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function cancelEditClient() {
+    document.getElementById("editClientId").value = "";
+    document.getElementById("cName").value = "";
+    document.getElementById("cPhone").value = "";
+    document.getElementById("cAddress").value = "";
+    document.getElementById("cPrice").value = "";
+    document.getElementById("cStatus").value = "pending";
+    document.getElementById("btnCancelEdit").classList.add("hidden");
+  }
+
+  async function deleteClient(id) {
+    if (!confirm(i18n[lang].confirmDel)) return;
+    appData.clients = appData.clients.filter(x => x.id !== id);
+    renderAll();
+    await saveToCloud();
+  }
+
+  function renderClients() {
+    const t = i18n[lang];
+    const q = (document.getElementById("searchClient").value || "").toLowerCase();
+    const filtered = appData.clients.filter(c =>
+      c.name.toLowerCase().includes(q) || (c.address || "").toLowerCase().includes(q)
+    );
+    document.getElementById("allClientsList").innerHTML = filtered.map(c => `
+      <div class="card">
+        <div class="client-header">
           <div>
-            <div style="font-size:14px; font-weight:600; margin-bottom:4px;">${n.text}</div>
-            <div style="font-size:11px; color:var(--muted);">${n.date}</div>
-          </div>
-          <button class="btn btn-danger btn-sm" onclick="deleteNote('${n.id}')">🗑️</button>
-        </div>
-      `).join('');
-    }
-
-    function startVoiceNote() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert(lang === 'es' ? 'Tu navegador no soporta dictado por voz.' : 'Voice dictation not supported in this browser.');
-        return;
-      }
-      const recognition = new SpeechRecognition();
-      recognition.lang = lang === 'en' ? 'en-US' : 'es-MX';
-      const btn = document.getElementById('voiceBtn');
-      btn.textContent = lang === 'en' ? '🔴 Listening...' : '🔴 Escuchando...';
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        const input = document.getElementById('noteInput');
-        input.value = input.value ? `${input.value} ${transcript}` : transcript;
-      };
-      recognition.onend = () => {
-        btn.textContent = t('btnVoice');
-      };
-      recognition.start();
-    }
-
-    // --- ACCOUNTING / FINANCE ---
-    function addTransaction() {
-      const type = document.getElementById('txType').value;
-      const amount = parseFloat(document.getElementById('txAmount').value);
-      const desc = document.getElementById('txDesc').value.trim();
-      if (!amount || amount <= 0) {
-        alert(lang === 'es' ? 'Ingresa un monto válido.' : 'Enter a valid amount.');
-        return;
-      }
-      appData.transactions.unshift({
-        id: Date.now().toString(),
-        type,
-        amount,
-        desc: desc || (type === 'ingreso' ? (lang === 'es' ? 'Ingreso' : 'Income') : (lang === 'es' ? 'Gasto' : 'Expense')),
-        date: formatShortDate()
-      });
-      document.getElementById('txAmount').value = '';
-      document.getElementById('txDesc').value = '';
-      renderFinance();
-      syncToCloud(true);
-    }
-
-    function deleteTransaction(id) {
-      appData.transactions = appData.transactions.filter(tx => tx.id !== id);
-      renderFinance();
-      syncToCloud(true);
-    }
-
-    function clearTransactions() {
-      if (!confirm(t('confirmClearTx'))) return;
-      appData.transactions = [];
-      renderFinance();
-      syncToCloud(true);
-    }
-
-    function renderFinance() {
-      let income = 0;
-      let expense = 0;
-      appData.transactions.forEach(tx => {
-        if (tx.type === 'ingreso') income += Number(tx.amount || 0);
-        else expense += Number(tx.amount || 0);
-      });
-      const net = income - expense;
-
-      document.getElementById('statIncome').textContent = `$${income.toFixed(2)}`;
-      document.getElementById('statExpense').textContent = `$${expense.toFixed(2)}`;
-      document.getElementById('statNet').textContent = `$${net.toFixed(2)}`;
-
-      const container = document.getElementById('txList');
-      if (appData.transactions.length === 0) {
-        container.innerHTML = `<div class="card" style="text-align:center; color:var(--muted);">${lang === 'es' ? 'Aún no hay movimientos registrados.' : 'No transactions recorded yet.'}</div>`;
-        return;
-      }
-      container.innerHTML = appData.transactions.map(tx => {
-        const isInc = tx.type === 'ingreso';
-        return `
-          <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <div class="client-name">${c.name}</div>
+            <div class="client-meta">📞 ${c.phone || "-"} · 📍 ${c.address || "-"}</div>
             <div>
-              <div style="font-size:14px; font-weight:700;">${isInc ? '💵' : '⛽'} ${tx.desc}</div>
-              <div style="font-size:11px; color:var(--muted);">${tx.date}</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-weight:800; color:${isInc ? '#2e7d32' : '#c62828'};">${isInc ? '+' : '-'}$${Number(tx.amount).toFixed(2)}</span>
-              <button class="btn btn-sm" style="background:#ffebee; color:#c62828;" onclick="deleteTransaction('${tx.id}')">✕</button>
+              <span class="tag tag-freq">${t.days[Number(c.day)] || ""}</span>
+              <span class="tag ${c.status === 'paid' ? 'tag-paid' : 'tag-pending'}">${c.status === 'paid' ? t.paid : t.pending}</span>
+              ${c.lastPaid ? `<span class="tag tag-date">📅 ${t.lastPaid}: ${c.lastPaid}</span>` : ""}
             </div>
           </div>
-        `;
-      }).join('');
-    }
+          <div style="text-align:right;">
+            <div class="client-price">$${c.price}</div>
+            <div style="margin-top:6px; display:flex; gap:4px;">
+              <button class="btn btn-secondary btn-sm" onclick="editClient('${c.id}')">✏️</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join("");
+  }
 
-    function renderAll() {
-      renderRoute();
-      renderClients();
-      renderNotes();
-      renderFinance();
-    }
+  async function addNote() {
+    const text = document.getElementById("noteInput").value.trim();
+    if (!text) return;
+    appData.notes.unshift({ id: Date.now().toString(), text, date: formatDisplayDate(new Date()) });
+    document.getElementById("noteInput").value = "";
+    renderNotes();
+    await saveToCloud();
+  }
 
-    // --- INIT ---
-    async function initApp() {
-      applyTranslations();
-      if (!currentUser) {
-        document.getElementById('authScreen').classList.remove('hidden');
-        return;
-      }
-      document.getElementById('authScreen').classList.add('hidden');
-      const allowed = await checkSubscription();
-      if (!allowed) {
-        document.getElementById('lockUserEmail').textContent = currentUser;
-        document.getElementById('lockScreen').classList.remove('hidden');
-        document.getElementById('appScreen').classList.add('hidden');
-        return;
-      }
-      document.getElementById('lockScreen').classList.add('hidden');
-      document.getElementById('appScreen').classList.remove('hidden');
-      document.getElementById('userEmailDisplay').textContent = currentUser;
-      await loadFromCloud();
-      renderAll();
-    }
+  async function deleteNote(id) {
+    appData.notes = appData.notes.filter(n => n.id !== id);
+    renderNotes();
+    await saveToCloud();
+  }
 
-    initApp();
-  </script>
+  function renderNotes() {
+    document.getElementById("notesList").innerHTML = appData.notes.map(n => `
+      <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div>
+          <div style="font-size:0.95rem; font-weight:600;">${n.text}</div>
+          <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">${n.date || ""}</div>
+        </div>
+        <button class="btn btn-danger btn-sm" onclick="deleteNote('${n.id}')">🗑️</button>
+      </div>
+    `).join("");
+  }
+
+  function startVoiceNote() {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) return alert(i18n[lang].voiceUnsupported);
+    const rec = new SpeechRec();
+    rec.lang = lang === "es" ? "es-MX" : "en-US";
+    showToast(i18n[lang].voiceListening);
+    rec.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      const box = document.getElementById("noteInput");
+      box.value = (box.value ? box.value + " " : "") + transcript;
+    };
+    rec.start();
+  }
+
+  async function addFinanceRecord() {
+    const type = document.getElementById("finType").value;
+    const amount = parseFloat(document.getElementById("finAmount").value);
+    const desc = document.getElementById("finDesc").value.trim() || (type === "income" ? "Ingreso" : "Gasto");
+    if (!amount || amount <= 0) return;
+    appData.finances.unshift({
+      id: Date.now().toString(),
+      type,
+      amount,
+      desc,
+      date: formatDisplayDate(new Date())
+    });
+    document.getElementById("finAmount").value = "";
+    document.getElementById("finDesc").value = "";
+    renderFinances();
+    await saveToCloud();
+  }
+
+  async function deleteFinance(id) {
+    if (!confirm(i18n[lang].confirmDel)) return;
+    appData.finances = appData.finances.filter(f => f.id !== id);
+    renderFinances();
+    await saveToCloud();
+  }
+
+  function renderFinances() {
+    let inc = 0, exp = 0;
+    appData.finances.forEach(f => {
+      if (f.type === "income") inc += Number(f.amount || 0);
+      else exp += Number(f.amount || 0);
+    });
+    document.getElementById("totalIncome").textContent = `$${inc.toFixed(2)}`;
+    document.getElementById("totalExpense").textContent = `$${exp.toFixed(2)}`;
+    document.getElementById("totalProfit").textContent = `$${(inc - exp).toFixed(2)}`;
+
+    document.getElementById("financeList").innerHTML = appData.finances.map(f => `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-weight:700; font-size:0.9rem;">${f.desc}</div>
+          <div style="font-size:0.75rem; color:var(--muted);">📅 ${f.date || ""}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-weight:800; color:${f.type === 'income' ? 'var(--primary)' : 'var(--danger)'};">
+            ${f.type === 'income' ? '+' : '-'}$${Number(f.amount).toFixed(2)}
+          </span>
+          <button class="btn btn-danger btn-sm" onclick="deleteFinance('${f.id}')">🗑️</button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  initSession();
+</script>
 </body>
 </html>
