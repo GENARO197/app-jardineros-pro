@@ -8,1046 +8,1077 @@
   <link rel="icon" type="image/png" href="/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Jardineros Pro" />
-  <meta name="theme-color" content="#15803d" />
   <style>
     :root {
-      --primary: #15803d;
-      --primary-dark: #166534;
-      --primary-light: #dcfce7;
-      --accent: #f59e0b;
-      --danger: #dc2626;
-      --bg: #f3f4f6;
+      --primary: #1b5e20;
+      --primary-light: #2e7d32;
+      --bg: #f4f6f4;
       --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
+      --text: #1c241d;
+      --muted: #5c6b5e;
+      --danger: #c62828;
+      --danger-bg: #ffebee;
+      --success: #2e7d32;
+      --success-bg: #e8f5e9;
+      --warning: #ef6c00;
+      --border: #dce3dc;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding-bottom: 85px; -webkit-tap-highlight-color: transparent; }
-    .header {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: #fff;
-      padding: 14px 16px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 85px; }
+    
+    /* Login & Paywall */
+    .auth-screen {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+      align-items: center; padding: 20px; background: linear-gradient(135deg, #1b5e20, #388e3c); color: white;
+    }
+    .auth-box {
+      background: white; color: var(--text); padding: 25px; border-radius: 16px;
+      width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .auth-box h1 { margin: 0 0 8px; color: var(--primary); font-size: 24px; text-align: center; }
+    .auth-box p { margin: 0 0 18px; color: var(--muted); font-size: 14px; text-align: center; }
+    
+    /* Header */
+    header {
+      background: var(--primary); color: white; padding: 14px 16px;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
     .header-top { display: flex; justify-content: space-between; align-items: center; }
-    .app-title { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+    .header-title { font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+    .header-sub { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 12px; }
+    .badge-cloud { background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 12px; font-weight: 600; }
     .lang-btn {
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.4);
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
+      background: white; color: var(--primary); border: none; padding: 5px 10px;
+      border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer;
     }
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
-      font-size: 0.75rem;
-      background: rgba(0,0,0,0.18);
-      padding: 5px 10px;
-      border-radius: 8px;
-    }
-    .badge-owner { background: #fbbf24; color: #78350f; padding: 2px 7px; border-radius: 10px; font-weight: 800; }
-    .badge-trial { background: #bbf7d0; color: #14532d; padding: 2px 7px; border-radius: 10px; font-weight: 800; }
-    .cloud-status { font-weight: 600; }
 
-    .container { max-width: 600px; margin: 0 auto; padding: 14px; }
+    /* Container & Cards */
+    .container { padding: 14px; max-width: 600px; margin: 0 auto; }
     .card {
-      background: var(--card);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-      border: 1px solid var(--border);
+      background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 12px;
+      border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+    .card.overdue-card { border: 2px solid var(--danger); background: #fffafa; }
+    
+    /* Alert Banner */
+    .overdue-banner {
+      background: var(--danger); color: white; padding: 12px 14px; border-radius: 12px;
+      margin-bottom: 12px; font-weight: 700; font-size: 14px; display: flex;
+      justify-content: space-between; align-items: center; box-shadow: 0 3px 8px rgba(198,40,40,0.25);
+    }
+
+    /* Inputs & Buttons */
+    input, select, textarea {
+      width: 100%; padding: 11px; margin-bottom: 10px; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 15px; background: #fff;
     }
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: none;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: opacity 0.15s;
-      text-decoration: none;
+      width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 15px;
+      font-weight: 700; cursor: pointer; display: inline-flex; align-items: center;
+      justify-content: center; gap: 6px;
     }
-    .btn:active { opacity: 0.8; }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-secondary { background: #e5e7eb; color: #1f2937; }
-    .btn-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
-    .btn-danger { background: #fee2e2; color: #991b1b; }
-    .btn-sm { padding: 7px 10px; font-size: 0.8rem; border-radius: 8px; }
-    .btn-block { width: 100%; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
+    .btn-sm { padding: 8px 10px; font-size: 13px; border-radius: 8px; width: auto; }
+    
+    /* Filter Pills */
+    .pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; }
+    .pill {
+      padding: 7px 12px; border-radius: 20px; border: 1px solid var(--border);
+      background: white; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer;
+    }
+    .pill.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .pill.pill-debt { border-color: var(--danger); color: var(--danger); }
+    .pill.pill-debt.active { background: var(--danger); color: white; }
 
-    input, select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      margin-bottom: 10px;
-      background: #fff;
-    }
-    label { display: block; font-size: 0.82rem; font-weight: 700; color: #374151; margin-bottom: 4px; }
-
-    .day-filters {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
-    }
-    .day-chip {
-      padding: 7px 12px;
-      border-radius: 20px;
-      border: 1px solid #d1d5db;
-      background: #fff;
-      font-size: 0.82rem;
-      font-weight: 700;
-      white-space: nowrap;
-      cursor: pointer;
-    }
-    .day-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-
+    /* Client Info & Monthly History */
     .client-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-    .client-name { font-size: 1.05rem; font-weight: 800; }
-    .client-price { font-size: 1.05rem; font-weight: 800; color: var(--primary); }
-    .client-meta { font-size: 0.82rem; color: var(--muted); margin: 4px 0; }
-    .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; margin-right: 4px; margin-top: 4px; }
-    .tag-paid { background: #dcfce7; color: #166534; }
-    .tag-pending { background: #fef3c7; color: #92400e; }
-    .tag-freq { background: #e0e7ff; color: #3730a3; }
-    .tag-date { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+    .client-name { font-size: 17px; font-weight: 800; margin: 0; }
+    .client-price { font-size: 16px; font-weight: 800; color: var(--primary); background: var(--success-bg); padding: 4px 10px; border-radius: 8px; }
+    .client-meta { font-size: 13px; color: var(--muted); margin: 6px 0 10px; line-height: 1.4; }
+    
+    /* Monthly Ledger Box */
+    .ledger-box {
+      background: #f9fbf9; border: 1px solid #e0e8e0; border-radius: 10px;
+      padding: 10px; margin: 10px 0;
+    }
+    .ledger-title {
+      font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .month-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .tag-paid {
+      background: var(--success-bg); color: var(--success); border: 1px solid #a5d6a7;
+      padding: 5px 9px; border-radius: 8px; font-size: 12px; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+    }
+    .tag-owed {
+      background: var(--danger-bg); color: var(--danger); border: 1px solid #ef9a9a;
+      padding: 5px 9px; border-radius: 8px; font-size: 12px; font-weight: 800;
+      display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+      animation: pulseBorder 2s infinite;
+    }
+    @keyframes pulseBorder {
+      0% { box-shadow: 0 0 0 0 rgba(198,40,40,0.3); }
+      70% { box-shadow: 0 0 0 4px rgba(198,40,40,0); }
+      100% { box-shadow: 0 0 0 0 rgba(198,40,40,0); }
+    }
+    .ledger-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn-add-paid {
+      background: var(--success); color: white; border: none; padding: 9px 8px;
+      border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .btn-add-owed {
+      background: var(--danger); color: white; border: none; padding: 9px 8px;
+      border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
 
-    .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
-    .action-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 6px; }
+    /* Action Row */
+    .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+    .act-btn {
+      padding: 8px 4px; border-radius: 8px; border: 1px solid var(--border);
+      background: white; font-size: 12px; font-weight: 700; text-align: center;
+      text-decoration: none; color: var(--text); cursor: pointer;
+    }
 
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #fff;
-      border-top: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      padding: 6px 0 10px;
-      z-index: 100;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+    /* Bottom Nav */
+    nav {
+      position: fixed; bottom: 0; left: 0; right: 0; background: white;
+      border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(4, 1fr);
+      padding: 8px 0 14px; z-index: 100;
     }
     .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      gap: 2px;
+      border: none; background: none; color: var(--muted); font-size: 11px;
+      font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer;
     }
     .nav-item.active { color: var(--primary); }
-    .nav-icon { font-size: 1.3rem; }
+    .nav-icon { font-size: 20px; }
 
-    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-    .stat-box { background: #fff; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
-    .stat-label { font-size: 0.72rem; color: var(--muted); font-weight: 700; }
-    .stat-val { font-size: 1.05rem; font-weight: 800; margin-top: 2px; }
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200;
+      display: none; justify-content: center; align-items: center; padding: 16px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      background: white; width: 100%; max-width: 400px; border-radius: 16px;
+      padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
 
+    /* Toast */
     .toast {
-      position: fixed;
-      top: 75px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #111827;
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: 25px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      z-index: 999;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      display: none;
-      white-space: nowrap;
+      position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+      background: #1b5e20; color: white; padding: 10px 18px; border-radius: 20px;
+      font-size: 13px; font-weight: 700; z-index: 300; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     .hidden { display: none !important; }
-    .auth-box { max-width: 400px; margin: 40px auto; padding: 20px; }
-    .paywall-box { text-align: center; padding: 24px 16px; }
   </style>
 </head>
 <body>
 
   <div id="toast" class="toast"></div>
 
-  <!-- PANTALLA DE LOGIN / REGISTRO -->
-  <div id="authScreen" class="auth-box hidden">
-    <div class="card" style="text-align:center;">
-      <div style="font-size:3rem; margin-bottom:8px;">🌱</div>
-      <h1 id="authTitle" style="font-size:1.5rem; font-weight:800; color:var(--primary);">Jardineros Pro</h1>
-      <p id="authSubtitle" style="color:var(--muted); font-size:0.9rem; margin:6px 0 18px;">Organiza tu ruta, cobros y gastos en la nube</p>
-      <div style="text-align:left;">
-        <label id="lblAuthEmail">Correo Electrónico</label>
-        <input type="email" id="loginEmail" placeholder="ejemplo@gmail.com" />
-        <label id="lblAuthPass">Contraseña</label>
-        <input type="password" id="loginPass" placeholder="••••••••" />
+  <!-- AUTH / PAYWALL SCREEN -->
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-box">
+      <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+        <button class="lang-btn" style="border:1px solid #1b5e20;" onclick="toggleLang()" id="authLangBtn">ES → EN</button>
       </div>
-      <button id="btnLogin" class="btn btn-primary btn-block" onclick="handleAuth()">Entrar / Crear Cuenta</button>
-      <p id="authTrialNote" style="font-size:0.78rem; color:var(--muted); margin-top:12px;">✨ 14 días de prueba gratis para nuevos usuarios</p>
-      <button class="lang-btn" style="background:#e5e7eb; color:#111827; margin-top:14px;" onclick="toggleLang()">🌐 Español / English</button>
+      <h1>🌱 <span data-t="appTitle">Jardineros Pro</span></h1>
+      <p data-t="authSubtitle">Control de rutas, clientes, meses pagados y adeudos.</p>
+      
+      <div id="loginForm">
+        <input type="email" id="emailInput" placeholder="tu@correo.com" />
+        <button class="btn btn-primary" onclick="handleLogin()" data-t="enterBtn">Entrar / Crear Cuenta</button>
+        <p style="font-size:12px; margin-top:12px;" data-t="trialNote">14 días de prueba gratis para usuarios nuevos.</p>
+      </div>
+
+      <div id="paywallBox" class="hidden" style="text-align:center;">
+        <div style="font-size:42px; margin-bottom:8px;">🔒</div>
+        <h3 style="margin:0 0 8px; color:#c62828;" data-t="expiredTitle">Tu prueba gratis terminó</h3>
+        <p style="font-size:14px; margin-bottom:16px;" data-t="expiredDesc">Activa tu suscripción mensual para seguir administrando tus clientes y cobros.</p>
+        <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" class="btn btn-primary" style="text-decoration:none; margin-bottom:10px;" data-t="payStripeBtn">💳 Suscribirme ($14.99/mes)</a>
+        <button class="btn btn-outline" onclick="checkSubscription(true)" data-t="alreadyPaidBtn">Ya pagué, verificar acceso</button>
+      </div>
     </div>
   </div>
 
-  <!-- PANTALLA DE SUSCRIPCIÓN VENCIDA -->
-  <div id="paywallScreen" class="auth-box hidden">
-    <div class="card paywall-box">
-      <div style="font-size:3rem; margin-bottom:8px;">🔒</div>
-      <h2 id="pwTitle" style="font-size:1.35rem; font-weight:800; margin-bottom:8px;">Tu prueba gratuita terminó</h2>
-      <p id="pwDesc" style="color:var(--muted); font-size:0.9rem; margin-bottom:16px;">Activa tu suscripción mensual para seguir administrando tus clientes y respaldos en la nube.</p>
-      <div style="background:var(--primary-light); color:var(--primary-dark); padding:12px; border-radius:12px; font-weight:800; font-size:1.2rem; margin-bottom:16px;">
-        $14.99 USD / <span id="pwMonth">mes</span>
-      </div>
-      <a id="pwPayBtn" href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" class="btn btn-primary btn-block" style="margin-bottom:10px;">💳 Suscribirme Ahora</a>
-      <p id="pwEmailHint" style="font-size:0.78rem; color:var(--muted); margin-bottom:14px;">Usa tu mismo correo al pagar en Stripe para activación automática.</p>
-      <button id="pwRefreshBtn" class="btn btn-secondary btn-block" style="margin-bottom:8px;" onclick="checkSubscription()">🔄 Ya pagué, verificar acceso</button>
-      <button id="pwLogoutBtn" class="btn btn-danger btn-sm" onclick="logout()">Cerrar Sesión</button>
-    </div>
-  </div>
-
-  <!-- APLICACIÓN PRINCIPAL -->
+  <!-- MAIN APP -->
   <div id="mainApp" class="hidden">
-    <div class="header">
+    <header>
       <div class="header-top">
-        <div class="app-title">🌱 <span id="hdrTitle">Jardineros Pro</span></div>
-        <button id="btnLang" class="lang-btn" onclick="toggleLang()">ES → EN</button>
+        <div class="header-title">🌱 <span data-t="appTitle">Jardineros Pro</span></div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button class="lang-btn" onclick="toggleLang()" id="headerLangBtn">ES → EN</button>
+          <button class="lang-btn" style="background:#ffebee; color:#c62828;" onclick="logout()" data-t="exitBtn">Salir</button>
+        </div>
       </div>
-      <div class="status-bar">
-        <span id="userBadge" class="badge-trial">Prueba Activa</span>
-        <span id="cloudStatus" class="cloud-status">☁️ Conectado</span>
+      <div class="header-sub">
+        <span id="userBadge">👑 Dueño Vitalicio</span>
+        <span class="badge-cloud" id="cloudStatus">☁️ Sincronizado</span>
       </div>
-    </div>
+    </header>
 
     <div class="container">
-      <!-- PESTAÑA 1: RUTA -->
-      <div id="tabRoute">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
-          <h2 id="routeHeading" style="font-size:1.1rem; font-weight:800;">📍 Mi Ruta</h2>
-          <button id="btnNewMonth" class="btn btn-warning btn-sm" onclick="resetMonthlyPayments()">🔄 Nuevo Mes (Reiniciar Cobros)</button>
-        </div>
-        <div id="dayFilters" class="day-filters"></div>
-        <div id="routeList"></div>
+      <!-- OVERDUE GLOBAL ALERT -->
+      <div id="globalDebtBanner" class="overdue-banner hidden" onclick="filterDebtsQuick()">
+        <span id="globalDebtText">⚠️ 0 clientes con meses debidos</span>
+        <span style="text-decoration:underline; font-size:12px;" data-t="viewDebtsBtn">Ver adeudos →</span>
       </div>
 
-      <!-- PESTAÑA 2: CLIENTES -->
-      <div id="tabClients" class="hidden">
-        <div class="card">
-          <h3 id="clientFormTitle" style="font-size:1rem; font-weight:800; margin-bottom:10px;">➕ Agregar / Editar Cliente</h3>
-          <input type="hidden" id="editClientId" />
-          <label id="lblClientName">Nombre del Cliente</label>
-          <input type="text" id="cName" placeholder="Ej. Juan Pérez" />
-          <label id="lblClientPhone">Teléfono (SMS / WhatsApp)</label>
-          <input type="tel" id="cPhone" placeholder="Ej. 6615551234" />
-          <label id="lblClientAddr">Dirección (para GPS)</label>
-          <input type="text" id="cAddress" placeholder="Ej. 123 Main St, Palmdale, CA" />
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <div>
-              <label id="lblClientPrice">Precio ($)</label>
-              <input type="number" id="cPrice" placeholder="120" />
-            </div>
-            <div>
-              <label id="lblClientDay">Día de Servicio</label>
-              <select id="cDay"></select>
-            </div>
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <div>
-              <label id="lblClientFreq">Frecuencia</label>
-              <select id="cFreq"></select>
-            </div>
-            <div>
-              <label id="lblClientStatus">Estado de Pago</label>
-              <select id="cStatus"></select>
-            </div>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button id="btnSaveClient" class="btn btn-primary btn-block" onclick="saveClient()">💾 Guardar Cliente</button>
-            <button id="btnCancelEdit" class="btn btn-secondary hidden" onclick="cancelEditClient()">Cancelar</button>
-          </div>
-        </div>
-
-        <input type="text" id="searchClient" placeholder="🔍 Buscar cliente por nombre o dirección..." oninput="renderClients()" />
-        <div id="allClientsList"></div>
+      <!-- TAB 1: RUTA -->
+      <div id="tabRuta">
+        <div class="pills" id="dayPills"></div>
+        <div id="rutaList"></div>
       </div>
 
-      <!-- PESTAÑA 3: LIBRETA -->
-      <div id="tabNotes" class="hidden">
+      <!-- TAB 2: CLIENTES -->
+      <div id="tabClientes" class="hidden">
+        <button class="btn btn-primary" style="margin-bottom:12px;" onclick="openClientModal()" data-t="newClientBtn">+ Agregar Nuevo Cliente</button>
+        <input type="text" id="searchClient" oninput="renderAll()" placeholder="🔍 Buscar cliente por nombre o dirección..." />
+        <div id="clientesList"></div>
+      </div>
+
+      <!-- TAB 3: LIBRETA -->
+      <div id="tabLibreta" class="hidden">
         <div class="card">
-          <h3 id="notesTitle" style="font-size:1rem; font-weight:800; margin-bottom:8px;">📓 Libreta y Lista de Compras</h3>
-          <textarea id="noteInput" rows="3" placeholder="Escribe o dicta materiales, pendientes o notas..."></textarea>
+          <h3 style="margin:0 0 10px;" data-t="notesTitle">📓 Libreta Rápida</h3>
+          <textarea id="noteInput" rows="3" placeholder="Escribe o dicta material, reparaciones o pendientes..."></textarea>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <button id="btnVoiceNote" class="btn btn-secondary" onclick="startVoiceNote()">🎙️ Dictar Voz</button>
-            <button id="btnAddNote" class="btn btn-primary" onclick="addNote()">➕ Guardar Nota</button>
+            <button class="btn btn-outline" onclick="startDictation()" data-t="voiceBtn">🎙️ Dictar Voz</button>
+            <button class="btn btn-primary" onclick="addNote()" data-t="saveNoteBtn">Guardar Nota</button>
           </div>
         </div>
         <div id="notesList"></div>
       </div>
 
-      <!-- PESTAÑA 4: CONTABILIDAD -->
-      <div id="tabFinance" class="hidden">
-        <div class="summary-grid">
-          <div class="stat-box">
-            <div id="lblIncome" class="stat-label">INGRESOS</div>
-            <div id="totalIncome" class="stat-val" style="color:var(--primary);">$0</div>
-          </div>
-          <div class="stat-box">
-            <div id="lblExpense" class="stat-label">GASTOS</div>
-            <div id="totalExpense" class="stat-val" style="color:var(--danger);">$0</div>
-          </div>
-          <div class="stat-box">
-            <div id="lblProfit" class="stat-label">GANANCIA</div>
-            <div id="totalProfit" class="stat-val" style="color:#111827;">$0</div>
+      <!-- TAB 4: CONTABILIDAD -->
+      <div id="tabConta" class="hidden">
+        <div class="card" style="background:linear-gradient(135deg,#1b5e20,#2e7d32); color:white;">
+          <div style="font-size:13px; opacity:0.9;" data-t="netProfitLabel">Ganancia Neta Total</div>
+          <div id="netProfitVal" style="font-size:32px; font-weight:800; margin:4px 0;">$0.00</div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:8px; border-top:1px solid rgba(255,255,255,0.25); padding-top:8px;">
+            <span><span data-t="incomeLabel">Ingresos:</span> <strong id="totalIncomeVal">$0</strong></span>
+            <span><span data-t="expenseLabel">Gastos:</span> <strong id="totalExpenseVal">$0</strong></span>
           </div>
         </div>
 
         <div class="card">
-          <h3 id="finFormTitle" style="font-size:1rem; font-weight:800; margin-bottom:8px;">💵 Registrar Movimiento</h3>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <div>
-              <label id="lblFinType">Tipo</label>
-              <select id="finType">
-                <option value="income">Ingreso (+)</option>
-                <option value="expense">Gasto (-)</option>
-              </select>
-            </div>
-            <div>
-              <label id="lblFinAmount">Monto ($)</label>
-              <input type="number" id="finAmount" placeholder="50" />
-            </div>
-          </div>
-          <label id="lblFinDesc">Concepto / Descripción</label>
-          <input type="text" id="finDesc" placeholder="Ej. Gasolina, Hilo, Pago extra..." />
-          <button id="btnAddFin" class="btn btn-primary btn-block" onclick="addFinanceRecord()">💾 Guardar Movimiento</button>
+          <h4 style="margin:0 0 8px;" data-t="addExpenseTitle">Registrar Gasto (Gasolina, Material, etc.)</h4>
+          <input type="text" id="expDesc" placeholder="Concepto (ej. Gasolina, Hilo)" />
+          <input type="number" id="expAmount" placeholder="Monto ($)" />
+          <button class="btn btn-danger" onclick="addExpense()" data-t="saveExpenseBtn">+ Agregar Gasto</button>
         </div>
 
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <h3 id="finHistoryTitle" style="font-size:0.95rem; font-weight:800;">📋 Historial de Pagos y Gastos</h3>
-            <button id="btnSyncNow" class="btn btn-secondary btn-sm" onclick="syncCloud(true)">🔄 Sincronizar</button>
-          </div>
-          <div id="financeList"></div>
+          <h4 style="margin:0 0 8px;" data-t="movementsTitle">Historial de Ingresos y Gastos</h4>
+          <div id="movementsList"></div>
         </div>
 
-        <button id="btnLogout" class="btn btn-danger btn-block" style="margin-top:10px;" onclick="logout()">🚪 Cerrar Sesión</button>
+        <button class="btn btn-outline" onclick="forceSync()" data-t="syncNowBtn">🔄 Sincronizar Nube Ahora</button>
       </div>
     </div>
 
-    <!-- NAVEGACIÓN INFERIOR -->
-    <div class="bottom-nav">
-      <button class="nav-item active" id="navRoute" onclick="switchTab('route')">
-        <span class="nav-icon">📍</span>
-        <span id="navTxtRoute">Ruta</span>
+    <!-- BOTTOM NAV -->
+    <nav>
+      <button class="nav-item active" id="navRuta" onclick="switchTab('Ruta')">
+        <span class="nav-icon">📍</span><span data-t="tabRoute">Ruta</span>
       </button>
-      <button class="nav-item" id="navClients" onclick="switchTab('clients')">
-        <span class="nav-icon">👥</span>
-        <span id="navTxtClients">Clientes</span>
+      <button class="nav-item" id="navClientes" onclick="switchTab('Clientes')">
+        <span class="nav-icon">👥</span><span data-t="tabClients">Clientes</span>
       </button>
-      <button class="nav-item" id="navNotes" onclick="switchTab('notes')">
-        <span class="nav-icon">📓</span>
-        <span id="navTxtNotes">Libreta</span>
+      <button class="nav-item" id="navLibreta" onclick="switchTab('Libreta')">
+        <span class="nav-icon">📓</span><span data-t="tabNotes">Libreta</span>
       </button>
-      <button class="nav-item" id="navFinance" onclick="switchTab('finance')">
-        <span class="nav-icon">💰</span>
-        <span id="navTxtFinance">Conta</span>
+      <button class="nav-item" id="navConta" onclick="switchTab('Conta')">
+        <span class="nav-icon">💰</span><span data-t="tabFinance">Conta</span>
       </button>
+    </nav>
+  </div>
+
+  <!-- MODAL: CLIENT FORM -->
+  <div id="clientModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 style="margin:0 0 12px;" id="clientModalTitle">Cliente</h3>
+      <input type="hidden" id="editClientId" />
+      <input type="text" id="cName" placeholder="Nombre del cliente" />
+      <input type="tel" id="cPhone" placeholder="Teléfono (ej. 6615551234)" />
+      <input type="text" id="cAddress" placeholder="Dirección completa" />
+      <input type="number" id="cPrice" placeholder="Precio mensual ($)" />
+      <select id="cDay">
+        <option value="Lunes">Lunes</option>
+        <option value="Martes">Martes</option>
+        <option value="Miércoles">Miércoles</option>
+        <option value="Jueves">Jueves</option>
+        <option value="Viernes">Viernes</option>
+        <option value="Sábado">Sábado</option>
+      </select>
+      <select id="cFreq">
+        <option value="Semanal">Semanal</option>
+        <option value="Quincenal">Quincenal</option>
+        <option value="Mensual">Mensual</option>
+      </select>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px;">
+        <button class="btn btn-outline" onclick="closeClientModal()" data-t="cancelBtn">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveClient()" data-t="saveBtn">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD MONTH (PAID OR OWED) -->
+  <div id="monthModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3 style="margin:0 0 6px;" id="monthModalTitle">Registrar Mes</h3>
+      <p id="monthModalClientName" style="margin:0 0 12px; font-size:14px; color:var(--muted); font-weight:700;"></p>
+      <input type="hidden" id="monthClientId" />
+      <input type="hidden" id="monthType" />
+      
+      <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;" data-t="selectMonthLabel">Selecciona el Mes:</label>
+      <select id="monthSelect"></select>
+
+      <label style="font-size:12px; font-weight:700; display:block; margin-bottom:4px;" data-t="selectYearLabel">Año:</label>
+      <select id="yearSelect">
+        <option value="2025">2025</option>
+        <option value="2026" selected>2026</option>
+        <option value="2027">2027</option>
+      </select>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
+        <button class="btn btn-outline" onclick="closeMonthModal()" data-t="cancelBtn">Cancelar</button>
+        <button class="btn btn-primary" id="confirmMonthBtn" onclick="confirmMonthEntry()">Guardar Mes</button>
+      </div>
     </div>
   </div>
 
 <script>
-  const SUPABASE_URL = "https://rjmrhjpmvptnzetcjsfo.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjCsW";
-  const OWNER_EMAIL = "gena197590@gmail.com";
+  const SUPABASE_URL = 'https://rjmrhjpmvptnzetcjsfo.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjCsW';
+  const OWNER_EMAIL = 'gena197590@gmail.com';
 
-  let lang = localStorage.getItem("jp_lang") || "es";
-  let currentUser = localStorage.getItem("jp_user") || "";
-  let selectedDay = "all";
-  let appData = { clients: [], notes: [], finances: [] };
+  let lang = localStorage.getItem('jp_lang') || 'es';
+  let currentUser = localStorage.getItem('jp_user') || '';
+  let selectedFilter = 'Todos';
 
-  const i18n = {
+  let appData = {
+    clients: [],
+    notes: [],
+    movements: []
+  };
+
+  const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  const DAYS_MAP = {
+    'Todos': { es: 'Todos', en: 'All' },
+    'Adeudos': { es: '⚠️ Adeudos', en: '⚠️ Overdue' },
+    'Lunes': { es: 'Lunes', en: 'Monday' },
+    'Martes': { es: 'Martes', en: 'Tuesday' },
+    'Miércoles': { es: 'Miércoles', en: 'Wednesday' },
+    'Jueves': { es: 'Jueves', en: 'Thursday' },
+    'Viernes': { es: 'Viernes', en: 'Friday' },
+    'Sábado': { es: 'Sábado', en: 'Saturday' }
+  };
+
+  const I18N = {
     es: {
-      appTitle: "Jardineros Pro",
-      authSubtitle: "Organiza tu ruta, cobros y gastos en la nube",
-      lblAuthEmail: "Correo Electrónico",
-      lblAuthPass: "Contraseña",
-      btnLogin: "Entrar / Crear Cuenta",
-      authTrialNote: "✨ 14 días de prueba gratis para nuevos usuarios",
-      pwTitle: "Tu prueba gratuita terminó",
-      pwDesc: "Activa tu suscripción mensual para seguir administrando tus clientes y respaldos en la nube.",
-      pwMonth: "mes",
-      pwPayBtn: "💳 Suscribirme Ahora",
-      pwEmailHint: "Usa tu mismo correo al pagar en Stripe para activación automática.",
-      pwRefreshBtn: "🔄 Ya pagué, verificar acceso",
-      pwLogoutBtn: "Cerrar Sesión",
-      langBtn: "ES → EN",
-      ownerBadge: "👑 Dueño Vitalicio",
-      trialBadge: "✨ Prueba Activa",
-      cloudSaved: "☁️ Guardado en la Nube",
-      cloudSyncing: "⏳ Sincronizando...",
-      routeHeading: "📍 Mi Ruta",
-      btnNewMonth: "🔄 Nuevo Mes (Reiniciar Cobros)",
-      confirmNewMonth: "¿Quieres marcar a todos los clientes como PENDIENTES para iniciar el nuevo mes? (Tus ingresos registrados en Contabilidad NO se borrarán).",
-      toastNewMonth: "🔄 Todos los clientes pasaron a Pendiente para el nuevo mes",
-      allDays: "Todos",
-      days: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-      freqs: { weekly: "Semanal", biweekly: "Quincenal", monthly: "Mensual" },
-      paid: "Pagado",
-      pending: "Pendiente",
-      collectBtn: "💵 Cobrar",
-      paidDoneBtn: "✅ Pagado",
-      lastPaid: "Último pago",
-      toastCollected: "✅ Pago registrado y sumado a Contabilidad",
-      clientFormTitle: "➕ Agregar / Editar Cliente",
-      lblClientName: "Nombre del Cliente",
-      lblClientPhone: "Teléfono (SMS / WhatsApp)",
-      lblClientAddr: "Dirección (para GPS)",
-      lblClientPrice: "Precio ($)",
-      lblClientDay: "Día de Servicio",
-      lblClientFreq: "Frecuencia",
-      lblClientStatus: "Estado de Pago",
-      btnSaveClient: "💾 Guardar Cliente",
-      btnCancelEdit: "Cancelar",
-      searchPlaceholder: "🔍 Buscar cliente por nombre o dirección...",
-      editBtn: "✏️ Editar",
-      delBtn: "🗑️",
-      confirmDel: "¿Eliminar este registro?",
-      notesTitle: "📓 Libreta y Lista de Compras",
-      notePlaceholder: "Escribe o dicta materiales, pendientes o notas...",
-      btnVoiceNote: "🎙️ Dictar Voz",
-      btnAddNote: "➕ Guardar Nota",
-      lblIncome: "INGRESOS",
-      lblExpense: "GASTOS",
-      lblProfit: "GANANCIA",
-      finFormTitle: "💵 Registrar Movimiento",
-      lblFinType: "Tipo",
-      optIncome: "Ingreso (+)",
-      optExpense: "Gasto (-)",
-      lblFinAmount: "Monto ($)",
-      lblFinDesc: "Concepto / Descripción",
-      btnAddFin: "💾 Guardar Movimiento",
-      finHistoryTitle: "📋 Historial de Pagos y Gastos",
-      btnSyncNow: "🔄 Sincronizar",
-      btnLogout: "🚪 Cerrar Sesión",
-      navRoute: "Ruta",
-      navClients: "Clientes",
-      navNotes: "Libreta",
-      navFinance: "Conta",
-      emptyRoute: "No hay clientes programados para este filtro.",
-      smsMsg: (name, price) => `Hola ${name}, le informamos que su servicio de jardinería ($${price}) está listo. ¡Muchas gracias por su preferencia!`,
-      voiceListening: "🎙️ Escuchando... habla ahora",
-      voiceUnsupported: "Tu navegador no soporta dictado por voz."
+      appTitle: 'Jardineros Pro',
+      authSubtitle: 'Control de rutas, clientes, meses pagados y adeudos.',
+      enterBtn: 'Entrar / Crear Cuenta',
+      trialNote: '14 días de prueba gratis para usuarios nuevos.',
+      expiredTitle: 'Tu prueba gratis terminó',
+      expiredDesc: 'Activa tu suscripción mensual para seguir administrando tus clientes y cobros.',
+      payStripeBtn: '💳 Suscribirme ($14.99/mes)',
+      alreadyPaidBtn: 'Ya pagué, verificar acceso',
+      exitBtn: 'Salir',
+      viewDebtsBtn: 'Ver adeudos →',
+      newClientBtn: '+ Agregar Nuevo Cliente',
+      notesTitle: '📓 Libreta Rápida',
+      voiceBtn: '🎙️ Dictar Voz',
+      saveNoteBtn: 'Guardar Nota',
+      netProfitLabel: 'Ganancia Neta Total',
+      incomeLabel: 'Ingresos:',
+      expenseLabel: 'Gastos:',
+      addExpenseTitle: 'Registrar Gasto (Gasolina, Material, etc.)',
+      saveExpenseBtn: '+ Agregar Gasto',
+      movementsTitle: 'Historial de Ingresos y Gastos',
+      syncNowBtn: '🔄 Sincronizar Nube Ahora',
+      tabRoute: 'Ruta',
+      tabClients: 'Clientes',
+      tabNotes: 'Libreta',
+      tabFinance: 'Conta',
+      cancelBtn: 'Cancelar',
+      saveBtn: 'Guardar',
+      selectMonthLabel: 'Selecciona el Mes:',
+      selectYearLabel: 'Año:',
+      ledgerTitle: 'HISTORIAL DE PAGOS Y ADEUDOS',
+      noMonthsYet: 'Sin meses registrados aún',
+      addPaidBtn: '+ Mes Pagado',
+      addOwedBtn: '+ Mes que Debe',
+      owesTotal: 'Debe',
+      monthsWord: 'mes(es)',
+      editBtn: '✏️ Editar',
+      delBtn: '🗑️ Borrar',
+      gpsBtn: '🗺️ GPS',
+      smsBtn: '💬 SMS',
+      waBtn: '📱 WhatsApp',
+      savedCloud: '☁️ Guardado en la Nube',
+      syncing: '⏳ Sincronizando...'
     },
     en: {
-      appTitle: "Gardeners Pro",
-      authSubtitle: "Organize your route, billing & expenses in the cloud",
-      lblAuthEmail: "Email Address",
-      lblAuthPass: "Password",
-      btnLogin: "Sign In / Create Account",
-      authTrialNote: "✨ 14-day free trial for new users",
-      pwTitle: "Your free trial has ended",
-      pwDesc: "Activate your monthly subscription to keep managing your clients and cloud backups.",
-      pwMonth: "month",
-      pwPayBtn: "💳 Subscribe Now",
-      pwEmailHint: "Use the same email on Stripe for automatic activation.",
-      pwRefreshBtn: "🔄 I already paid, check access",
-      pwLogoutBtn: "Sign Out",
-      langBtn: "EN → ES",
-      ownerBadge: "👑 Lifetime Owner",
-      trialBadge: "✨ Active Trial",
-      cloudSaved: "☁️ Saved to Cloud",
-      cloudSyncing: "⏳ Syncing...",
-      routeHeading: "📍 My Route",
-      btnNewMonth: "🔄 New Month (Reset Billing)",
-      confirmNewMonth: "Reset all clients to PENDING for the new month? (Your recorded income in Finance will NOT be deleted).",
-      toastNewMonth: "🔄 All clients reset to Pending for the new month",
-      allDays: "All",
-      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      freqs: { weekly: "Weekly", biweekly: "Biweekly", monthly: "Monthly" },
-      paid: "Paid",
-      pending: "Pending",
-      collectBtn: "💵 Collect",
-      paidDoneBtn: "✅ Paid",
-      lastPaid: "Last paid",
-      toastCollected: "✅ Payment recorded & added to Finance",
-      clientFormTitle: "➕ Add / Edit Client",
-      lblClientName: "Client Name",
-      lblClientPhone: "Phone (SMS / WhatsApp)",
-      lblClientAddr: "Address (for GPS)",
-      lblClientPrice: "Price ($)",
-      lblClientDay: "Service Day",
-      lblClientFreq: "Frequency",
-      lblClientStatus: "Payment Status",
-      btnSaveClient: "💾 Save Client",
-      btnCancelEdit: "Cancel",
-      searchPlaceholder: "🔍 Search client by name or address...",
-      editBtn: "✏️ Edit",
-      delBtn: "🗑️",
-      confirmDel: "Delete this item?",
-      notesTitle: "📓 Notepad & Shopping List",
-      notePlaceholder: "Type or dictate supplies, reminders or notes...",
-      btnVoiceNote: "🎙️ Voice Dictate",
-      btnAddNote: "➕ Save Note",
-      lblIncome: "INCOME",
-      lblExpense: "EXPENSES",
-      lblProfit: "PROFIT",
-      finFormTitle: "💵 Add Transaction",
-      lblFinType: "Type",
-      optIncome: "Income (+)",
-      optExpense: "Expense (-)",
-      lblFinAmount: "Amount ($)",
-      lblFinDesc: "Description",
-      btnAddFin: "💾 Save Transaction",
-      finHistoryTitle: "📋 Payment & Expense History",
-      btnSyncNow: "🔄 Sync Now",
-      btnLogout: "🚪 Sign Out",
-      navRoute: "Route",
-      navClients: "Clients",
-      navNotes: "Notes",
-      navFinance: "Finance",
-      emptyRoute: "No clients scheduled for this filter.",
-      smsMsg: (name, price) => `Hi ${name}, your lawn care service ($${price}) is complete. Thank you for your business!`,
-      voiceListening: "🎙️ Listening... speak now",
-      voiceUnsupported: "Voice dictation is not supported on this browser."
+      appTitle: 'Gardeners Pro',
+      authSubtitle: 'Route management, clients, paid months & overdue balances.',
+      enterBtn: 'Sign In / Create Account',
+      trialNote: '14-day free trial for new users.',
+      expiredTitle: 'Your free trial ended',
+      expiredDesc: 'Activate your monthly subscription to keep managing your clients and payments.',
+      payStripeBtn: '💳 Subscribe ($14.99/mo)',
+      alreadyPaidBtn: 'I already paid, verify access',
+      exitBtn: 'Exit',
+      viewDebtsBtn: 'View overdue →',
+      newClientBtn: '+ Add New Client',
+      notesTitle: '📓 Quick Notes',
+      voiceBtn: '🎙️ Voice Dictate',
+      saveNoteBtn: 'Save Note',
+      netProfitLabel: 'Total Net Profit',
+      incomeLabel: 'Income:',
+      expenseLabel: 'Expenses:',
+      addExpenseTitle: 'Record Expense (Gas, Supplies, etc.)',
+      saveExpenseBtn: '+ Add Expense',
+      movementsTitle: 'Income & Expense History',
+      syncNowBtn: '🔄 Sync Cloud Now',
+      tabRoute: 'Route',
+      tabClients: 'Clients',
+      tabNotes: 'Notes',
+      tabFinance: 'Finance',
+      cancelBtn: 'Cancel',
+      saveBtn: 'Save',
+      selectMonthLabel: 'Select Month:',
+      selectYearLabel: 'Year:',
+      ledgerTitle: 'PAYMENT & OVERDUE HISTORY',
+      noMonthsYet: 'No months recorded yet',
+      addPaidBtn: '+ Paid Month',
+      addOwedBtn: '+ Owed Month',
+      owesTotal: 'Owes',
+      monthsWord: 'month(s)',
+      editBtn: '✏️ Edit',
+      delBtn: '🗑️ Delete',
+      gpsBtn: '🗺️ GPS',
+      smsBtn: '💬 SMS',
+      waBtn: '📱 WhatsApp',
+      savedCloud: '☁️ Saved to Cloud',
+      syncing: '⏳ Syncing...'
     }
   };
 
   function showToast(msg) {
-    const t = document.getElementById("toast");
+    const t = document.getElementById('toast');
     t.textContent = msg;
-    t.style.display = "block";
-    clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(() => { t.style.display = "none"; }, 2800);
-  }
-
-  function formatDisplayDate(dateObj = new Date()) {
-    const locale = lang === "es" ? "es-MX" : "en-US";
-    return dateObj.toLocaleDateString(locale, { day: "2-digit", month: "short", year: "numeric" });
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 2800);
   }
 
   function applyTranslations() {
-    const t = i18n[lang];
-    document.getElementById("authTitle").textContent = t.appTitle;
-    document.getElementById("authSubtitle").textContent = t.authSubtitle;
-    document.getElementById("lblAuthEmail").textContent = t.lblAuthEmail;
-    document.getElementById("lblAuthPass").textContent = t.lblAuthPass;
-    document.getElementById("btnLogin").textContent = t.btnLogin;
-    document.getElementById("authTrialNote").textContent = t.authTrialNote;
-
-    document.getElementById("pwTitle").textContent = t.pwTitle;
-    document.getElementById("pwDesc").textContent = t.pwDesc;
-    document.getElementById("pwMonth").textContent = t.pwMonth;
-    document.getElementById("pwPayBtn").textContent = t.pwPayBtn;
-    document.getElementById("pwEmailHint").textContent = t.pwEmailHint;
-    document.getElementById("pwRefreshBtn").textContent = t.pwRefreshBtn;
-    document.getElementById("pwLogoutBtn").textContent = t.pwLogoutBtn;
-
-    document.getElementById("hdrTitle").textContent = t.appTitle;
-    document.getElementById("btnLang").textContent = t.langBtn;
-    document.getElementById("userBadge").textContent = currentUser === OWNER_EMAIL ? t.ownerBadge : t.trialBadge;
-    document.getElementById("userBadge").className = currentUser === OWNER_EMAIL ? "badge-owner" : "badge-trial";
-
-    document.getElementById("routeHeading").textContent = t.routeHeading;
-    document.getElementById("btnNewMonth").textContent = t.btnNewMonth;
-
-    document.getElementById("clientFormTitle").textContent = t.clientFormTitle;
-    document.getElementById("lblClientName").textContent = t.lblClientName;
-    document.getElementById("lblClientPhone").textContent = t.lblClientPhone;
-    document.getElementById("lblClientAddr").textContent = t.lblClientAddr;
-    document.getElementById("lblClientPrice").textContent = t.lblClientPrice;
-    document.getElementById("lblClientDay").textContent = t.lblClientDay;
-    document.getElementById("lblClientFreq").textContent = t.lblClientFreq;
-    document.getElementById("lblClientStatus").textContent = t.lblClientStatus;
-    document.getElementById("btnSaveClient").textContent = t.btnSaveClient;
-    document.getElementById("btnCancelEdit").textContent = t.btnCancelEdit;
-    document.getElementById("searchClient").placeholder = t.searchPlaceholder;
-
-    const cDaySel = document.getElementById("cDay");
-    const prevDay = cDaySel.value || "0";
-    cDaySel.innerHTML = t.days.map((d, idx) => `<option value="${idx}">${d}</option>`).join("");
-    cDaySel.value = prevDay;
-
-    const cFreqSel = document.getElementById("cFreq");
-    const prevFreq = cFreqSel.value || "weekly";
-    cFreqSel.innerHTML = `
-      <option value="weekly">${t.freqs.weekly}</option>
-      <option value="biweekly">${t.freqs.biweekly}</option>
-      <option value="monthly">${t.freqs.monthly}</option>
-    `;
-    cFreqSel.value = prevFreq;
-
-    const cStatusSel = document.getElementById("cStatus");
-    const prevStatus = cStatusSel.value || "pending";
-    cStatusSel.innerHTML = `
-      <option value="pending">${t.pending}</option>
-      <option value="paid">${t.paid}</option>
-    `;
-    cStatusSel.value = prevStatus;
-
-    document.getElementById("notesTitle").textContent = t.notesTitle;
-    document.getElementById("noteInput").placeholder = t.notePlaceholder;
-    document.getElementById("btnVoiceNote").textContent = t.btnVoiceNote;
-    document.getElementById("btnAddNote").textContent = t.btnAddNote;
-
-    document.getElementById("lblIncome").textContent = t.lblIncome;
-    document.getElementById("lblExpense").textContent = t.lblExpense;
-    document.getElementById("lblProfit").textContent = t.lblProfit;
-    document.getElementById("finFormTitle").textContent = t.finFormTitle;
-    document.getElementById("lblFinType").textContent = t.lblFinType;
-    document.getElementById("finType").options[0].text = t.optIncome;
-    document.getElementById("finType").options[1].text = t.optExpense;
-    document.getElementById("lblFinAmount").textContent = t.lblFinAmount;
-    document.getElementById("lblFinDesc").textContent = t.lblFinDesc;
-    document.getElementById("btnAddFin").textContent = t.btnAddFin;
-    document.getElementById("finHistoryTitle").textContent = t.finHistoryTitle;
-    document.getElementById("btnSyncNow").textContent = t.btnSyncNow;
-    document.getElementById("btnLogout").textContent = t.btnLogout;
-
-    document.getElementById("navTxtRoute").textContent = t.navRoute;
-    document.getElementById("navTxtClients").textContent = t.navClients;
-    document.getElementById("navTxtNotes").textContent = t.navNotes;
-    document.getElementById("navTxtFinance").textContent = t.navFinance;
-
-    renderAll();
+    document.querySelectorAll('[data-t]').forEach(el => {
+      const k = el.getAttribute('data-t');
+      if (I18N[lang][k]) el.textContent = I18N[lang][k];
+    });
+    const btnText = lang === 'es' ? 'ES → EN' : 'EN → ES';
+    document.getElementById('authLangBtn').textContent = btnText;
+    document.getElementById('headerLangBtn').textContent = btnText;
+    document.getElementById('searchClient').placeholder = lang === 'es'
+      ? '🔍 Buscar cliente por nombre o dirección...'
+      : '🔍 Search client by name or address...';
+    document.getElementById('noteInput').placeholder = lang === 'es'
+      ? 'Escribe o dicta material, reparaciones o pendientes...'
+      : 'Type or dictate supplies, repairs or tasks...';
+    document.getElementById('expDesc').placeholder = lang === 'es'
+      ? 'Concepto (ej. Gasolina, Hilo)'
+      : 'Description (e.g. Gas, Trimmer line)';
+    document.getElementById('expAmount').placeholder = lang === 'es' ? 'Monto ($)' : 'Amount ($)';
   }
 
   function toggleLang() {
-    lang = lang === "es" ? "en" : "es";
-    localStorage.setItem("jp_lang", lang);
+    lang = lang === 'es' ? 'en' : 'es';
+    localStorage.setItem('jp_lang', lang);
     applyTranslations();
+    renderAll();
   }
 
   async function sbFetch(path, options = {}) {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-      ...options,
-      headers: {
-        "apikey": SUPABASE_KEY,
-        "Authorization": `Bearer ${SUPABASE_KEY}`,
-        "Content-Type": "application/json",
-        ...(options.headers || {})
-      }
-    });
-    if (!res.ok) throw new Error(await res.text());
-    const txt = await res.text();
-    return txt ? JSON.parse(txt) : null;
+    const headers = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    };
+    return fetch(SUPABASE_URL + '/rest/v1/' + path, { ...options, headers });
   }
 
-  async function handleAuth() {
-    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-    if (!email || !email.includes("@")) return alert("Ingresa un correo válido / Enter a valid email");
+  async function handleLogin() {
+    const email = document.getElementById('emailInput').value.trim().toLowerCase();
+    if (!email || !email.includes('@')) {
+      alert(lang === 'es' ? 'Ingresa un correo válido.' : 'Enter a valid email.');
+      return;
+    }
     currentUser = email;
-    localStorage.setItem("jp_user", currentUser);
-    await initSession();
+    localStorage.setItem('jp_user', currentUser);
+    await checkSubscription(false);
   }
 
-  function logout() {
-    localStorage.removeItem("jp_user");
-    currentUser = "";
-    document.getElementById("mainApp").classList.add("hidden");
-    document.getElementById("paywallScreen").classList.add("hidden");
-    document.getElementById("authScreen").classList.remove("hidden");
-  }
+  async function checkSubscription(manualCheck) {
+    if (!currentUser) return;
+    if (currentUser === OWNER_EMAIL) {
+      document.getElementById('userBadge').textContent = lang === 'es' ? '👑 Dueño Vitalicio' : '👑 Lifetime Owner';
+      enterApp();
+      return;
+    }
 
-  async function checkSubscription() {
-    if (currentUser === OWNER_EMAIL) return true;
     try {
-      const rows = await sbFetch(`suscripciones?email=eq.${encodeURIComponent(currentUser)}&select=*`);
-      const today = new Date().toISOString().split("T")[0];
+      const res = await sbFetch(`suscripciones?email=eq.${encodeURIComponent(currentUser)}&select=*`);
+      const rows = await res.json();
+      const today = new Date().toISOString().slice(0, 10);
+
       if (!rows || rows.length === 0) {
         const trialEnd = new Date();
         trialEnd.setDate(trialEnd.getDate() + 14);
-        const vence = trialEnd.toISOString().split("T")[0];
-        await sbFetch("suscripciones", {
-          method: "POST",
+        const vence = trialEnd.toISOString().slice(0, 10);
+        await sbFetch('suscripciones', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=minimal' },
           body: JSON.stringify({ email: currentUser, activa: true, vence })
         });
-        return true;
+        document.getElementById('userBadge').textContent = lang === 'es' ? '🎁 Prueba Gratis Activa' : '🎁 Active Free Trial';
+        enterApp();
+      } else {
+        const sub = rows[0];
+        if (sub.activa && sub.vence >= today) {
+          document.getElementById('userBadge').textContent = (lang === 'es' ? '✅ Activo hasta ' : '✅ Active until ') + sub.vence;
+          enterApp();
+        } else {
+          document.getElementById('loginForm').classList.add('hidden');
+          document.getElementById('paywallBox').classList.remove('hidden');
+          if (manualCheck) {
+            alert(lang === 'es' ? 'Aún no aparece el pago. Si acabas de pagar, espera 10 segundos y vuelve a intentar.' : 'Payment not reflected yet. If you just paid, wait 10 seconds and retry.');
+          }
+        }
       }
-      const sub = rows[0];
-      return sub.activa && sub.vence >= today;
     } catch (e) {
-      return true;
+      enterApp();
     }
   }
 
-  async function initSession() {
-    if (!currentUser) {
-      document.getElementById("authScreen").classList.remove("hidden");
-      applyTranslations();
-      return;
-    }
-    const allowed = await checkSubscription();
-    document.getElementById("authScreen").classList.add("hidden");
-    if (!allowed) {
-      document.getElementById("paywallScreen").classList.remove("hidden");
-      document.getElementById("mainApp").classList.add("hidden");
-      applyTranslations();
-      return;
-    }
-    document.getElementById("paywallScreen").classList.add("hidden");
-    document.getElementById("mainApp").classList.remove("hidden");
-
-    const localKey = `jp_data_${currentUser}`;
-    const savedLocal = localStorage.getItem(localKey);
-    if (savedLocal) {
-      try { appData = JSON.parse(savedLocal); } catch(e) {}
-    }
-    applyTranslations();
+  async function enterApp() {
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
+    loadLocalData();
+    renderAll();
     await loadFromCloud();
   }
 
-  async function loadFromCloud() {
-    const t = i18n[lang];
-    document.getElementById("cloudStatus").textContent = t.cloudSyncing;
-    try {
-      const rows = await sbFetch(`datos_jardinero?email=eq.${encodeURIComponent(currentUser)}&select=*`);
-      if (rows && rows.length > 0 && rows[0].contenido) {
-        appData = {
-          clients: rows[0].contenido.clients || [],
-          notes: rows[0].contenido.notes || [],
-          finances: rows[0].contenido.finances || []
-        };
-        localStorage.setItem(`jp_data_${currentUser}`, JSON.stringify(appData));
-        renderAll();
-      } else if (appData.clients.length > 0 || appData.notes.length > 0 || appData.finances.length > 0) {
-        await saveToCloud();
-      }
-      document.getElementById("cloudStatus").textContent = t.cloudSaved;
-    } catch (e) {
-      document.getElementById("cloudStatus").textContent = "⚠️ Local";
-    }
+  function logout() {
+    localStorage.removeItem('jp_user');
+    location.reload();
   }
 
-  async function saveToCloud() {
-    const t = i18n[lang];
-    localStorage.setItem(`jp_data_${currentUser}`, JSON.stringify(appData));
-    document.getElementById("cloudStatus").textContent = t.cloudSyncing;
+  function loadLocalData() {
+    const raw = localStorage.getItem('jp_data_' + currentUser);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        appData.clients = Array.isArray(parsed.clients) ? parsed.clients : [];
+        appData.notes = Array.isArray(parsed.notes) ? parsed.notes : [];
+        appData.movements = Array.isArray(parsed.movements) ? parsed.movements : [];
+      } catch (e) {}
+    }
+    appData.clients.forEach(c => {
+      if (!Array.isArray(c.paidMonths)) c.paidMonths = [];
+      if (!Array.isArray(c.owedMonths)) c.owedMonths = [];
+    });
+  }
+
+  async function saveAllData() {
+    localStorage.setItem('jp_data_' + currentUser, JSON.stringify(appData));
+    document.getElementById('cloudStatus').textContent = I18N[lang].syncing;
     try {
-      await sbFetch("datos_jardinero?on_conflict=email", {
-        method: "POST",
-        headers: { "Prefer": "resolution=merge-duplicates" },
+      await sbFetch('datos_jardinero?on_conflict=email', {
+        method: 'POST',
+        headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
         body: JSON.stringify({ email: currentUser, contenido: appData })
       });
-      document.getElementById("cloudStatus").textContent = t.cloudSaved;
+      document.getElementById('cloudStatus').textContent = I18N[lang].savedCloud;
     } catch (e) {
-      document.getElementById("cloudStatus").textContent = "⚠️ Error Cloud";
+      document.getElementById('cloudStatus').textContent = '⚠️ Local';
     }
   }
 
-  async function syncCloud(manual = false) {
-    await saveToCloud();
-    if (manual) showToast(i18n[lang].cloudSaved);
+  async function loadFromCloud() {
+    try {
+      const res = await sbFetch(`datos_jardinero?email=eq.${encodeURIComponent(currentUser)}&select=contenido`);
+      const rows = await res.json();
+      if (rows && rows.length > 0 && rows[0].contenido) {
+        const cloud = rows[0].contenido;
+        if ((cloud.clients && cloud.clients.length > 0) || (cloud.notes && cloud.notes.length > 0) || (cloud.movements && cloud.movements.length > 0)) {
+          appData.clients = cloud.clients || [];
+          appData.notes = cloud.notes || [];
+          appData.movements = cloud.movements || [];
+          appData.clients.forEach(c => {
+            if (!Array.isArray(c.paidMonths)) c.paidMonths = [];
+            if (!Array.isArray(c.owedMonths)) c.owedMonths = [];
+          });
+          localStorage.setItem('jp_data_' + currentUser, JSON.stringify(appData));
+          renderAll();
+        } else if (appData.clients.length > 0) {
+          await saveAllData();
+        }
+      } else if (appData.clients.length > 0) {
+        await saveAllData();
+      }
+      document.getElementById('cloudStatus').textContent = I18N[lang].savedCloud;
+    } catch (e) {}
+  }
+
+  async function forceSync() {
+    await saveAllData();
+    showToast(I18N[lang].savedCloud);
   }
 
   function switchTab(tab) {
-    ["route", "clients", "notes", "finance"].forEach(name => {
-      document.getElementById("tab" + name.charAt(0).toUpperCase() + name.slice(1)).classList.toggle("hidden", name !== tab);
-      document.getElementById("nav" + name.charAt(0).toUpperCase() + name.slice(1)).classList.toggle("active", name === tab);
+    ['Ruta','Clientes','Libreta','Conta'].forEach(t => {
+      document.getElementById('tab' + t).classList.toggle('hidden', t !== tab);
+      document.getElementById('nav' + t).classList.toggle('active', t === tab);
     });
-  }
-
-  function renderAll() {
-    renderDayFilters();
-    renderRoute();
-    renderClients();
-    renderNotes();
-    renderFinances();
-  }
-
-  function renderDayFilters() {
-    const t = i18n[lang];
-    const el = document.getElementById("dayFilters");
-    let html = `<button class="day-chip ${selectedDay === 'all' ? 'active' : ''}" onclick="setDayFilter('all')">${t.allDays}</button>`;
-    t.days.forEach((d, idx) => {
-      html += `<button class="day-chip ${selectedDay === String(idx) ? 'active' : ''}" onclick="setDayFilter('${idx}')">${d}</button>`;
-    });
-    el.innerHTML = html;
-  }
-
-  function setDayFilter(d) {
-    selectedDay = d;
-    renderDayFilters();
-    renderRoute();
-  }
-
-  function renderRoute() {
-    const t = i18n[lang];
-    const list = document.getElementById("routeList");
-    const filtered = appData.clients.filter(c => selectedDay === "all" || String(c.day) === selectedDay);
-    if (filtered.length === 0) {
-      list.innerHTML = `<div class="card" style="text-align:center; color:var(--muted);">${t.emptyRoute}</div>`;
-      return;
-    }
-    list.innerHTML = filtered.map(c => {
-      const dayName = t.days[Number(c.day)] || "";
-      const freqName = t.freqs[c.freq] || c.freq;
-      const isPaid = c.status === "paid";
-      const smsText = encodeURIComponent(t.smsMsg(c.name, c.price));
-      const cleanPhone = (c.phone || "").replace(/\D/g, "");
-      const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(c.address || "")}`;
-      return `
-        <div class="card">
-          <div class="client-header">
-            <div>
-              <div class="client-name">${c.name}</div>
-              <div class="client-meta">📍 ${c.address || "-"}</div>
-              <div>
-                <span class="tag tag-freq">${dayName} · ${freqName}</span>
-                <span class="tag ${isPaid ? 'tag-paid' : 'tag-pending'}">${isPaid ? t.paid : t.pending}</span>
-                ${c.lastPaid ? `<span class="tag tag-date">📅 ${t.lastPaid}: ${c.lastPaid}</span>` : ""}
-              </div>
-            </div>
-            <div class="client-price">$${c.price}</div>
-          </div>
-          <div class="action-grid">
-            <a href="${mapsUrl}" target="_blank" class="btn btn-secondary btn-sm">🗺️ GPS</a>
-            <a href="sms:${cleanPhone}?body=${smsText}" class="btn btn-secondary btn-sm">💬 SMS</a>
-            <a href="https://wa.me/${cleanPhone}?text=${smsText}" target="_blank" class="btn btn-secondary btn-sm">📱 WhatsApp</a>
-          </div>
-          <div class="action-grid-2">
-            <button class="btn ${isPaid ? 'btn-secondary' : 'btn-primary'} btn-sm" onclick="collectClientPayment('${c.id}')">
-              ${isPaid ? t.paidDoneBtn : t.collectBtn}
-            </button>
-            <button class="btn btn-secondary btn-sm" onclick="editClient('${c.id}')">${t.editBtn}</button>
-          </div>
-        </div>
-      `;
-    }).join("");
-  }
-
-  async function collectClientPayment(id) {
-    const c = appData.clients.find(x => x.id === id);
-    if (!c) return;
-    const dateStr = formatDisplayDate(new Date());
-    c.status = "paid";
-    c.lastPaid = dateStr;
-
-    const amount = parseFloat(c.price) || 0;
-    if (amount > 0) {
-      appData.finances.unshift({
-        id: Date.now().toString(),
-        type: "income",
-        amount: amount,
-        desc: `${c.name}`,
-        date: dateStr
-      });
-    }
     renderAll();
-    showToast(i18n[lang].toastCollected);
-    await saveToCloud();
   }
 
-  async function resetMonthlyPayments() {
-    const t = i18n[lang];
-    if (!confirm(t.confirmNewMonth)) return;
-    appData.clients.forEach(c => { c.status = "pending"; });
+  function filterDebtsQuick() {
+    switchTab('Ruta');
+    selectedFilter = 'Adeudos';
     renderAll();
-    showToast(t.toastNewMonth);
-    await saveToCloud();
+  }
+
+  // CLIENT CRUD
+  function openClientModal(id = null) {
+    document.getElementById('clientModal').classList.add('open');
+    if (id) {
+      const c = appData.clients.find(x => x.id === id);
+      if (!c) return;
+      document.getElementById('clientModalTitle').textContent = lang === 'es' ? 'Editar Cliente' : 'Edit Client';
+      document.getElementById('editClientId').value = c.id;
+      document.getElementById('cName').value = c.name || '';
+      document.getElementById('cPhone').value = c.phone || '';
+      document.getElementById('cAddress').value = c.address || '';
+      document.getElementById('cPrice').value = c.price || '';
+      document.getElementById('cDay').value = c.day || 'Lunes';
+      document.getElementById('cFreq').value = c.freq || 'Semanal';
+    } else {
+      document.getElementById('clientModalTitle').textContent = lang === 'es' ? 'Nuevo Cliente' : 'New Client';
+      document.getElementById('editClientId').value = '';
+      document.getElementById('cName').value = '';
+      document.getElementById('cPhone').value = '';
+      document.getElementById('cAddress').value = '';
+      document.getElementById('cPrice').value = '';
+      document.getElementById('cDay').value = 'Lunes';
+      document.getElementById('cFreq').value = 'Semanal';
+    }
+  }
+
+  function closeClientModal() {
+    document.getElementById('clientModal').classList.remove('open');
   }
 
   async function saveClient() {
-    const id = document.getElementById("editClientId").value;
-    const name = document.getElementById("cName").value.trim();
-    if (!name) return;
-    const clientObj = {
-      id: id || Date.now().toString(),
-      name,
-      phone: document.getElementById("cPhone").value.trim(),
-      address: document.getElementById("cAddress").value.trim(),
-      price: document.getElementById("cPrice").value || "0",
-      day: document.getElementById("cDay").value,
-      freq: document.getElementById("cFreq").value,
-      status: document.getElementById("cStatus").value,
-      lastPaid: id ? (appData.clients.find(x => x.id === id)?.lastPaid || "") : ""
-    };
+    const id = document.getElementById('editClientId').value;
+    const name = document.getElementById('cName').value.trim();
+    const phone = document.getElementById('cPhone').value.trim();
+    const address = document.getElementById('cAddress').value.trim();
+    const price = parseFloat(document.getElementById('cPrice').value) || 0;
+    const day = document.getElementById('cDay').value;
+    const freq = document.getElementById('cFreq').value;
+
+    if (!name) {
+      alert(lang === 'es' ? 'Escribe el nombre del cliente.' : 'Enter client name.');
+      return;
+    }
+
     if (id) {
       const idx = appData.clients.findIndex(x => x.id === id);
-      if (idx !== -1) appData.clients[idx] = clientObj;
+      if (idx !== -1) {
+        appData.clients[idx] = { ...appData.clients[idx], name, phone, address, price, day, freq };
+      }
     } else {
-      appData.clients.push(clientObj);
+      appData.clients.push({
+        id: 'c_' + Date.now(),
+        name, phone, address, price, day, freq,
+        paidMonths: [],
+        owedMonths: []
+      });
     }
-    cancelEditClient();
+
+    closeClientModal();
     renderAll();
-    await saveToCloud();
-  }
-
-  function editClient(id) {
-    const c = appData.clients.find(x => x.id === id);
-    if (!c) return;
-    document.getElementById("editClientId").value = c.id;
-    document.getElementById("cName").value = c.name;
-    document.getElementById("cPhone").value = c.phone || "";
-    document.getElementById("cAddress").value = c.address || "";
-    document.getElementById("cPrice").value = c.price || "";
-    document.getElementById("cDay").value = c.day || "0";
-    document.getElementById("cFreq").value = c.freq || "weekly";
-    document.getElementById("cStatus").value = c.status || "pending";
-    document.getElementById("btnCancelEdit").classList.remove("hidden");
-    switchTab("clients");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function cancelEditClient() {
-    document.getElementById("editClientId").value = "";
-    document.getElementById("cName").value = "";
-    document.getElementById("cPhone").value = "";
-    document.getElementById("cAddress").value = "";
-    document.getElementById("cPrice").value = "";
-    document.getElementById("cStatus").value = "pending";
-    document.getElementById("btnCancelEdit").classList.add("hidden");
+    await saveAllData();
+    showToast(lang === 'es' ? '✅ Cliente guardado' : '✅ Client saved');
   }
 
   async function deleteClient(id) {
-    if (!confirm(i18n[lang].confirmDel)) return;
+    const ok = confirm(lang === 'es' ? '¿Seguro que deseas borrar este cliente?' : 'Delete this client?');
+    if (!ok) return;
     appData.clients = appData.clients.filter(x => x.id !== id);
     renderAll();
-    await saveToCloud();
+    await saveAllData();
   }
 
-  function renderClients() {
-    const t = i18n[lang];
-    const q = (document.getElementById("searchClient").value || "").toLowerCase();
-    const filtered = appData.clients.filter(c =>
-      c.name.toLowerCase().includes(q) || (c.address || "").toLowerCase().includes(q)
-    );
-    document.getElementById("allClientsList").innerHTML = filtered.map(c => `
-      <div class="card">
+  // MONTHLY LEDGER MODAL & LOGIC
+  function openMonthModal(clientId, type) {
+    const c = appData.clients.find(x => x.id === clientId);
+    if (!c) return;
+
+    document.getElementById('monthClientId').value = clientId;
+    document.getElementById('monthType').value = type;
+    document.getElementById('monthModalClientName').textContent = c.name + ' ($' + c.price + '/mes)';
+
+    const titleEl = document.getElementById('monthModalTitle');
+    const btnEl = document.getElementById('confirmMonthBtn');
+    if (type === 'paid') {
+      titleEl.textContent = lang === 'es' ? '✅ Agregar Mes Pagado' : '✅ Add Paid Month';
+      titleEl.style.color = 'var(--success)';
+      btnEl.className = 'btn btn-primary';
+      btnEl.textContent = lang === 'es' ? 'Guardar Pagado' : 'Save Paid';
+    } else {
+      titleEl.textContent = lang === 'es' ? '🔴 Anotar Mes que Debe' : '🔴 Add Owed Month';
+      titleEl.style.color = 'var(--danger)';
+      btnEl.className = 'btn btn-danger';
+      btnEl.textContent = lang === 'es' ? 'Anotar Adeudo' : 'Save Owed';
+    }
+
+    const sel = document.getElementById('monthSelect');
+    const curMonthIdx = new Date().getMonth();
+    const list = lang === 'es' ? MONTHS_ES : MONTHS_EN;
+    sel.innerHTML = list.map((m, i) => `<option value="${i}" ${i === curMonthIdx ? 'selected' : ''}>${m}</option>`).join('');
+
+    document.getElementById('monthModal').classList.add('open');
+  }
+
+  function closeMonthModal() {
+    document.getElementById('monthModal').classList.remove('open');
+  }
+
+  function formatMonthLabel(monthIndex, year) {
+    const name = lang === 'es' ? MONTHS_ES[monthIndex] : MONTHS_EN[monthIndex];
+    return `${name} ${year}`;
+  }
+
+  async function confirmMonthEntry() {
+    const clientId = document.getElementById('monthClientId').value;
+    const type = document.getElementById('monthType').value;
+    const monthIndex = parseInt(document.getElementById('monthSelect').value, 10);
+    const year = document.getElementById('yearSelect').value;
+    const key = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
+
+    const c = appData.clients.find(x => x.id === clientId);
+    if (!c) return;
+    if (!Array.isArray(c.paidMonths)) c.paidMonths = [];
+    if (!Array.isArray(c.owedMonths)) c.owedMonths = [];
+
+    if (type === 'paid') {
+      // Remove from owed if it was there
+      c.owedMonths = c.owedMonths.filter(m => m.key !== key);
+      if (!c.paidMonths.some(m => m.key === key)) {
+        c.paidMonths.push({ key, monthIndex, year });
+        c.paidMonths.sort((a, b) => a.key.localeCompare(b.key));
+        // Add to accounting automatically
+        appData.movements.unshift({
+          id: 'm_' + Date.now(),
+          type: 'income',
+          desc: `${c.name} - ${MONTHS_ES[monthIndex]} ${year}`,
+          amount: Number(c.price) || 0,
+          date: new Date().toLocaleDateString()
+        });
+      }
+      showToast(lang === 'es' ? '✅ Mes pagado y sumado a Conta' : '✅ Paid month added to Finance');
+    } else {
+      // Remove from paid if needed or add to owed
+      if (!c.owedMonths.some(m => m.key === key)) {
+        c.owedMonths.push({ key, monthIndex, year });
+        c.owedMonths.sort((a, b) => a.key.localeCompare(b.key));
+      }
+      showToast(lang === 'es' ? '🔴 Mes anotado como adeudo' : '🔴 Month marked as owed');
+    }
+
+    closeMonthModal();
+    renderAll();
+    await saveAllData();
+  }
+
+  async function settleOwedMonth(clientId, key) {
+    const c = appData.clients.find(x => x.id === clientId);
+    if (!c) return;
+    const item = (c.owedMonths || []).find(m => m.key === key);
+    if (!item) return;
+
+    const label = formatMonthLabel(item.monthIndex, item.year);
+    const msg = lang === 'es'
+      ? `¿Marcar ${label} de ${c.name} ($${c.price}) como PAGADO y sumarlo a Contabilidad?`
+      : `Mark ${label} for ${c.name} ($${c.price}) as PAID and add to Finance?`;
+    if (!confirm(msg)) return;
+
+    c.owedMonths = c.owedMonths.filter(m => m.key !== key);
+    if (!c.paidMonths.some(m => m.key === key)) {
+      c.paidMonths.push(item);
+      c.paidMonths.sort((a, b) => a.key.localeCompare(b.key));
+    }
+
+    appData.movements.unshift({
+      id: 'm_' + Date.now(),
+      type: 'income',
+      desc: `${c.name} - ${MONTHS_ES[item.monthIndex]} ${item.year}`,
+      amount: Number(c.price) || 0,
+      date: new Date().toLocaleDateString()
+    });
+
+    renderAll();
+    await saveAllData();
+    showToast(lang === 'es' ? '✅ Adeudo cobrado y sumado' : '✅ Overdue paid & added');
+  }
+
+  async function removePaidMonth(clientId, key) {
+    const c = appData.clients.find(x => x.id === clientId);
+    if (!c) return;
+    const item = (c.paidMonths || []).find(m => m.key === key);
+    if (!item) return;
+    const label = formatMonthLabel(item.monthIndex, item.year);
+    const ok = confirm(lang === 'es' ? `¿Quitar ${label} de la lista de pagados?` : `Remove ${label} from paid list?`);
+    if (!ok) return;
+    c.paidMonths = c.paidMonths.filter(m => m.key !== key);
+    renderAll();
+    await saveAllData();
+  }
+
+  function buildMessageText(c) {
+    const owed = c.owedMonths || [];
+    if (owed.length > 0) {
+      const names = owed.map(m => formatMonthLabel(m.monthIndex, m.year)).join(', ');
+      const total = owed.length * (Number(c.price) || 0);
+      return lang === 'es'
+        ? `Hola ${c.name}, te saludo de Jardineros Pro. Te recuerdo el saldo pendiente de jardinería de: ${names} (Total: $${total}). ¡Gracias!`
+        : `Hi ${c.name}, greeting from Gardeners Pro. Friendly reminder of your pending lawn care balance for: ${names} (Total: $${total}). Thank you!`;
+    }
+    return lang === 'es'
+      ? `Hola ${c.name}, te saludo de Jardineros Pro para confirmar tu servicio de jardinería ($${c.price}/mes). ¡Gracias!`
+      : `Hi ${c.name}, greeting from Gardeners Pro confirming your lawn care service ($${c.price}/mo). Thank you!`;
+  }
+
+  function renderClientCard(c) {
+    const paid = c.paidMonths || [];
+    const owed = c.owedMonths || [];
+    const totalOwed = owed.length * (Number(c.price) || 0);
+    const cleanPhone = (c.phone || '').replace(/\D/g, '');
+    const msgEncoded = encodeURIComponent(buildMessageText(c));
+    const mapUrl = `https://maps.google.com/?q=${encodeURIComponent(c.address || '')}`;
+
+    const owedBadges = owed.map(m =>
+      `<span class="tag-owed" onclick="settleOwedMonth('${c.id}','${m.key}')" title="Tocar para cobrar">🔴 ${I18N[lang].owesTotal}: ${formatMonthLabel(m.monthIndex, m.year)} ✓</span>`
+    ).join('');
+
+    const paidBadges = paid.map(m =>
+      `<span class="tag-paid" onclick="removePaidMonth('${c.id}','${m.key}')">✅ ${formatMonthLabel(m.monthIndex, m.year)}</span>`
+    ).join('');
+
+    const emptyNotice = (owed.length === 0 && paid.length === 0)
+      ? `<span style="font-size:12px; color:var(--muted); font-style:italic;">${I18N[lang].noMonthsYet}</span>`
+      : '';
+
+    const debtSummary = owed.length > 0
+      ? `<span style="color:var(--danger); font-weight:800;">${I18N[lang].owesTotal} ${owed.length} ${I18N[lang].monthsWord}: $${totalOwed}</span>`
+      : '';
+
+    return `
+      <div class="card ${owed.length > 0 ? 'overdue-card' : ''}">
         <div class="client-header">
           <div>
-            <div class="client-name">${c.name}</div>
-            <div class="client-meta">📞 ${c.phone || "-"} · 📍 ${c.address || "-"}</div>
-            <div>
-              <span class="tag tag-freq">${t.days[Number(c.day)] || ""}</span>
-              <span class="tag ${c.status === 'paid' ? 'tag-paid' : 'tag-pending'}">${c.status === 'paid' ? t.paid : t.pending}</span>
-              ${c.lastPaid ? `<span class="tag tag-date">📅 ${t.lastPaid}: ${c.lastPaid}</span>` : ""}
+            <h3 class="client-name">${c.name}</h3>
+            <div class="client-meta">
+              📅 ${c.day} • ${c.freq}<br/>
+              📍 ${c.address || '---'}<br/>
+              📞 ${c.phone || '---'}
             </div>
           </div>
-          <div style="text-align:right;">
-            <div class="client-price">$${c.price}</div>
-            <div style="margin-top:6px; display:flex; gap:4px;">
-              <button class="btn btn-secondary btn-sm" onclick="editClient('${c.id}')">✏️</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">🗑️</button>
-            </div>
+          <div class="client-price">$${c.price}</div>
+        </div>
+
+        <!-- MONTHLY PAYMENT & OVERDUE LEDGER -->
+        <div class="ledger-box">
+          <div class="ledger-title">
+            <span>${I18N[lang].ledgerTitle}</span>
+            ${debtSummary}
+          </div>
+          <div class="month-tags">
+            ${owedBadges}
+            ${paidBadges}
+            ${emptyNotice}
+          </div>
+          <div class="ledger-actions">
+            <button class="btn-add-paid" onclick="openMonthModal('${c.id}', 'paid')">${I18N[lang].addPaidBtn}</button>
+            <button class="btn-add-owed" onclick="openMonthModal('${c.id}', 'owed')">${I18N[lang].addOwedBtn}</button>
           </div>
         </div>
+
+        <div class="action-grid">
+          <a class="act-btn" href="${mapUrl}" target="_blank">${I18N[lang].gpsBtn}</a>
+          <a class="act-btn" href="sms:${cleanPhone}?body=${msgEncoded}">${I18N[lang].smsBtn}</a>
+          <a class="act-btn" href="https://wa.me/1${cleanPhone}?text=${msgEncoded}" target="_blank">${I18N[lang].waBtn}</a>
+          <button class="act-btn" onclick="openClientModal('${c.id}')">${I18N[lang].editBtn}</button>
+        </div>
+        <div style="text-align:right; margin-top:8px;">
+          <button onclick="deleteClient('${c.id}')" style="background:none; border:none; color:#999; font-size:12px; cursor:pointer;">${I18N[lang].delBtn}</button>
+        </div>
       </div>
-    `).join("");
+    `;
   }
 
+  // NOTES
   async function addNote() {
-    const text = document.getElementById("noteInput").value.trim();
-    if (!text) return;
-    appData.notes.unshift({ id: Date.now().toString(), text, date: formatDisplayDate(new Date()) });
-    document.getElementById("noteInput").value = "";
-    renderNotes();
-    await saveToCloud();
+    const txt = document.getElementById('noteInput').value.trim();
+    if (!txt) return;
+    appData.notes.unshift({ id: 'n_' + Date.now(), text: txt, date: new Date().toLocaleDateString() });
+    document.getElementById('noteInput').value = '';
+    renderAll();
+    await saveAllData();
   }
 
   async function deleteNote(id) {
     appData.notes = appData.notes.filter(n => n.id !== id);
-    renderNotes();
-    await saveToCloud();
+    renderAll();
+    await saveAllData();
   }
 
-  function renderNotes() {
-    document.getElementById("notesList").innerHTML = appData.notes.map(n => `
-      <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-        <div>
-          <div style="font-size:0.95rem; font-weight:600;">${n.text}</div>
-          <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">${n.date || ""}</div>
-        </div>
-        <button class="btn btn-danger btn-sm" onclick="deleteNote('${n.id}')">🗑️</button>
-      </div>
-    `).join("");
-  }
-
-  function startVoiceNote() {
+  function startDictation() {
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRec) return alert(i18n[lang].voiceUnsupported);
+    if (!SpeechRec) {
+      alert(lang === 'es' ? 'Tu navegador no soporta dictado por voz.' : 'Voice dictation not supported.');
+      return;
+    }
     const rec = new SpeechRec();
-    rec.lang = lang === "es" ? "es-MX" : "en-US";
-    showToast(i18n[lang].voiceListening);
+    rec.lang = lang === 'es' ? 'es-MX' : 'en-US';
     rec.onresult = (e) => {
       const transcript = e.results[0][0].transcript;
-      const box = document.getElementById("noteInput");
-      box.value = (box.value ? box.value + " " : "") + transcript;
+      const box = document.getElementById('noteInput');
+      box.value = (box.value + ' ' + transcript).trim();
     };
     rec.start();
+    showToast(lang === 'es' ? '🎙️ Escuchando...' : '🎙️ Listening...');
   }
 
-  async function addFinanceRecord() {
-    const type = document.getElementById("finType").value;
-    const amount = parseFloat(document.getElementById("finAmount").value);
-    const desc = document.getElementById("finDesc").value.trim() || (type === "income" ? "Ingreso" : "Gasto");
-    if (!amount || amount <= 0) return;
-    appData.finances.unshift({
-      id: Date.now().toString(),
-      type,
-      amount,
+  // ACCOUNTING
+  async function addExpense() {
+    const desc = document.getElementById('expDesc').value.trim();
+    const amount = parseFloat(document.getElementById('expAmount').value);
+    if (!desc || !amount) return;
+    appData.movements.unshift({
+      id: 'm_' + Date.now(),
+      type: 'expense',
       desc,
-      date: formatDisplayDate(new Date())
+      amount,
+      date: new Date().toLocaleDateString()
     });
-    document.getElementById("finAmount").value = "";
-    document.getElementById("finDesc").value = "";
-    renderFinances();
-    await saveToCloud();
+    document.getElementById('expDesc').value = '';
+    document.getElementById('expAmount').value = '';
+    renderAll();
+    await saveAllData();
   }
 
-  async function deleteFinance(id) {
-    if (!confirm(i18n[lang].confirmDel)) return;
-    appData.finances = appData.finances.filter(f => f.id !== id);
-    renderFinances();
-    await saveToCloud();
+  async function deleteMovement(id) {
+    appData.movements = appData.movements.filter(m => m.id !== id);
+    renderAll();
+    await saveAllData();
   }
 
-  function renderFinances() {
-    let inc = 0, exp = 0;
-    appData.finances.forEach(f => {
-      if (f.type === "income") inc += Number(f.amount || 0);
-      else exp += Number(f.amount || 0);
-    });
-    document.getElementById("totalIncome").textContent = `$${inc.toFixed(2)}`;
-    document.getElementById("totalExpense").textContent = `$${exp.toFixed(2)}`;
-    document.getElementById("totalProfit").textContent = `$${(inc - exp).toFixed(2)}`;
+  function renderAll() {
+    // Global Overdue Alert
+    const overdueClients = appData.clients.filter(c => (c.owedMonths || []).length > 0);
+    const banner = document.getElementById('globalDebtBanner');
+    if (overdueClients.length > 0) {
+      const totalDebt = overdueClients.reduce((sum, c) => sum + ((c.owedMonths || []).length * (Number(c.price) || 0)), 0);
+      document.getElementById('globalDebtText').textContent = lang === 'es'
+        ? `⚠️ ${overdueClients.length} cliente(s) deben $${totalDebt}`
+        : `⚠️ ${overdueClients.length} client(s) owe $${totalDebt}`;
+      banner.classList.remove('hidden');
+    } else {
+      banner.classList.add('hidden');
+    }
 
-    document.getElementById("financeList").innerHTML = appData.finances.map(f => `
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border);">
+    // Pills in Ruta
+    const pillsEl = document.getElementById('dayPills');
+    pillsEl.innerHTML = Object.keys(DAYS_MAP).map(key => {
+      const isDebt = key === 'Adeudos';
+      const active = selectedFilter === key ? 'active' : '';
+      return `<button class="pill ${isDebt ? 'pill-debt' : ''} ${active}" onclick="selectedFilter='${key}'; renderAll();">${DAYS_MAP[key][lang]}</button>`;
+    }).join('');
+
+    // Filtered Ruta List
+    let filtered = appData.clients;
+    if (selectedFilter === 'Adeudos') {
+      filtered = appData.clients.filter(c => (c.owedMonths || []).length > 0);
+    } else if (selectedFilter !== 'Todos') {
+      filtered = appData.clients.filter(c => c.day === selectedFilter);
+    }
+    document.getElementById('rutaList').innerHTML = filtered.length
+      ? filtered.map(renderClientCard).join('')
+      : `<div class="card" style="text-align:center; color:var(--muted);">${lang === 'es' ? 'No hay clientes en este filtro.' : 'No clients in this filter.'}</div>`;
+
+    // All Clients List
+    const q = (document.getElementById('searchClient').value || '').toLowerCase();
+    const searched = appData.clients.filter(c =>
+      (c.name || '').toLowerCase().includes(q) || (c.address || '').toLowerCase().includes(q)
+    );
+    document.getElementById('clientesList').innerHTML = searched.length
+      ? searched.map(renderClientCard).join('')
+      : `<div class="card" style="text-align:center; color:var(--muted);">${lang === 'es' ? 'Aún no tienes clientes.' : 'No clients yet.'}</div>`;
+
+    // Notes
+    document.getElementById('notesList').innerHTML = appData.notes.map(n => `
+      <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
         <div>
-          <div style="font-weight:700; font-size:0.9rem;">${f.desc}</div>
-          <div style="font-size:0.75rem; color:var(--muted);">📅 ${f.date || ""}</div>
+          <div style="font-size:15px;">${n.text}</div>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">${n.date}</div>
+        </div>
+        <button onclick="deleteNote('${n.id}')" style="background:none; border:none; color:var(--danger); font-size:16px; cursor:pointer;">🗑️</button>
+      </div>
+    `).join('');
+
+    // Finance
+    let inc = 0, exp = 0;
+    appData.movements.forEach(m => {
+      if (m.type === 'income') inc += Number(m.amount) || 0;
+      else exp += Number(m.amount) || 0;
+    });
+    document.getElementById('totalIncomeVal').textContent = '$' + inc.toFixed(2);
+    document.getElementById('totalExpenseVal').textContent = '$' + exp.toFixed(2);
+    document.getElementById('netProfitVal').textContent = '$' + (inc - exp).toFixed(2);
+
+    document.getElementById('movementsList').innerHTML = appData.movements.map(m => `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #eee;">
+        <div>
+          <div style="font-weight:700; font-size:14px;">${m.desc}</div>
+          <div style="font-size:11px; color:var(--muted);">${m.date}</div>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span style="font-weight:800; color:${f.type === 'income' ? 'var(--primary)' : 'var(--danger)'};">
-            ${f.type === 'income' ? '+' : '-'}$${Number(f.amount).toFixed(2)}
+          <span style="font-weight:800; color:${m.type === 'income' ? 'var(--success)' : 'var(--danger)'};">
+            ${m.type === 'income' ? '+' : '-'}$${Number(m.amount).toFixed(2)}
           </span>
-          <button class="btn btn-danger btn-sm" onclick="deleteFinance('${f.id}')">🗑️</button>
+          <button onclick="deleteMovement('${m.id}')" style="background:none; border:none; color:#aaa; cursor:pointer;">✕</button>
         </div>
       </div>
-    `).join("");
+    `).join('');
   }
 
-  initSession();
+  // Init
+  applyTranslations();
+  if (currentUser) {
+    document.getElementById('emailInput').value = currentUser;
+    checkSubscription(false);
+  }
 </script>
 </body>
 </html>
