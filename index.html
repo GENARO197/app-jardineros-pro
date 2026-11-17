@@ -1,148 +1,206 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Jardineros Pro</title>
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Jardineros Pro" />
-  <script src="https://tailwindcss.com"></script>
-  <style>
-    body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Jardineros Pro</title>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jardineros Pro">
+<script src="https://tailwindcss.com"></script>
+<style>
+body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+</style>
 </head>
 <body class="bg-gray-100 text-gray-900 pb-24">
 
-  <div id="authScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-green-700 to-green-900">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6">
-      <div class="flex justify-between items-center mb-4">
-        <div class="flex items-center gap-2">
-          <span class="text-3xl">🌱</span>
-          <h1 id="authTitle" class="text-2xl font-extrabold text-green-800">Jardineros Pro</h1>
-        </div>
-        <button onclick="toggleLang()" id="langBtnAuth" class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full text-xs">ES → EN</button>
-      </div>
-      <p id="authSubtitle" class="text-sm text-gray-600 mb-5">Administra tu ruta, clientes, cobros y gastos desde tu celular.</p>
-
-      <div class="space-y-3">
-        <div>
-          <label id="lblEmail" class="block text-xs font-bold text-gray-700 mb-1">Correo electrónico</label>
-          <input id="emailInput" type="email" placeholder="tucorreo@ejemplo.com" class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-600" />
-        </div>
-        <button onclick="loginUser()" id="btnEnter" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow text-sm">Entrar / Crear Cuenta (14 días gratis)</button>
-      </div>
-      <p id="authNote" class="text-xs text-center text-gray-400 mt-4">Tus datos se respaldan automáticamente en la nube.</p>
+<div id="authScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-green-700 to-green-900">
+  <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6">
+    <div class="flex justify-between items-center mb-4">
+      <div class="flex items-center gap-2"><span class="text-3xl">🌱</span><h1 id="authTitle" class="text-2xl font-extrabold text-green-800">Jardineros Pro</h1></div>
+      <button onclick="toggleLang()" id="langBtnAuth" class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full text-xs">ES → EN</button>
     </div>
+    <p id="authSubtitle" class="text-sm text-gray-600 mb-5">Administra tu ruta, clientes, cobros y gastos desde tu celular.</p>
+    <div class="space-y-3">
+      <div><label id="lblEmail" class="block text-xs font-bold text-gray-700 mb-1">Correo electrónico</label><input id="emailInput" type="email" placeholder="tucorreo@ejemplo.com" class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm"></div>
+      <button onclick="loginUser()" id="btnEnter" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl shadow text-sm">Entrar / Crear Cuenta (14 días gratis)</button>
+    </div>
+    <p id="authNote" class="text-xs text-center text-gray-400 mt-4">Tus datos se respaldan automáticamente en la nube.</p>
+  </div>
+</div>
+
+<div id="paywallScreen" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-900 text-white">
+  <div class="bg-gray-800 w-full max-w-md rounded-2xl p-6 text-center shadow-2xl border border-gray-700">
+    <div class="text-5xl mb-3">🔒</div>
+    <h2 id="pwTitle" class="text-2xl font-extrabold mb-2">Tu prueba gratis ha terminado</h2>
+    <p id="pwDesc" class="text-sm text-gray-300 mb-5">Activa tu suscripción mensual por solo $14.99/mes para seguir usando Jardineros Pro sin límites.</p>
+    <a href="https://stripe.com" target="_blank" id="pwBtn" class="block w-full bg-green-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg mb-3">Suscribirme ahora ($14.99/mes)</a>
+    <button onclick="checkSubscription(true)" id="pwRefresh" class="w-full bg-gray-700 text-gray-200 font-semibold py-2.5 rounded-xl text-sm mb-2">Ya pagué, verificar acceso</button>
+    <button onclick="logoutUser()" id="pwLogout" class="text-xs text-gray-400 underline mt-2">Cerrar sesión</button>
+  </div>
+</div>
+
+<div id="appScreen" class="hidden max-w-2xl mx-auto">
+  <header class="bg-green-700 text-white p-4 sticky top-0 z-30 shadow-md">
+    <div class="flex justify-between items-center">
+      <div>
+        <div class="flex items-center gap-2"><span class="text-2xl">🌱</span><h1 id="appTitle" class="text-lg font-extrabold">Jardineros Pro</h1></div>
+        <div class="flex items-center gap-2 mt-1">
+          <span id="planBadge" class="text-[11px] bg-green-900 text-green-200 px-2 py-0.5 rounded-full font-semibold">Prueba Activa</span>
+          <span id="cloudBadge" class="text-[11px] bg-yellow-400 text-gray-900 px-2 py-0.5 rounded-full font-bold">⏳ Sincronizando...</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleLang()" id="langBtnApp" class="bg-green-800 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs">ES → EN</button>
+        <button onclick="logoutUser()" id="btnLogout" class="bg-red-600 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="debtAlertBanner" class="hidden bg-red-600 text-white px-4 py-2.5 text-xs font-bold flex justify-between items-center shadow">
+    <span id="debtAlertText">⚠️ Tienes clientes con meses pendientes de pago.</span>
+    <button onclick="filterDebtOnly()" id="btnSeeDebts" class="bg-white text-red-700 px-2.5 py-1 rounded-lg font-extrabold">Ver Adeudos</button>
   </div>
 
-  <div id="paywallScreen" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-900 text-white">
-    <div class="bg-gray-800 w-full max-w-md rounded-2xl p-6 text-center shadow-2xl border border-gray-700">
-      <div class="text-5xl mb-3">🔒</div>
-      <h2 id="pwTitle" class="text-2xl font-extrabold mb-2">Tu prueba gratis ha terminado</h2>
-      <p id="pwDesc" class="text-sm text-gray-300 mb-5">Activa tu suscripción mensual por solo <b>$14.99/mes</b> para seguir usando Jardineros Pro sin límites.</p>
-      <a href="https://stripe.com" target="_blank" id="pwBtn" class="block w-full bg-green-500 hover:bg-green-600 text-white font-extrabold py-3.5 rounded-xl shadow-lg mb-3">Suscribirme ahora ($14.99/mes)</a>
-      <button onclick="checkSubscription(true)" id="pwRefresh" class="w-full bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold py-2.5 rounded-xl text-sm mb-2">Ya pagué, verificar acceso</button>
-      <button onclick="logoutUser()" id="pwLogout" class="text-xs text-gray-400 underline mt-2">Cerrar sesión</button>
+  <section id="tabRuta" class="p-4 space-y-4">
+    <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1" id="dayFilters"></div>
+    <div class="flex justify-between items-center">
+      <h2 id="routeHeading" class="font-extrabold text-gray-800 text-base">Ruta de Trabajo</h2>
+      <span id="routeSummary" class="text-xs font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-full">0 clientes</span>
     </div>
+    <div id="routeList" class="space-y-3"></div>
+  </section>
+
+  <section id="tabClientes" class="hidden p-4 space-y-4">
+    <div class="flex justify-between items-center">
+      <h2 id="clientsHeading" class="font-extrabold text-gray-800 text-base">Mis Clientes</h2>
+      <button onclick="openClientModal()" id="btnNewClient" class="bg-green-600 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow">+ Nuevo Cliente</button>
+    </div>
+    <input id="searchClientInput" oninput="renderAll()" type="text" placeholder="Buscar por nombre, teléfono o dirección..." class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm shadow-sm">
+    <div id="clientsList" class="space-y-3"></div>
+  </section>
+
+  <section id="tabLibreta" class="hidden p-4 space-y-4">
+    <h2 id="notesHeading" class="font-extrabold text-gray-800 text-base">Libreta Rápida</h2>
+    <div class="bg-white p-3.5 rounded-2xl shadow-sm space-y-2.5">
+      <div class="flex gap-2">
+        <textarea id="noteInput" rows="2" placeholder="Escribe o dicta una nota rápida..." class="w-full border border-gray-300 rounded-xl p-2.5 text-sm"></textarea>
+        <button onclick="startVoice('noteInput')" class="bg-blue-600 text-white px-3.5 rounded-xl font-bold text-lg shadow">🎙️</button>
+      </div>
+      <button onclick="addGeneralNote()" id="btnSaveNote" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-sm">Guardar Nota</button>
+    </div>
+    <div id="generalNotesList" class="space-y-2.5"></div>
+  </section>
+
+  <section id="tabConta" class="hidden p-4 space-y-4">
+    <div class="flex justify-between items-center">
+      <h2 id="financeHeading" class="font-extrabold text-gray-800 text-base">Contabilidad</h2>
+      <button onclick="syncCloud(true)" id="btnSyncNow" class="bg-blue-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow">🔄 Sincronizar Nube</button>
+    </div>
+    <div class="grid grid-cols-3 gap-2 text-center">
+      <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-green-500"><p id="lblIncome" class="text-[11px] text-gray-500 font-bold">Ingresos</p><p id="totalIncome" class="text-base font-extrabold text-green-700">$0</p></div>
+      <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-red-500"><p id="lblExpenses" class="text-[11px] text-gray-500 font-bold">Gastos</p><p id="totalExpenses" class="text-base font-extrabold text-red-600">$0</p></div>
+      <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-blue-500"><p id="lblProfit" class="text-[11px] text-gray-500 font-bold">Ganancia</p><p id="totalProfit" class="text-base font-extrabold text-blue-700">$0</p></div>
+    </div>
+    <div class="bg-white p-3.5 rounded-2xl shadow-sm space-y-2.5">
+      <h3 id="addExpenseHeading" class="font-bold text-sm text-gray-800">Registrar Gasto</h3>
+      <div class="grid grid-cols-3 gap-2">
+        <input id="expDesc" type="text" placeholder="Concepto" class="col-span-2 border border-gray-300 rounded-xl px-3 py-2 text-sm">
+        <input id="expAmount" type="number" placeholder="$ Monto" class="border border-gray-300 rounded-xl px-3 py-2 text-sm">
+      </div>
+      <button onclick="addExpense()" id="btnAddExpense" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-xl text-sm">+ Agregar Gasto</button>
+    </div>
+    <div class="bg-white p-3.5 rounded-2xl shadow-sm space-y-2">
+      <h3 id="movHeading" class="font-bold text-sm text-gray-800">Movimientos Recientes</h3>
+      <div id="movementsList" class="space-y-2 max-h-72 overflow-y-auto"></div>
+    </div>
+  </section>
+
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-30 max-w-2xl mx-auto shadow-lg">
+    <button onclick="switchTab('Ruta')" id="navRuta" class="flex flex-col items-center text-green-700 font-extrabold text-xs"><span class="text-xl">📍</span><span id="txtNavRuta">Ruta</span></button>
+    <button onclick="switchTab('Clientes')" id="navClientes" class="flex flex-col items-center text-gray-500 font-bold text-xs"><span class="text-xl">👥</span><span id="txtNavClientes">Clientes</span></button>
+    <button onclick="switchTab('Libreta')" id="navLibreta" class="flex flex-col items-center text-gray-500 font-bold text-xs"><span class="text-xl">📓</span><span id="txtNavLibreta">Libreta</span></button>
+    <button onclick="switchTab('Conta')" id="navConta" class="flex flex-col items-center text-gray-500 font-bold text-xs"><span class="text-xl">💰</span><span id="txtNavConta">Conta</span></button>
+  </nav>
+</div>
+
+<div id="clientModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center"><h3 id="modalClientTitle" class="font-extrabold text-lg text-gray-800">Nuevo Cliente</h3><button onclick="closeClientModal()" class="text-gray-500 font-bold text-xl">✕</button></div>
+    <input type="hidden" id="editClientId">
+    <div><label id="lblCName" class="text-xs font-bold text-gray-700">Nombre completo *</label><input id="cName" type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    <div class="grid grid-cols-2 gap-2">
+      <div><label id="lblCPhone" class="text-xs font-bold text-gray-700">Teléfono</label><input id="cPhone" type="tel" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+      <div><label id="lblCPrice" class="text-xs font-bold text-gray-700">Tarifa ($ USD)</label><input id="cPrice" type="number" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    </div>
+    <div><label id="lblCAddress" class="text-xs font-bold text-gray-700">Dirección</label><input id="cAddress" type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    <div class="grid grid-cols-2 gap-2">
+      <div><label id="lblCDay" class="text-xs font-bold text-gray-700">Día de visita</label><select id="cDay" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white"></select></div>
+      <div><label id="lblCFreq" class="text-xs font-bold text-gray-700">Frecuencia</label><select id="cFreq" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white"></select></div>
+    </div>
+    <div><label id="lblCNotes" class="text-xs font-bold text-gray-700">Notas privadas del cliente</label><div class="flex gap-2"><textarea id="cNotes" rows="2" class="w-full border border-gray-300 rounded-xl p-2 text-sm"></textarea><button type="button" onclick="startVoice('cNotes')" class="bg-blue-600 text-white px-3 rounded-xl font-bold">🎙️</button></div></div>
+    <button onclick="saveClient()" id="btnSaveClient" class="w-full bg-green-600 text-white font-extrabold py-3 rounded-xl shadow text-sm">Guardar Cliente</button>
   </div>
+</div>
 
-  <div id="appScreen" class="hidden max-w-2xl mx-auto">
-    <header class="bg-green-700 text-white p-4 sticky top-0 z-30 shadow-md">
-      <div class="flex justify-between items-center">
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="text-2xl">🌱</span>
-            <h1 id="appTitle" class="text-lg font-extrabold leading-tight">Jardineros Pro</h1>
-          </div>
-          <div class="flex items-center gap-2 mt-1">
-            <span id="planBadge" class="text-[11px] bg-green-900 text-green-200 px-2 py-0.5 rounded-full font-semibold">Prueba Activa</span>
-            <span id="cloudBadge" class="text-[11px] bg-yellow-500 text-gray-900 px-2 py-0.5 rounded-full font-bold">⏳ Sincronizando...</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="toggleLang()" id="langBtnApp" class="bg-green-800 hover:bg-green-900 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs">ES → EN</button>
-          <button onclick="logoutUser()" id="btnLogout" class="bg-red-600 hover:bg-red-700 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs">Salir</button>
-        </div>
-      </div>
-    </header>
-
-    <div id="debtAlertBanner" class="hidden bg-red-600 text-white px-4 py-2.5 text-xs font-bold flex justify-between items-center shadow">
-      <span id="debtAlertText">⚠️ Tienes clientes con meses pendientes de pago.</span>
-      <button onclick="filterDebtOnly()" id="btnSeeDebts" class="bg-white text-red-700 px-2.5 py-1 rounded-lg font-extrabold">Ver Adeudos</button>
+<div id="paymentModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  <div class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-3">
+    <div class="flex justify-between items-center"><h3 id="payModalTitle" class="font-extrabold text-base text-gray-800">Registrar Pago</h3><button onclick="closePaymentModal()" class="text-gray-500 font-bold text-xl">✕</button></div>
+    <p id="payModalClientName" class="text-xs font-bold text-green-700"></p>
+    <input type="hidden" id="payClientId"><input type="hidden" id="payType">
+    <div class="grid grid-cols-2 gap-2">
+      <div><label id="lblPayMonth" class="text-xs font-bold text-gray-700">Mes</label><select id="payMonthSelect" class="w-full border border-gray-300 rounded-xl px-2.5 py-2 text-sm bg-white"></select></div>
+      <div><label id="lblPayYear" class="text-xs font-bold text-gray-700">Año</label><select id="payYearSelect" class="w-full border border-gray-300 rounded-xl px-2.5 py-2 text-sm bg-white"><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option></select></div>
     </div>
+    <div><label id="lblPayAmount" class="text-xs font-bold text-gray-700">Monto ($ USD)</label><input id="payAmountInput" type="number" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    <div><label id="lblPayNote" class="text-xs font-bold text-gray-700">Detalle / Nota del pago</label><input id="payNoteInput" type="text" placeholder="Ej. Mensualidad / Extra" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    <button onclick="confirmPaymentAction()" id="btnConfirmPay" class="w-full bg-green-600 text-white font-extrabold py-3 rounded-xl text-sm shadow">Guardar Registro</button>
+  </div>
+</div>
 
-    <section id="tabRuta" class="p-4 space-y-4">
-      <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1" id="dayFilters"></div>
-      <div class="flex justify-between items-center">
-        <h2 id="routeHeading" class="font-extrabold text-gray-800 text-base">Ruta de Trabajo</h2>
-        <span id="routeSummary" class="text-xs font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-full">0 clientes</span>
-      </div>
-      <div id="routeList" class="space-y-3"></div>
-    </section>
+<div id="clientNoteModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  <div class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-3">
+    <div class="flex justify-between items-center"><h3 id="cNoteModalTitle" class="font-extrabold text-base text-gray-800">Notas del Cliente</h3><button onclick="closeClientNoteModal()" class="text-gray-500 font-bold text-xl">✕</button></div>
+    <p id="cNoteClientName" class="text-xs font-bold text-green-700"></p>
+    <input type="hidden" id="noteClientId">
+    <div class="flex gap-2"><textarea id="quickClientNoteText" rows="4" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm"></textarea><button onclick="startVoice('quickClientNoteText')" class="bg-blue-600 text-white px-3 rounded-xl font-bold text-lg">🎙️</button></div>
+    <button onclick="saveQuickClientNote()" id="btnSaveQuickClientNote" class="w-full bg-green-600 text-white font-extrabold py-2.5 rounded-xl text-sm">Guardar Nota del Cliente</button>
+  </div>
+</div>
 
-    <section id="tabClientes" class="hidden p-4 space-y-4">
-      <div class="flex justify-between items-center">
-        <h2 id="clientsHeading" class="font-extrabold text-gray-800 text-base">Mis Clientes</h2>
-        <button onclick="openClientModal()" id="btnNewClient" class="bg-green-600 hover:bg-green-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow">+ Nuevo Cliente</button>
-      </div>
-      <input id="searchClientInput" oninput="renderAll()" type="text" placeholder="Buscar por nombre, teléfono o dirección..." class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm shadow-sm focus:outline-none focus:border-green-600" />
-      <div id="clientsList" class="space-y-3"></div>
-    </section>
+<script>
+const SUPABASE_URL = 'https://supabase.co';
+const SUPABASE_KEY = 'sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjCsW';
+const OWNER_EMAIL = 'gena197590@gmail.com';
+let lang = localStorage.getItem('jp_lang') || 'es';
+let currentUser = localStorage.getItem('jp_user') || '';
+let selectedDay = 'Todos';
+let appData = { clients: [], notes: [], movements: [] };
+const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS_LIST = ['Todos','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Adeudos'];
 
-    <section id="tabLibreta" class="hidden p-4 space-y-4">
-      <h2 id="notesHeading" class="font-extrabold text-gray-800 text-base">Libreta Rápida</h2>
-      <div class="bg-white p-3.5 rounded-2xl shadow-sm space-y-2.5">
-        <div class="flex gap-2">
-          <textarea id="noteInput" rows="2" placeholder="Escribe o dicta una nota rápida..." class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:outline-none focus:border-green-600"></textarea>
-          <button onclick="startVoice('noteInput')" class="bg-blue-600 text-white px-3.5 rounded-xl font-bold text-lg shadow" title="Dictar por voz">🎙️</button>
-        </div>
-        <button onclick="addGeneralNote()" id="btnSaveNote" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl text-sm">Guardar Nota</button>
-      </div>
-      <div id="generalNotesList" class="space-y-2.5"></div>
-    </section>
-
-    <section id="tabConta" class="hidden p-4 space-y-4">
-      <div class="flex justify-between items-center">
-        <h2 id="financeHeading" class="font-extrabold text-gray-800 text-base">Contabilidad</h2>
-        <button onclick="syncCloud(true)" id="btnSyncNow" class="bg-blue-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow">🔄 Sincronizar Nube</button>
-      </div>
-
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-green-500">
-          <p id="lblIncome" class="text-[11px] text-gray-500 font-bold">Ingresos</p>
-          <p id="totalIncome" class="text-base font-extrabold text-green-700">$0</p>
-        </div>
-        <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-red-500">
-          <p id="lblExpenses" class="text-[11px] text-gray-500 font-bold">Gastos</p>
-          <p id="totalExpenses" class="text-base font-extrabold text-red-600">$0</p>
-        </div>
-        <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-blue-500">
-          <p id="lblProfit" class="text-[11px] text-gray-500 font-bold">Ganancia</p>
-          <p id="totalProfit" class="text-base font-extrabold text-blue-700">$0</p>
-        </div>
-      </div>
-
-      <div class="bg-white p-3.5 rounded-2xl shadow-sm space-y-2.5">
-        <h3 id="addExpenseHeading" class="font-bold text-sm text-gray-800">Registrar Gasto (Gasolina, herramienta...)</h3>
-        <div class="grid grid-cols-3 gap-2">
-          <input id="expDesc" type="text" placeholder="Concepto" class="col-span-2 border border-gray-300 rounded-xl px-3 py-2 text-sm" />
-          <input id="expAmount" type="number" placeholder="$ Monto" class="border border-gray-300 rounded-xl px-3 py-2 text-sm" />
-        </div>
-        <button onclick="addExpense()" id="btnAddExpense" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-sm">+ Agregar Gasto</button>
-      </div>
-
-      <div class="bg-white p-3.5 rounded-2xl shadow-sm space-y-2">
-        <h3 id="movHeading" class="font-bold text-sm text-gray-800">Movimientos Recientes</h3>
-        <div id="movementsList" class="space-y-2 max-h-72 overflow-y-auto"></div>
-      </div>
-    </section>
-
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-30 max-w-2xl mx-auto shadow-lg">
-      <button onclick="switchTab('Ruta')" id="navRuta" class="flex flex-col items-center text-green-700 font-extrabold text-xs">
-        <span class="text-xl">📍</span><span id="txtNavRuta">Ruta</span>
-      </button>
-      <button onclick="switchTab('Clientes')" id="navClientes" class="flex flex-col items-center text-gray-500 font-bold text-xs">
+const I18N = {
+  es: {
+    authTitle:'Jardineros Pro', authSubtitle:'Administra tu ruta, clientes, cobros y gastos desde tu celular.', lblEmail:'Correo electrónico', btnEnter:'Entrar / Crear Cuenta (14 días gratis)', authNote:'Tus datos se respaldan automáticamente en la nube.', langBtn:'ES → EN',
+    pwTitle:'Tu prueba gratis ha terminado', pwDesc:'Activa tu suscripción mensual por solo $14.99/mes para seguir usando Jardineros Pro sin límites.', pwBtn:'Suscribirme ahora ($14.99/mes)', pwRefresh:'Ya pagué, verificar acceso', pwLogout:'Cerrar sesión',
+    appTitle:'Jardineros Pro', ownerBadge:'👑 Dueño Vitalicio', trialBadge:'✅ Prueba Activa', cloudSaved:'☁️ Guardado en la Nube', cloudSyncing:'⏳ Sincronizando...', cloudOffline:'⚠️ Guardado Local', btnLogout:'Salir',
+    debtAlert:'⚠️ Tienes clientes con meses pendientes de pago.', btnSeeDebts:'Ver Adeudos', routeHeading:'Ruta de Trabajo', clientsHeading:'Mis Clientes', btnNewClient:'+ Nuevo Cliente', searchPlaceholder:'Buscar por nombre, teléfono o dirección...',
+    notesHeading:'Libreta Rápida', notePlaceholder:'Escribe o dicta una nota rápida...', btnSaveNote:'Guardar Nota', financeHeading:'Contabilidad', btnSyncNow:'🔄 Sincronizar Nube', lblIncome:'Ingresos', lblExpenses:'Gastos', lblProfit:'Ganancia',
+    addExpenseHeading:'Registrar Gasto (Gasolina, herramienta...)', btnAddExpense:'+ Agregar Gasto', movHeading:'Movimientos Recientes', navRuta:'Ruta', navClientes:'Clientes', navLibreta:'Libreta', navConta:'Conta',
+    days:{Todos:'Todos',Lunes:'Lunes',Martes:'Martes',Miércoles:'Miércoles',Jueves:'Jueves',Viernes:'Viernes',Sábado:'Sábado',Adeudos:'🔴 Adeudos'}, freqs:{Semanal:'Semanal',Quincenal:'Quincenal',Mensual:'Mensual'},
+    btnAddPay:'+ Pago', btnAddDebt:'+ Debe', btnClientNote:'📝 Nota', btnEdit:'Editar', btnDel:'Borrar', paidHistoryTitle:'Pagos registrados:', debtHistoryTitle:'Meses que debe:', noHistory:'Sin pagos ni adeudos registrados aún.',
+    confirmPayDebt:'¿Marcar este mes pendiente como PAGADO y sumarlo a Contabilidad?', confirmDelItem:'¿Eliminar este registro?', confirmDelClient:'¿Eliminar este cliente?',
+    payModalPay:'Registrar Pago (1, 2, 3+ veces/mes)', payModalDebt:'Anotar Mes que Debe', lblPayMonth:'Mes', lblPayYear:'Año', lblPayAmount:'Monto ($ USD)', lblPayNote:'Detalle / Nota (ej. Mensualidad, Poda extra)', btnConfirmPay:'Guardar Registro',
+    cNoteModalTitle:'Notas Privadas del Cliente', btnSaveQuickClientNote:'Guardar Nota del Cliente', modalNewClient:'Nuevo Cliente', modalEditClient:'Editar Cliente',
+    lblCName:'Nombre completo *', lblCPhone:'Teléfono', lblCPrice:'Tarifa ($ USD)', lblCAddress:'Dirección', lblCDay:'Día de visita', lblCFreq:'Frecuencia', lblCNotes:'Notas privadas del cliente', btnSaveClient:'Guardar Cliente', clientsCount:'clientes',
+    waRemindDebt:(n,m,tot)=>`Hola ${n}, te recuerdo amablemente tu saldo pendiente de jardinería correspondiente a: ${m} (Total: $${tot}). ¡Gracias!`, waGreet:(n)=>`Hola ${n}, te saludamos de tu servicio de jardinería.`
+  },
+  en: {
+    authTitle:'Gardeners Pro', authSubtitle:'Manage your route, clients, payments and expenses from your phone.', lblEmail:'Email address', btnEnter:'Sign In / Create Account (14-day free trial)', authNote:'Your data is automatically backed up to the cloud.', langBtn:'EN → ES',
+    pwTitle:'Your free trial has ended', pwDesc:'Activate your monthly subscription for only $14.99/mo to keep using Gardeners Pro unlimited.', pwBtn:'Subscribe Now ($14.99/mo)', pwRefresh:'I already paid, verify access', pwLogout:'Log out',
+    appTitle:'Gardeners Pro', ownerBadge:'👑 Lifetime Owner', trialBadge:'✅ Active Plan', cloudSaved:'☁️ Saved to Cloud', cloudSyncing:'⏳ Syncing...', cloudOffline:'⚠️ Saved Locally', btnLogout:'Exit',
+    debtAlert:'⚠️ You have clients with overdue unpaid months.', btnSeeDebts:'View Debts', routeHeading:'Work Route', clientsHeading:'My Clients', btnNewClient:'+ New Client', searchPlaceholder:'Search by name, phone or address...',
+    notesHeading:'Quick Notes', notePlaceholder:'Type or dictate a quick note...', btnSaveNote:'Save Note', financeHeading:'Accounting', btnSyncNow:'🔄 Sync Cloud', lblIncome:'Income', lblExpenses:'Expenses', lblProfit:'Profit',
