@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Jardineros Pro">
-<script src="https://tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
 body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -36,7 +36,7 @@ body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, Bli
     <div class="text-5xl mb-3">🔒</div>
     <h2 id="pwTitle" class="text-2xl font-extrabold mb-2">Tu prueba gratis ha terminado</h2>
     <p id="pwDesc" class="text-sm text-gray-300 mb-5">Activa tu suscripción mensual por solo $14.99/mes para seguir usando Jardineros Pro sin límites.</p>
-    <a href="https://stripe.com" target="_blank" id="pwBtn" class="block w-full bg-green-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg mb-3">Suscribirme ahora ($14.99/mes)</a>
+    <a href="https://buy.stripe.com/5kQ9AS4cQ33d58jbwpgIo02" target="_blank" id="pwBtn" class="block w-full bg-green-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg mb-3">Suscribirme ahora ($14.99/mes)</a>
     <button onclick="checkSubscription(true)" id="pwRefresh" class="w-full bg-gray-700 text-gray-200 font-semibold py-2.5 rounded-xl text-sm mb-2">Ya pagué, verificar acceso</button>
     <button onclick="logoutUser()" id="pwLogout" class="text-xs text-gray-400 underline mt-2">Cerrar sesión</button>
   </div>
@@ -128,8 +128,50 @@ body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, Bli
 
 <div id="clientModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
   <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center"><h3 id="modalClientTitle" class="font-extrabold text-lg text-gray-800">Nuevo Cliente</h3><button onclick="closeClientModal()" class="text-gray-500 font-bold text-xl">✕</button></div>
+    <input type="hidden" id="editClientId">
+    <div><label id="lblCName" class="text-xs font-bold text-gray-700">Nombre completo *</label><input id="cName" type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    <div class="grid grid-cols-2 gap-2">
+      <div><label id="lblCPhone" class="text-xs font-bold text-gray-700">Teléfono</label><input id="cPhone" type="tel" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+      <div><label id="lblCPrice" class="text-xs font-bold text-gray-700">Tarifa ($ USD)</label><input id="cPrice" type="number" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    </div>
+    <div><label id="lblCAddress" class="text-xs font-bold text-gray-700">Dirección</label><input id="cAddress" type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    <div class="grid grid-cols-2 gap-2">
+      <div><label id="lblCDay" class="text-xs font-bold text-gray-700">Día de visita</label><select id="cDay" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white"></select></div>
+      <div><label id="lblCFreq" class="text-xs font-bold text-gray-700">Frecuencia</label><select id="cFreq" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm bg-white"></select></div>
+    </div>
+    <div><label id="lblCNotes" class="text-xs font-bold text-gray-700">Notas privadas del cliente</label><div class="flex gap-2"><textarea id="cNotes" rows="2" class="w-full border border-gray-300 rounded-xl p-2 text-sm"></textarea><button type="button" onclick="startVoice('cNotes')" class="bg-blue-600 text-white px-3 rounded-xl font-bold">🎙️</button></div></div>
+    <button onclick="saveClient()" id="btnSaveClient" class="w-full bg-green-600 text-white font-extrabold py-3 rounded-xl shadow text-sm">Guardar Cliente</button>
+  </div>
+</div>
+
+<div id="paymentModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  <div class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-3">
+    <div class="flex justify-between items-center"><h3 id="payModalTitle" class="font-extrabold text-base text-gray-800">Registrar Pago</h3><button onclick="closePaymentModal()" class="text-gray-500 font-bold text-xl">✕</button></div>
+    <p id="payModalClientName" class="text-xs font-bold text-green-700"></p>
+    <input type="hidden" id="payClientId"><input type="hidden" id="payType">
+    <div class="grid grid-cols-2 gap-2">
+      <div><label id="lblPayMonth" class="text-xs font-bold text-gray-700">Mes</label><select id="payMonthSelect" class="w-full border border-gray-300 rounded-xl px-2.5 py-2 text-sm bg-white"></select></div>
+      <div><label id="lblPayYear" class="text-xs font-bold text-gray-700">Año</label><select id="payYearSelect" class="w-full border border-gray-300 rounded-xl px-2.5 py-2 text-sm bg-white"><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option></select></div>
+    </div>
+    <div><label id="lblPayAmount" class="text-xs font-bold text-gray-700">Monto ($ USD)</label><input id="payAmountInput" type="number" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    <div><label id="lblPayNote" class="text-xs font-bold text-gray-700">Detalle / Nota del pago</label><input id="payNoteInput" type="text" placeholder="Ej. Mensualidad / Extra" class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm"></div>
+    <button onclick="confirmPaymentAction()" id="btnConfirmPay" class="w-full bg-green-600 text-white font-extrabold py-3 rounded-xl text-sm shadow">Guardar Registro</button>
+  </div>
+</div>
+
+<div id="clientNoteModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+  <div class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-3">
+    <div class="flex justify-between items-center"><h3 id="cNoteModalTitle" class="font-extrabold text-base text-gray-800">Notas del Cliente</h3><button onclick="closeClientNoteModal()" class="text-gray-500 font-bold text-xl">✕</button></div>
+    <p id="cNoteClientName" class="text-xs font-bold text-green-700"></p>
+    <input type="hidden" id="noteClientId">
+    <div class="flex gap-2"><textarea id="quickClientNoteText" rows="4" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm"></textarea><button onclick="startVoice('quickClientNoteText')" class="bg-blue-600 text-white px-3 rounded-xl font-bold text-lg">🎙️</button></div>
+    <button onclick="saveQuickClientNote()" id="btnSaveQuickClientNote" class="w-full bg-green-600 text-white font-extrabold py-2.5 rounded-xl text-sm">Guardar Nota del Cliente</button>
+  </div>
+</div>
+
 <script>
-const SUPABASE_URL = 'https://supabase.co';
+const SUPABASE_URL = 'https://rjmrhjpmvptnzetcjsfo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjCsW';
 const OWNER_EMAIL = 'gena197590@gmail.com';
 let lang = localStorage.getItem('jp_lang') || 'es';
@@ -154,7 +196,7 @@ const I18N = {
     payModalPay:'Registrar Pago (1, 2, 3+ veces/mes)', payModalDebt:'Anotar Mes que Debe', lblPayMonth:'Mes', lblPayYear:'Año', lblPayAmount:'Monto ($ USD)', lblPayNote:'Detalle / Nota (ej. Mensualidad, Poda extra)', btnConfirmPay:'Guardar Registro',
     cNoteModalTitle:'Notas Privadas del Cliente', btnSaveQuickClientNote:'Guardar Nota del Cliente', modalNewClient:'Nuevo Cliente', modalEditClient:'Editar Cliente',
     lblCName:'Nombre completo *', lblCPhone:'Teléfono', lblCPrice:'Tarifa ($ USD)', lblCAddress:'Dirección', lblCDay:'Día de visita', lblCFreq:'Frecuencia', lblCNotes:'Notas privadas del cliente', btnSaveClient:'Guardar Cliente', clientsCount:'clientes',
-    waRemindDebt:(n,m,tot)=>`Hola ${n}, te recuerdo amablemente tu saldo pendiente de jardinería correspondiente a: ${m} (Saldo pendiente: $${tot}). ¡Gracias!`, waGreet:(n)=>`Hola ${n}, te saludamos de tu servicio de jardinería.`
+    waRemindDebt:(n,m,tot)=>`Hola ${n}, te recuerdo amablemente tu saldo pendiente de jardinería correspondiente a: ${m} (Total: $${tot}). ¡Gracias!`, waGreet:(n)=>`Hola ${n}, te saludamos de tu servicio de jardinería.`
   },
   en: {
     authTitle:'Gardeners Pro', authSubtitle:'Manage your route, clients, payments and expenses from your phone.', lblEmail:'Email address', btnEnter:'Sign In / Create Account (14-day free trial)', authNote:'Your data is automatically backed up to the cloud.', langBtn:'EN → ES',
@@ -169,7 +211,7 @@ const I18N = {
     payModalPay:'Record Payment (1, 2, 3+ times/mo)', payModalDebt:'Add Owed Month', lblPayMonth:'Month', lblPayYear:'Year', lblPayAmount:'Amount ($ USD)', lblPayNote:'Payment note (e.g. Monthly, Tree trim)', btnConfirmPay:'Save Record',
     cNoteModalTitle:'Private Client Notes', btnSaveQuickClientNote:'Save Client Note', modalNewClient:'New Client', modalEditClient:'Edit Client',
     lblCName:'Full Name *', lblCPhone:'Phone', lblCPrice:'Rate ($ USD)', lblCAddress:'Address', lblCDay:'Visit Day', lblCFreq:'Frequency', lblCNotes:'Private client notes', btnSaveClient:'Save Client', clientsCount:'clients',
-    waRemindDebt:(n,m,tot)=>`Hi ${n}, friendly reminder of your pending landscaping balance for: ${m} (Balance due: $${tot}). Thank you!`, waGreet:(n)=>`Hi ${n}, greetings from your landscaping service.`
+    waRemindDebt:(n,m,tot)=>`Hi ${n}, friendly reminder of your pending landscaping balance for: ${m} (Total: $${tot}). Thank you!`, waGreet:(n)=>`Hi ${n}, greetings from your landscaping service.`
   }
 };
 
@@ -214,6 +256,252 @@ async function checkSubscription(manual=false){
   try{
     const res=await fetch(`${SUPABASE_URL}/rest/v1/suscripciones?email=eq.${encodeURIComponent(currentUser)}&select=*`,{headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
     const rows=await res.json();
+    const firstRow = Array.isArray(rows) ? rows[0] : null;
     const today=new Date().toISOString().slice(0,10);
-    if(rows&&rows.length>0){
-      if(rows[0].activa && rows[0].vence>=today){
+    if(firstRow){
+      if(firstRow.activa && firstRow.vence>=today){
+        if(manual){ document.getElementById('paywallScreen').classList.add('hidden'); document.getElementById('appScreen').classList.remove('hidden'); }
+        return true;
+      }
+      return false;
+    }else{
+      const d=new Date(); d.setDate(d.getDate()+14);
+      await fetch(`${SUPABASE_URL}/rest/v1/suscripciones`,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({email:currentUser,activa:true,vence:d.toISOString().slice(0,10)})});
+      return true;
+    }
+  }catch(e){ return true; }
+}
+
+function setCloudStatus(s){
+  const b=document.getElementById('cloudBadge');
+  if(s==='saved'){ b.className='text-[11px] bg-green-200 text-green-900 px-2 py-0.5 rounded-full font-bold'; b.textContent=t('cloudSaved'); }
+  else if(s==='syncing'){ b.className='text-[11px] bg-yellow-400 text-gray-900 px-2 py-0.5 rounded-full font-bold'; b.textContent=t('cloudSyncing'); }
+  else{ b.className='text-[11px] bg-red-200 text-red-900 px-2 py-0.5 rounded-full font-bold'; b.textContent=t('cloudOffline'); }
+}
+
+function saveLocal(){ localStorage.setItem(`jp_data_${currentUser}`,JSON.stringify(appData)); }
+
+async function syncCloud(alertOk=false){
+  if(!currentUser) return;
+  setCloudStatus('syncing'); saveLocal();
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/datos_jardinero?on_conflict=email`,{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify({email:currentUser,contenido:appData})
+    });
+    if(res.ok){ setCloudStatus('saved'); if(alertOk) alert(lang==='es'?'☁️ Nube sincronizada.':'☁️ Cloud synced.'); }
+    else setCloudStatus('offline');
+  }catch(e){ setCloudStatus('offline'); }
+}
+
+function normalizeData(){
+  if(!Array.isArray(appData.clients)) appData.clients=[];
+  if(!Array.isArray(appData.notes)) appData.notes=[];
+  if(!Array.isArray(appData.movements)) appData.movements=[];
+  appData.clients.forEach(c=>{ if(!Array.isArray(c.payments)) c.payments=[]; if(!Array.isArray(c.debts)) c.debts=[]; if(typeof c.notes!=='string') c.notes=''; });
+}
+
+async function loadFromCloud(){
+  const raw=localStorage.getItem(`jp_data_${currentUser}`);
+  if(raw){ try{ appData=JSON.parse(raw); }catch(e){} }
+  normalizeData();
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/datos_jardinero?email=eq.${encodeURIComponent(currentUser)}&select=contenido`,{headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}});
+    const rows=await res.json();
+    const firstRow = Array.isArray(rows) ? rows[0] : null;
+    if(firstRow && firstRow.contenido){
+      const cd=firstRow.contenido;
+      if((Array.isArray(cd.clients)&&cd.clients.length>0)||appData.clients.length===0){ appData=cd; normalizeData(); saveLocal(); }
+      else if(appData.clients.length>0){ await syncCloud(); }
+      setCloudStatus('saved');
+    }else{ await syncCloud(); }
+  }catch(e){ setCloudStatus('offline'); }
+}
+
+async function initApp(){
+  document.getElementById('authScreen').classList.add('hidden');
+  if(!(await checkSubscription())){ document.getElementById('paywallScreen').classList.remove('hidden'); return; }
+  document.getElementById('paywallScreen').classList.add('hidden');
+  document.getElementById('appScreen').classList.remove('hidden');
+  applyTranslations(); await loadFromCloud(); renderAll();
+}
+
+function switchTab(tab){
+  ['Ruta','Clientes','Libreta','Conta'].forEach(n=>{
+    document.getElementById('tab'+n).classList.add('hidden');
+    const nav=document.getElementById('nav'+n); nav.classList.remove('text-green-700','font-extrabold'); nav.classList.add('text-gray-500','font-bold');
+  });
+  document.getElementById('tab'+tab).classList.remove('hidden');
+  const act=document.getElementById('nav'+tab); act.classList.remove('text-gray-500','font-bold'); act.classList.add('text-green-700','font-extrabold');
+  renderAll();
+}
+
+function filterDebtOnly(){ selectedDay='Adeudos'; switchTab('Ruta'); }
+
+function renderClientCard(c){
+  const mNames=lang==='es'?MONTHS_ES:MONTHS_EN;
+  const debts=c.debts||[], payments=c.payments||[];
+  const totalOwed=debts.reduce((s,d)=>s+Number(d.amount||c.price||0),0);
+  const waText=debts.length>0?I18N[lang].waRemindDebt(c.name,debts.map(d=>`${mNames[d.monthIndex]} ${d.year}`).join(', '),totalOwed):I18N[lang].waGreet(c.name);
+  const ph=(c.phone||'').replace(/\D/g,'');
+  const waUrl=ph?`https://wa.me/${ph.length===10?'1'+ph:ph}?text=${encodeURIComponent(waText)}`:'#';
+  const smsUrl=ph?`sms:${ph}?body=${encodeURIComponent(waText)}`:'#';
+  const mapsUrl=c.address?`https://maps.google.com/?q=${encodeURIComponent(c.address)}`:'#';
+
+  const debtsHtml=debts.map((d,i)=>`<span onclick="convertDebtToPaid('${c.id}',${i})" class="cursor-pointer inline-flex items-center gap-1 bg-red-100 border border-red-300 text-red-800 text-[11px] font-extrabold px-2 py-1 rounded-lg">🔴 ${mNames[d.monthIndex]} ${d.year} ($${d.amount}) <button onclick="event.stopPropagation();deleteDebt('${c.id}',${i})" class="ml-1 text-red-600">✕</button></span>`).join('');
+  const paymentsHtml=payments.map((p,i)=>`<span class="inline-flex items-center gap-1 bg-green-100 border border-green-300 text-green-800 text-[11px] font-bold px-2 py-1 rounded-lg">✅ ${mNames[p.monthIndex]} ${p.year} ($${p.amount}${p.note?' - '+p.note:''}) <button onclick="deletePayment('${c.id}',${i})" class="ml-1 text-green-700 font-extrabold">✕</button></span>`).join('');
+
+  return `<div class="bg-white rounded-2xl p-4 shadow-sm border-l-4 ${debts.length>0?'border-red-500':'border-green-600'} space-y-2.5">
+    <div class="flex justify-between items-start">
+      <div><h3 class="font-extrabold text-gray-900 text-base">${c.name}</h3><p class="text-xs text-gray-500">${I18N[lang].days[c.day]||c.day} • ${I18N[lang].freqs[c.freq]||c.freq}</p>${c.address?`<p class="text-xs text-gray-600 mt-0.5">📍 ${c.address}</p>`:''}</div>
+      <div class="text-right"><span class="bg-green-100 text-green-800 font-extrabold text-sm px-2.5 py-1 rounded-xl">$${c.price||0}</span>${debts.length>0?`<p class="text-[11px] font-extrabold text-red-600 mt-1">Debe: $${totalOwed}</p>`:''}</div>
+    </div>
+    ${c.notes?`<div onclick="openClientNoteModal('${c.id}')" class="cursor-pointer bg-yellow-50 border border-yellow-200 rounded-xl p-2 text-xs text-yellow-900"><b>📝 Nota:</b> ${c.notes}</div>`:''}
+    <div class="bg-gray-50 rounded-xl p-2.5 space-y-2 border border-gray-200">
+      <div class="flex justify-between items-center gap-1.5">
+        <button onclick="openPaymentModal('${c.id}','paid')" class="flex-1 bg-green-600 text-white font-extrabold py-1.5 px-2 rounded-lg text-xs shadow-sm">${t('btnAddPay')}</button>
+        <button onclick="openPaymentModal('${c.id}','debt')" class="flex-1 bg-red-600 text-white font-extrabold py-1.5 px-2 rounded-lg text-xs shadow-sm">${t('btnAddDebt')}</button>
+        <button onclick="openClientNoteModal('${c.id}')" class="bg-yellow-400 text-gray-900 font-extrabold py-1.5 px-2.5 rounded-lg text-xs shadow-sm">${t('btnClientNote')}</button>
+      </div>
+      ${debts.length>0?`<div><p class="text-[11px] font-extrabold text-red-700 mb-1">${t('debtHistoryTitle')}</p><div class="flex flex-wrap gap-1.5">${debtsHtml}</div></div>`:''}
+      ${payments.length>0?`<div><p class="text-[11px] font-extrabold text-green-700 mb-1">${t('paidHistoryTitle')}</p><div class="flex flex-wrap gap-1.5">${paymentsHtml}</div></div>`:''}
+      ${debts.length===0&&payments.length===0?`<p class="text-[11px] text-gray-400 text-center">${t('noHistory')}</p>`:''}
+    </div>
+    <div class="flex flex-wrap gap-1.5 pt-1 border-t border-gray-100">
+      ${c.address?`<a href="${mapsUrl}" target="_blank" class="bg-blue-100 text-blue-800 font-bold px-2.5 py-1.5 rounded-lg text-xs">🗺️ GPS</a>`:''}
+      ${c.phone?`<a href="${smsUrl}" class="bg-gray-100 text-gray-800 font-bold px-2.5 py-1.5 rounded-lg text-xs">💬 SMS</a>`:''}
+      ${c.phone?`<a href="${waUrl}" target="_blank" class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1.5 rounded-lg text-xs">📱 WhatsApp</a>`:''}
+      <div class="ml-auto flex gap-1.5">
+        <button onclick="openClientModal('${c.id}')" class="bg-gray-200 text-gray-800 font-bold px-2.5 py-1.5 rounded-lg text-xs">${t('btnEdit')}</button>
+        <button onclick="deleteClient('${c.id}')" class="bg-red-100 text-red-700 font-bold px-2.5 py-1.5 rounded-lg text-xs">${t('btnDel')}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderAll(){
+  document.getElementById('dayFilters').innerHTML=DAYS_LIST.map(d=>{
+    const act=selectedDay===d, isD=d==='Adeudos';
+    const cls=act?(isD?'bg-red-600 text-white':'bg-green-700 text-white'):(isD?'bg-red-100 text-red-700':'bg-white text-gray-700');
+    return `<button onclick="selectedDay='${d}';renderAll()" class="${cls} px-3 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap shadow-sm">${I18N[lang].days[d]}</button>`;
+  }).join('');
+
+  const hasDebts=appData.clients.some(c=>(c.debts||[]).length>0);
+  document.getElementById('debtAlertBanner').classList.toggle('hidden',!hasDebts);
+
+  let rc=appData.clients;
+  if(selectedDay==='Adeudos') rc=appData.clients.filter(c=>(c.debts||[]).length>0);
+  else if(selectedDay!=='Todos') rc=appData.clients.filter(c=>c.day===selectedDay);
+  document.getElementById('routeSummary').textContent=`${rc.length} ${t('clientsCount')}`;
+  document.getElementById('routeList').innerHTML=rc.map(renderClientCard).join('')||'<p class="text-center text-gray-400 text-sm py-8">No hay clientes aquí.</p>';
+
+  const q=(document.getElementById('searchClientInput').value||'').toLowerCase();
+  const fc=appData.clients.filter(c=>(c.name||'').toLowerCase().includes(q)||(c.phone||'').toLowerCase().includes(q)||(c.address||'').toLowerCase().includes(q));
+  document.getElementById('clientsList').innerHTML=fc.map(renderClientCard).join('')||'<p class="text-center text-gray-400 text-sm py-8">Sin clientes aún.</p>';
+
+  document.getElementById('generalNotesList').innerHTML=appData.notes.map((n,i)=>`<div class="bg-white p-3.5 rounded-2xl shadow-sm flex justify-between items-start gap-2"><div><p class="text-sm text-gray-800 whitespace-pre-line">${n.text}</p><p class="text-[10px] text-gray-400 mt-1">${n.date}</p></div><button onclick="deleteGeneralNote(${i})" class="text-red-500 font-bold text-xs">✕</button></div>`).join('');
+
+  let inc=0,exp=0;
+  appData.movements.forEach(m=>{ if(m.type==='income') inc+=Number(m.amount||0); else exp+=Number(m.amount||0); });
+  document.getElementById('totalIncome').textContent=`$${inc.toFixed(0)}`;
+  document.getElementById('totalExpenses').textContent=`$${exp.toFixed(0)}`;
+  document.getElementById('totalProfit').textContent=`$${(inc-exp).toFixed(0)}`;
+  document.getElementById('movementsList').innerHTML=appData.movements.map((m,i)=>`<div class="flex justify-between items-center border-b border-gray-100 pb-2 text-xs"><div><p class="font-bold text-gray-800">${m.desc}</p><p class="text-[10px] text-gray-400">${m.date}</p></div><div class="flex items-center gap-2"><span class="font-extrabold ${m.type==='income'?'text-green-600':'text-red-600'}">${m.type==='income'?'+':'-'}$${m.amount}</span><button onclick="deleteMovement(${i})" class="text-gray-400">✕</button></div></div>`).join('');
+}
+
+function openClientModal(id=''){
+  document.getElementById('editClientId').value=id;
+  if(id){
+    const c=appData.clients.find(x=>x.id===id);
+    document.getElementById('modalClientTitle').textContent=t('modalEditClient');
+    document.getElementById('cName').value=c.name||''; document.getElementById('cPhone').value=c.phone||'';
+    document.getElementById('cPrice').value=c.price||''; document.getElementById('cAddress').value=c.address||'';
+    document.getElementById('cDay').value=c.day||'Lunes'; document.getElementById('cFreq').value=c.freq||'Semanal';
+    document.getElementById('cNotes').value=c.notes||'';
+  }else{
+    document.getElementById('modalClientTitle').textContent=t('modalNewClient');
+    ['cName','cPhone','cPrice','cAddress','cNotes'].forEach(k=>document.getElementById(k).value='');
+    document.getElementById('cDay').value='Lunes'; document.getElementById('cFreq').value='Semanal';
+  }
+  document.getElementById('clientModal').classList.remove('hidden');
+}
+function closeClientModal(){ document.getElementById('clientModal').classList.add('hidden'); }
+
+async function saveClient(){
+  const id=document.getElementById('editClientId').value, name=document.getElementById('cName').value.trim();
+  if(!name) return alert(lang==='es'?'Escribe el nombre.':'Enter name.');
+  const data={ name, phone:document.getElementById('cPhone').value.trim(), price:Number(document.getElementById('cPrice').value||0), address:document.getElementById('cAddress').value.trim(), day:document.getElementById('cDay').value, freq:document.getElementById('cFreq').value, notes:document.getElementById('cNotes').value.trim() };
+  if(id){ const idx=appData.clients.findIndex(x=>x.id===id); if(idx>=0) appData.clients[idx]={...appData.clients[idx],...data}; }
+  else appData.clients.unshift({id:'c_'+Date.now(),...data,payments:[],debts:[]});
+  closeClientModal(); renderAll(); await syncCloud();
+}
+
+async function deleteClient(id){ if(!confirm(t('confirmDelClient'))) return; appData.clients=appData.clients.filter(c=>c.id!==id); renderAll(); await syncCloud(); }
+
+function openPaymentModal(cid,type){
+  const c=appData.clients.find(x=>x.id===cid); if(!c) return;
+  document.getElementById('payClientId').value=cid; document.getElementById('payType').value=type;
+  document.getElementById('payModalClientName').textContent=c.name;
+  document.getElementById('payModalTitle').textContent=type==='paid'?t('payModalPay'):t('payModalDebt');
+  document.getElementById('payMonthSelect').selectedIndex=new Date().getMonth();
+  document.getElementById('payYearSelect').value=String(new Date().getFullYear());
+  document.getElementById('payAmountInput').value=c.price||0; document.getElementById('payNoteInput').value='';
+  document.getElementById('paymentModal').classList.remove('hidden');
+}
+function closePaymentModal(){ document.getElementById('paymentModal').classList.add('hidden'); }
+
+async function confirmPaymentAction(){
+  const cid=document.getElementById('payClientId').value, type=document.getElementById('payType').value;
+  const monthIndex=Number(document.getElementById('payMonthSelect').value), year=document.getElementById('payYearSelect').value;
+  const amount=Number(document.getElementById('payAmountInput').value||0), note=document.getElementById('payNoteInput').value.trim();
+  const c=appData.clients.find(x=>x.id===cid); if(!c) return;
+  const mNames=lang==='es'?MONTHS_ES:MONTHS_EN, today=new Date().toLocaleDateString();
+  if(type==='paid'){
+    c.payments.push({monthIndex,year,amount,note,date:today});
+    appData.movements.unshift({type:'income',desc:`${c.name} - ${mNames[monthIndex]} ${year}${note?' ('+note+')':''}`,amount,date:today});
+  }else{ c.debts.push({monthIndex,year,amount,note}); }
+  closePaymentModal(); renderAll(); await syncCloud();
+}
+
+async function convertDebtToPaid(cid,idx){
+  if(!confirm(t('confirmPayDebt'))) return;
+  const c=appData.clients.find(x=>x.id===cid); if(!c) return;
+  const d=c.debts[idx]; if(!d) return;
+  const mNames=lang==='es'?MONTHS_ES:MONTHS_EN, today=new Date().toLocaleDateString(), amount=Number(d.amount||c.price||0);
+  c.debts.splice(idx,1); c.payments.push({monthIndex:d.monthIndex,year:d.year,amount,note:d.note||'',date:today});
+  appData.movements.unshift({type:'income',desc:`${c.name} - ${mNames[d.monthIndex]} ${d.year}`,amount,date:today});
+  renderAll(); await syncCloud();
+}
+
+async function deletePayment(cid,idx){ if(!confirm(t('confirmDelItem'))) return; const c=appData.clients.find(x=>x.id===cid); if(c){ c.payments.splice(idx,1); renderAll(); await syncCloud(); } }
+async function deleteDebt(cid,idx){ if(!confirm(t('confirmDelItem'))) return; const c=appData.clients.find(x=>x.id===cid); if(c){ c.debts.splice(idx,1); renderAll(); await syncCloud(); } }
+
+function openClientNoteModal(cid){
+  const c=appData.clients.find(x=>x.id===cid); if(!c) return;
+  document.getElementById('noteClientId').value=cid; document.getElementById('cNoteClientName').textContent=c.name;
+  document.getElementById('quickClientNoteText').value=c.notes||''; document.getElementById('clientNoteModal').classList.remove('hidden');
+}
+function closeClientNoteModal(){ document.getElementById('clientNoteModal').classList.add('hidden'); }
+async function saveQuickClientNote(){
+  const cid=document.getElementById('noteClientId').value, c=appData.clients.find(x=>x.id===cid);
+  if(c){ c.notes=document.getElementById('quickClientNoteText').value.trim(); closeClientNoteModal(); renderAll(); await syncCloud(); }
+}
+
+async function addGeneralNote(){ const txt=document.getElementById('noteInput').value.trim(); if(!txt) return; appData.notes.unshift({text:txt,date:new Date().toLocaleString()}); document.getElementById('noteInput').value=''; renderAll(); await syncCloud(); }
+async function deleteGeneralNote(i){ appData.notes.splice(i,1); renderAll(); await syncCloud(); }
+async function addExpense(){ const d=document.getElementById('expDesc').value.trim(), a=Number(document.getElementById('expAmount').value||0); if(!d||a<=0) return; appData.movements.unshift({type:'expense',desc:d,amount:a,date:new Date().toLocaleDateString()}); document.getElementById('expDesc').value=''; document.getElementById('expAmount').value=''; renderAll(); await syncCloud(); }
+async function deleteMovement(i){ appData.movements.splice(i,1); renderAll(); await syncCloud(); }
+
+function startVoice(id){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR) return alert(lang==='es'?'Voz no soportada aquí.':'Voice not supported.');
+  const r=new SR(); r.lang=lang==='es'?'es-MX':'en-US';
+  r.onresult=(e)=>{ const el=document.getElementById(id), tr=e.results[0][0].transcript; el.value=el.value?el.value+' '+tr:tr; };
+  r.start();
+}
+
+if(currentUser) initApp(); else applyTranslations();
+</script>
+</body>
+</html>
