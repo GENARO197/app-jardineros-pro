@@ -1,131 +1,224 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Jardineros Pro</title>
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Jardineros Pro">
-<script src="https://tailwindcss.com"></script>
-<style>
-body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-.no-scrollbar::-webkit-scrollbar { display: none; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Jardineros Pro</title>
+  <style>
+    :root {
+      --bg: #f4f7f5;
+      --card: #ffffff;
+      --primary: #1b7a43;
+      --primary-dark: #135c31;
+      --accent: #e8f5ee;
+      --text: #1c2420;
+      --muted: #607067;
+      --danger: #c62828;
+      --danger-bg: #fdecea;
+      --warn: #b45309;
+      --warn-bg: #fef3c7;
+      --border: #dce5df;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 90px; }
+    header {
+      background: var(--primary); color: #fff; padding: 18px 16px 14px;
+      position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    header h1 { margin: 0; font-size: 20px; font-weight: 700; }
+    header p { margin: 4px 0 0; font-size: 13px; opacity: 0.9; }
+    .container { padding: 14px; max-width: 600px; margin: 0 auto; }
+    .summary {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;
+    }
+    .stat {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 10px 8px; text-align: center;
+    }
+    .stat span { display: block; font-size: 11px; color: var(--muted); font-weight: 600; }
+    .stat strong { display: block; font-size: 16px; margin-top: 3px; color: var(--primary-dark); }
+    .stat.debt strong { color: var(--danger); }
+    .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .tab {
+      flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 10px;
+      background: var(--card); font-weight: 600; font-size: 14px; color: var(--muted); cursor: pointer;
+    }
+    .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .search-box {
+      width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border);
+      font-size: 15px; margin-bottom: 12px; background: #fff;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .client-name { font-size: 17px; font-weight: 700; margin: 0; }
+    .client-meta { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .badge {
+      padding: 4px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap;
+    }
+    .badge.ok { background: var(--accent); color: var(--primary-dark); }
+    .badge.due { background: var(--danger-bg); color: var(--danger); }
+    .note-box {
+      margin-top: 9px; background: var(--warn-bg); color: #78350f; padding: 8px 10px;
+      border-radius: 8px; font-size: 13px; line-height: 1.35;
+    }
+    .history {
+      margin-top: 9px; font-size: 12px; color: var(--muted);
+      border-top: 1px dashed var(--border); padding-top: 8px;
+    }
+    .actions {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 11px;
+    }
+    .btn {
+      border: none; border-radius: 8px; padding: 9px 4px; font-size: 12px; font-weight: 700;
+      cursor: pointer; text-align: center;
+    }
+    .btn-pay { background: var(--primary); color: #fff; }
+    .btn-debt { background: var(--danger-bg); color: var(--danger); }
+    .btn-note { background: var(--warn-bg); color: var(--warn); }
+    .btn-del { background: #eef2f0; color: var(--muted); }
+    .fab {
+      position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: #fff;
+      border: none; border-radius: 999px; padding: 14px 20px; font-size: 15px; font-weight: 700;
+      box-shadow: 0 4px 14px rgba(27,122,67,0.35); cursor: pointer; z-index: 20;
+    }
+    dialog {
+      border: none; border-radius: 16px; width: 92%; max-width: 420px; padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    dialog::backdrop { background: rgba(0,0,0,0.45); }
+    dialog h3 { margin: 0 0 12px; font-size: 18px; }
+    .field { margin-bottom: 11px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--muted); }
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 9px; font-size: 15px;
+    }
+    .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+    .modal-btns button { padding: 10px 16px; border-radius: 9px; border: none; font-weight: 700; font-size: 14px; cursor: pointer; }
+    .btn-cancel { background: #e5e9e7; color: var(--text); }
+    .btn-save { background: var(--primary); color: #fff; }
+    .empty { text-align: center; color: var(--muted); padding: 30px 10px; font-size: 14px; }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-900 pb-24">
+<body>
 
-<div id="authScreen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-green-700 to-green-900">
-  <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6">
-    <div class="flex justify-between items-center mb-4">
-      <div class="flex items-center gap-2"><span class="text-3xl">🌱</span><h1 id="authTitle" class="text-2xl font-extrabold text-green-800">Jardineros Pro</h1></div>
-      <button onclick="toggleLang()" id="langBtnAuth" class="bg-green-100 text-green-800 font-bold px-3 py-1 rounded-full text-xs">ES → EN</button>
-    </div>
-    <p id="authSubtitle" class="text-sm text-gray-600 mb-5">Administra tu ruta, clientes, cobros y gastos desde tu celular.</p>
-    <div class="space-y-3">
-      <div><label id="lblEmail" class="block text-xs font-bold text-gray-700 mb-1">Correo electrónico</label><input id="emailInput" type="email" placeholder="tucorreo@ejemplo.com" class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm"></div>
-      <button onclick="loginUser()" id="btnEnter" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl shadow text-sm">Entrar / Crear Cuenta (14 días gratis)</button>
-    </div>
-    <p id="authNote" class="text-xs text-center text-gray-400 mt-4">Tus datos se respaldan automáticamente en la nube.</p>
-  </div>
-</div>
+<header>
+  <h1>🌿 Jardineros Pro</h1>
+  <p id="monthLabel">Control de clientes, cobros y notas</p>
+</header>
 
-<div id="paywallScreen" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-900 text-white">
-  <div class="bg-gray-800 w-full max-w-md rounded-2xl p-6 text-center shadow-2xl border border-gray-700">
-    <div class="text-5xl mb-3">🔒</div>
-    <h2 id="pwTitle" class="text-2xl font-extrabold mb-2">Tu prueba gratis ha terminado</h2>
-    <p id="pwDesc" class="text-sm text-gray-300 mb-5">Activa tu suscripción mensual por solo $14.99/mes para seguir usando Jardineros Pro sin límites.</p>
-    <a href="https://stripe.com" target="_blank" id="pwBtn" class="block w-full bg-green-500 text-white font-extrabold py-3.5 rounded-xl shadow-lg mb-3">Suscribirme ahora ($14.99/mes)</a>
-    <button onclick="checkSubscription(true)" id="pwRefresh" class="w-full bg-gray-700 text-gray-200 font-semibold py-2.5 rounded-xl text-sm mb-2">Ya pagué, verificar acceso</button>
-    <button onclick="logoutUser()" id="pwLogout" class="text-xs text-gray-400 underline mt-2">Cerrar sesión</button>
-  </div>
-</div>
-
-<div id="appScreen" class="hidden max-w-2xl mx-auto">
-  <header class="bg-green-700 text-white p-4 sticky top-0 z-30 shadow-md">
-    <div class="flex justify-between items-center">
-      <div>
-        <div class="flex items-center gap-2"><span class="text-2xl">🌱</span><h1 id="appTitle" class="text-lg font-extrabold">Jardineros Pro</h1></div>
-        <div class="flex items-center gap-2 mt-1">
-          <span id="planBadge" class="text-[11px] bg-green-900 text-green-200 px-2 py-0.5 rounded-full font-semibold">Prueba Activa</span>
-          <span id="cloudBadge" class="text-[11px] bg-yellow-400 text-gray-900 px-2 py-0.5 rounded-full font-bold">⏳ Sincronizando...</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-2">
-        <button onclick="toggleLang()" id="langBtnApp" class="bg-green-800 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs">ES → EN</button>
-        <button onclick="logoutUser()" id="btnLogout" class="bg-red-600 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs">Salir</button>
-      </div>
-    </div>
-  </header>
-
-  <div id="debtAlertBanner" class="hidden bg-red-600 text-white px-4 py-2.5 text-xs font-bold flex justify-between items-center shadow">
-    <span id="debtAlertText">⚠️ Tienes clientes con meses pendientes de pago.</span>
-    <button onclick="filterDebtOnly()" id="btnSeeDebts" class="bg-white text-red-700 px-2.5 py-1 rounded-lg font-extrabold">Ver Adeudos</button>
+<div class="container">
+  <div class="summary">
+    <div class="stat"><span>Clientes</span><strong id="statClients">0</strong></div>
+    <div class="stat"><span>Cobrado Mes</span><strong id="statPaid">$0</strong></div>
+    <div class="stat debt"><span>Por Cobrar</span><strong id="statDebt">$0</strong></div>
   </div>
 
-  <section id="tabRuta" class="p-4 space-y-4">
-    <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1" id="dayFilters"></div>
-    <div class="flex justify-between items-center">
-      <h2 id="routeHeading" class="font-extrabold text-gray-800 text-base">Ruta de Trabajo</h2>
-      <span id="routeSummary" class="text-xs font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-full">0 clientes</span>
-    </div>
-    <div id="routeList" class="space-y-3"></div>
-  </section>
+  <div class="tabs">
+    <button class="tab active" onclick="setFilter('all', this)">Todos</button>
+    <button class="tab" onclick="setFilter('debt', this)">Con Adeudo</button>
+    <button class="tab" onclick="setFilter('paid', this)">Al Corriente</button>
+  </div>
 
-  <section id="tabClientes" class="hidden p-4 space-y-4">
-    <div class="flex justify-between items-center">
-      <h2 id="clientsHeading" class="font-extrabold text-gray-800 text-base">Mis Clientes</h2>
-      <button onclick="openClientModal()" id="btnNewClient" class="bg-green-600 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow">+ Nuevo Cliente</button>
-    </div>
-    <input id="searchClientInput" oninput="renderAll()" type="text" placeholder="Buscar por nombre, teléfono o dirección..." class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2.5 text-sm shadow-sm">
-    <div id="clientsList" class="space-y-3"></div>
-  </section>
+  <input type="search" id="searchInput" class="search-box" placeholder="Buscar cliente o dirección..." oninput="render()" />
 
-  <section id="tabLibreta" class="hidden p-4 space-y-4">
-    <h2 id="notesHeading" class="font-extrabold text-gray-800 text-base">Libreta Rápida</h2>
-    <div class="bg-white p-3.5 rounded-2xl shadow-sm space-y-2.5">
-      <div class="flex gap-2">
-        <textarea id="noteInput" rows="2" placeholder="Escribe o dicta una nota rápida..." class="w-full border border-gray-300 rounded-xl p-2.5 text-sm"></textarea>
-        <button onclick="startVoice('noteInput')" class="bg-blue-600 text-white px-3.5 rounded-xl font-bold text-lg shadow">🎙️</button>
-      </div>
-      <button onclick="addGeneralNote()" id="btnSaveNote" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-sm">Guardar Nota</button>
-    </div>
-    <div id="generalNotesList" class="space-y-2.5"></div>
-  </section>
-
-  <section id="tabConta" class="hidden p-4 space-y-4">
-    <div class="flex justify-between items-center">
-      <h2 id="financeHeading" class="font-extrabold text-gray-800 text-base">Contabilidad</h2>
-      <button onclick="syncCloud(true)" id="btnSyncNow" class="bg-blue-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow">🔄 Sincronizar Nube</button>
-    </div>
-    <div class="grid grid-cols-3 gap-2 text-center">
-      <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-green-500"><p id="lblIncome" class="text-[11px] text-gray-500 font-bold">Ingresos</p><p id="totalIncome" class="text-base font-extrabold text-green-700">$0</p></div>
-      <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-red-500"><p id="lblExpenses" class="text-[11px] text-gray-500 font-bold">Gastos</p><p id="totalExpenses" class="text-base font-extrabold text-red-600">$0</p></div>
-      <div class="bg-white p-3 rounded-2xl shadow-sm border-b-4 border-blue-500"><p id="lblProfit" class="text-[11px] text-gray-500 font-bold">Ganancia</p><p id="totalProfit" class="text-base font-extrabold text-blue-700">$0</p></div>
-    </div>
-    <div class="bg-white p-3.5 rounded-2xl shadow-sm space-y-2.5">
-      <h3 id="addExpenseHeading" class="font-bold text-sm text-gray-800">Registrar Gasto</h3>
-      <div class="grid grid-cols-3 gap-2">
-        <input id="expDesc" type="text" placeholder="Concepto" class="col-span-2 border border-gray-300 rounded-xl px-3 py-2 text-sm">
-        <input id="expAmount" type="number" placeholder="$ Monto" class="border border-gray-300 rounded-xl px-3 py-2 text-sm">
-      </div>
-      <button onclick="addExpense()" id="btnAddExpense" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-xl text-sm">+ Agregar Gasto</button>
-    </div>
-    <div class="bg-white p-3.5 rounded-2xl shadow-sm space-y-2">
-      <h3 id="movHeading" class="font-bold text-sm text-gray-800">Movimientos Recientes</h3>
-      <div id="movementsList" class="space-y-2 max-h-72 overflow-y-auto"></div>
-    </div>
-  </section>
-
-  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-30 max-w-2xl mx-auto shadow-lg">
-    <button onclick="switchTab('Ruta')" id="navRuta" class="flex flex-col items-center text-green-700 font-extrabold text-xs"><span class="text-xl">📍</span><span id="txtNavRuta">Ruta</span></button>
-    <button onclick="switchTab('Clientes')" id="navClientes" class="flex flex-col items-center text-gray-500 font-bold text-xs"><span class="text-xl">👥</span><span id="txtNavClientes">Clientes</span></button>
-    <button onclick="switchTab('Libreta')" id="navLibreta" class="flex flex-col items-center text-gray-500 font-bold text-xs"><span class="text-xl">📓</span><span id="txtNavLibreta">Libreta</span></button>
-    <button onclick="switchTab('Conta')" id="navConta" class="flex flex-col items-center text-gray-500 font-bold text-xs"><span class="text-xl">💰</span><span id="txtNavConta">Conta</span></button>
-  </nav>
+  <div id="clientList"></div>
 </div>
 
-<div id="clientModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-  <div class="bg-white w-full max-w-md rounded-2xl p-5 space-y-3 max-h-[90vh] overflow-y-auto">
-    <div class="flex justify-between items-center"><h3 id="modalClientTitle" class="font-extrabold text-lg text-gray-800">Nuevo Cliente</h3><button onclick="closeClientModal()" class="text-gray-500 font-bold text-xl">✕</button></div>
+<button class="fab" onclick="openNewClient()">+ Nuevo Cliente</button>
+
+<!-- Modal Nuevo Cliente -->
+<dialog id="clientModal">
+  <h3>Nuevo Cliente</h3>
+  <div class="field"><label>Nombre</label><input id="cName" placeholder="Ej. Sra. Marta López" /></div>
+  <div class="field"><label>Dirección / Día</label><input id="cAddr" placeholder="Ej. Calle Roble 123 - Martes" /></div>
+  <div class="field"><label>Tarifa habitual ($)</label><input id="cRate" type="number" placeholder="Ej. 60" /></div>
+  <div class="field"><label>Adeudo inicial ($)</label><input id="cDebt" type="number" value="0" /></div>
+  <div class="field"><label>Nota privada</label><textarea id="cNote" rows="2" placeholder="Ej. Cuidado con el perro, cerrar portón"></textarea></div>
+  <div class="modal-btns">
+    <button class="btn-cancel" onclick="closeModal('clientModal')">Cancelar</button>
+    <button class="btn-save" onclick="saveClient()">Guardar</button>
+  </div>
+</dialog>
+
+<!-- Modal Movimiento (+ Pago o + Debe) -->
+<dialog id="txModal">
+  <h3 id="txTitle">Registrar Pago</h3>
+  <div class="field"><label>Monto ($)</label><input id="txAmount" type="number" /></div>
+  <div class="field"><label>Concepto</label><input id="txConcept" placeholder="Ej. Corte extra / Mensualidad" /></div>
+  <div class="modal-btns">
+    <button class="btn-cancel" onclick="closeModal('txModal')">Cancelar</button>
+    <button class="btn-save" onclick="confirmTx()">Confirmar</button>
+  </div>
+</dialog>
+
+<!-- Modal Nota -->
+<dialog id="noteModal">
+  <h3>📝 Nota del Cliente</h3>
+  <div class="field"><label>Apuntes privados</label><textarea id="noteText" rows="4"></textarea></div>
+  <div class="modal-btns">
+    <button class="btn-cancel" onclick="closeModal('noteModal')">Cancelar</button>
+    <button class="btn-save" onclick="saveNote()">Guardar Nota</button>
+  </div>
+</dialog>
+
+<script>
+  const STORAGE_KEY = 'jardineros_pro_v2';
+  let clients = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  let currentFilter = 'all';
+  let activeId = null;
+  let txType = 'pay';
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+    render();
+  }
+
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function openNewClient() {
+    ['cName','cAddr','cRate','cNote'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('cDebt').value = '0';
+    document.getElementById('clientModal').showModal();
+  }
+
+  function saveClient() {
+    const name = document.getElementById('cName').value.trim();
+    if (!name) return alert('Escribe el nombre del cliente');
+    clients.unshift({
+      id: Date.now().toString(),
+      name,
+      addr: document.getElementById('cAddr').value.trim(),
+      rate: Number(document.getElementById('cRate').value) || 0,
+      debt: Number(document.getElementById('cDebt').value) || 0,
+      note: document.getElementById('cNote').value.trim(),
+      payments: []
+    });
+    closeModal('clientModal');
+    save();
+  }
+
+  function openTx(id, type) {
+    activeId = id;
+    txType = type;
+    const c = clients.find(x => x.id === id);
+    document.getElementById('txTitle').textContent = type === 'pay' ? `+ Pago de ${c.name}` : `+ Adeudo a ${c.name}`;
+    document.getElementById('txAmount').value = c.rate || '';
+    document.getElementById('txConcept').value = type === 'pay' ? 'Servicio de jardinería' : 'Mensualidad atrasada';
+    document.getElementById('txModal').showModal();
+  }
+
+  function confirmTx() {
+    const amount = Number(document.getElementById('txAmount').value);
+    if (!amount || amount <= 0) return alert('Ingresa un monto válido');
+    const concept = document.getElementById('txConcept').value.trim() || (txType === 'pay' ? 'Pago' : 'Cargo');
+    const c = clients.find(x => x.id === activeId);
