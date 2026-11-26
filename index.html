@@ -190,6 +190,7 @@
       
       <div id="loginForm">
         <input type="email" id="emailInput" placeholder="tu@correo.com" />
+        <input type="password" id="passwordInput" placeholder="Contraseña de Supabase" autocomplete="current-password" />
         <button class="btn btn-primary" onclick="handleLogin()" data-t="enterBtn">Entrar / Crear Cuenta</button>
         <p style="font-size:12px; margin-top:12px;" data-t="trialNote">14 días de prueba gratis para usuarios nuevos.</p>
       </div>
@@ -216,7 +217,7 @@
       </div>
       <div class="header-sub">
         <span id="userBadge">👑 Dueño Vitalicio</span>
-        <span class="badge-cloud" id="cloudStatus">☁️ Sincronizado</span>
+        <span class="badge-cloud" id="cloudStatus">⚠️ Sin verificar</span>
       </div>
     </header>
 
@@ -352,12 +353,13 @@
   </div>
 
 <script>
-  const SUPABASE_URL = 'https://rjmrhjpmvptnzetcjsfo.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_JjMF-Gt0D61jE455kLcOUQ_sgBkjCsW';
+  const SUPABASE_URL = 'https://hzhbfwxotbazgjjpukfl.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_ybcXNTO88HnpYMOFTx9i8Q_ONgiwmEN';
   const OWNER_EMAIL = 'gena197590@gmail.com';
 
   let lang = localStorage.getItem('jp_lang') || 'es';
-  let currentUser = localStorage.getItem('jp_user') || '';
+  let currentUser = '';
+  let authSession = null;
   let selectedFilter = 'Todos';
 
   let appData = {
@@ -506,66 +508,44 @@
   }
 
   async function sbFetch(path, options = {}) {
+    if (!authSession?.access_token) throw new Error('Inicia sesión para sincronizar');
     const headers = {
       'apikey': SUPABASE_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Authorization': 'Bearer ' + authSession.access_token,
       'Content-Type': 'application/json',
       ...(options.headers || {})
     };
-    return fetch(SUPABASE_URL + '/rest/v1/' + path, { ...options, headers });
+    const response = await fetch(SUPABASE_URL + '/rest/v1/' + path, { ...options, headers });
+    if (!response.ok) throw new Error('Supabase ' + response.status + ': ' + (await response.text()).slice(0,250));
+    return response;
   }
 
   async function handleLogin() {
     const email = document.getElementById('emailInput').value.trim().toLowerCase();
-    if (!email || !email.includes('@')) {
-      alert(lang === 'es' ? 'Ingresa un correo válido.' : 'Enter a valid email.');
-      return;
-    }
-    currentUser = email;
-    localStorage.setItem('jp_user', currentUser);
-    await checkSubscription(false);
+    const password = document.getElementById('passwordInput').value;
+    if (!email || !password) { alert('Escribe tu correo y contraseña.'); return; }
+    try {
+      const response = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (!response.ok) throw new Error('Correo o contraseña incorrectos, o correo sin confirmar');
+      authSession = await response.json();
+      currentUser = authSession.user.email.toLowerCase();
+      localStorage.setItem('jp_user', currentUser);
+      await checkSubscription(false);
+    } catch (error) { alert('No se pudo iniciar sesión: ' + error.message); }
   }
 
   async function checkSubscription(manualCheck) {
-    if (!currentUser) return;
-    if (currentUser === OWNER_EMAIL) {
-      document.getElementById('userBadge').textContent = lang === 'es' ? '👑 Dueño Vitalicio' : '👑 Lifetime Owner';
-      enterApp();
+    if (!authSession?.user?.id) { alert('Inicia sesión primero.'); return; }
+    if (currentUser !== OWNER_EMAIL) {
+      alert('Esta versión de pruebas está limitada al dueño. Las suscripciones se configurarán de forma segura después.');
       return;
     }
-
-    try {
-      const res = await sbFetch(`suscripciones?email=eq.${encodeURIComponent(currentUser)}&select=*`);
-      const rows = await res.json();
-      const today = new Date().toISOString().slice(0, 10);
-
-      if (!rows || rows.length === 0) {
-        const trialEnd = new Date();
-        trialEnd.setDate(trialEnd.getDate() + 14);
-        const vence = trialEnd.toISOString().slice(0, 10);
-        await sbFetch('suscripciones', {
-          method: 'POST',
-          headers: { 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ email: currentUser, activa: true, vence })
-        });
-        document.getElementById('userBadge').textContent = lang === 'es' ? '🎁 Prueba Gratis Activa' : '🎁 Active Free Trial';
-        enterApp();
-      } else {
-        const sub = rows[0];
-        if (sub.activa && sub.vence >= today) {
-          document.getElementById('userBadge').textContent = (lang === 'es' ? '✅ Activo hasta ' : '✅ Active until ') + sub.vence;
-          enterApp();
-        } else {
-          document.getElementById('loginForm').classList.add('hidden');
-          document.getElementById('paywallBox').classList.remove('hidden');
-          if (manualCheck) {
-            alert(lang === 'es' ? 'Aún no aparece el pago. Si acabas de pagar, espera 10 segundos y vuelve a intentar.' : 'Payment not reflected yet. If you just paid, wait 10 seconds and retry.');
-          }
-        }
-      }
-    } catch (e) {
-      enterApp();
-    }
+    document.getElementById('userBadge').textContent = '👑 Dueño (pruebas)';
+    await enterApp();
   }
 
   async function enterApp() {
@@ -599,48 +579,59 @@
 
   async function saveAllData() {
     localStorage.setItem('jp_data_' + currentUser, JSON.stringify(appData));
-    document.getElementById('cloudStatus').textContent = I18N[lang].syncing;
+    const status = document.getElementById('cloudStatus');
+    status.textContent = '⏳ Sincronizando';
     try {
-      await sbFetch('datos_jardinero?on_conflict=email', {
+      await sbFetch('jardineros_estado?on_conflict=user_id', {
         method: 'POST',
         headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-        body: JSON.stringify({ email: currentUser, contenido: appData })
+        body: JSON.stringify({ user_id: authSession.user.id, contenido: appData })
       });
-      document.getElementById('cloudStatus').textContent = I18N[lang].savedCloud;
-    } catch (e) {
-      document.getElementById('cloudStatus').textContent = '⚠️ Local';
+      status.textContent = '☁️ Guardado en la Nube';
+      return true;
+    } catch (error) {
+      status.textContent = '⚠️ Solo local';
+      console.error('Error guardando en Supabase:', error);
+      return false;
     }
   }
 
   async function loadFromCloud() {
+    const status = document.getElementById('cloudStatus');
     try {
-      const res = await sbFetch(`datos_jardinero?email=eq.${encodeURIComponent(currentUser)}&select=contenido`);
+      const res = await sbFetch('jardineros_estado?user_id=eq.' + encodeURIComponent(authSession.user.id) + '&select=contenido');
       const rows = await res.json();
-      if (rows && rows.length > 0 && rows[0].contenido) {
-        const cloud = rows[0].contenido;
-        if ((cloud.clients && cloud.clients.length > 0) || (cloud.notes && cloud.notes.length > 0) || (cloud.movements && cloud.movements.length > 0)) {
-          appData.clients = cloud.clients || [];
-          appData.notes = cloud.notes || [];
-          appData.movements = cloud.movements || [];
-          appData.clients.forEach(c => {
-            if (!Array.isArray(c.paidMonths)) c.paidMonths = [];
-            if (!Array.isArray(c.owedMonths)) c.owedMonths = [];
-          });
-          localStorage.setItem('jp_data_' + currentUser, JSON.stringify(appData));
-          renderAll();
-        } else if (appData.clients.length > 0) {
-          await saveAllData();
+      const cloud = rows?.[0]?.contenido;
+      if (cloud && Array.isArray(cloud.clients)) {
+        if (appData.clients.length > 0 && JSON.stringify(appData) !== JSON.stringify(cloud)) {
+          // Never overwrite existing local client/payment records automatically.
+          status.textContent = '⚠️ Datos locales y nube distintos';
+          return;
         }
+        appData.clients = cloud.clients || [];
+        appData.notes = cloud.notes || [];
+        appData.movements = cloud.movements || [];
+        appData.clients.forEach(c => {
+          if (!Array.isArray(c.paidMonths)) c.paidMonths = [];
+          if (!Array.isArray(c.owedMonths)) c.owedMonths = [];
+        });
+        localStorage.setItem('jp_data_' + currentUser, JSON.stringify(appData));
+        renderAll();
+        status.textContent = '☁️ Datos cargados';
       } else if (appData.clients.length > 0) {
-        await saveAllData();
+        status.textContent = '⚠️ Datos locales pendientes';
+      } else {
+        status.textContent = '☁️ Sin datos todavía';
       }
-      document.getElementById('cloudStatus').textContent = I18N[lang].savedCloud;
-    } catch (e) {}
+    } catch (error) {
+      console.error('Error leyendo Supabase:', error);
+      status.textContent = '⚠️ Solo local';
+    }
   }
 
   async function forceSync() {
-    await saveAllData();
-    showToast(I18N[lang].savedCloud);
+    const ok = await saveAllData();
+    showToast(ok ? I18N[lang].savedCloud : 'No se guardó en Supabase');
   }
 
   function switchTab(tab) {
@@ -1075,12 +1066,7 @@
 
   // Init
   applyTranslations();
-  if (currentUser) {
-    document.getElementById('emailInput').value = currentUser;
-    checkSubscription(false);
-  }
-  const supabaseUrl = 'https://hzhbfwxotbazgjjpukfl.supabase.co';
-  const supabaseKey = 'AQUI_VA_TU_CLAVE_PUBLICA';
+  document.getElementById('emailInput').value = localStorage.getItem('jp_user') || ''; 
 </script>
 </body>
 </html>
